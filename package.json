@@ -1,0 +1,27 @@
+{
+  "name": "sc16-ephemeral-lbs-server",
+  "version": "1.0.0",
+  "description": "Smart cities project summer semester 2016",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/chack05/sc16-ephemeral-lbs-server.git"
+  },
+  "keywords": [
+    "smart",
+    "cities",
+    "location",
+    "based",
+    "services",
+    "ephemeral"
+  ],
+  "author": "smart cities course ss16",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/chack05/sc16-ephemeral-lbs-server/issues"
+  },
+  "homepage": "https://github.com/chack05/sc16-ephemeral-lbs-server#readme"
+}
