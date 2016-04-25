@@ -1,2 +1,2 @@
 # About
-This repository contains the server-side source code for the "Smart Cities" project, with the goal to test ephemeral location-based services.
+This repository contains the server-side source code for the "Smart Cities" project, which has the goal of researching/prototyping ephemeral location-based services.
