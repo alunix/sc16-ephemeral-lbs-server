@@ -25,6 +25,7 @@
   },
   "homepage": "https://github.com/chack05/sc16-ephemeral-lbs-server#readme",
   "dependencies": {
+    "body-parser": "^1.15.0",
     "express": "^4.13.4",
     "nano": "^6.2.0"
   }
