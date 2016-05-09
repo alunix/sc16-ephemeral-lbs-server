@@ -19,7 +19,6 @@ var bodyParser = require("body-parser");
  */
 var server = express();
 server.use(express.static('./public'));
-
 /* This adds CORS-string into the header of each response. */
 server.use(function(req, res, next) {
     res.header('Access-Control-Allow-Origin', '*');
