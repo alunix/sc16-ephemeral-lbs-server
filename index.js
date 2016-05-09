@@ -19,6 +19,7 @@ var bodyParser = require("body-parser");
  */
 var server = express();
 server.use(express.static('./public'));
+
 /* This adds CORS-string into the header of each response. */
 server.use(function(req, res, next) {
     res.header('Access-Control-Allow-Origin', '*');
@@ -38,34 +39,76 @@ server.get('/api/zones', function(req, res) {
             res.json(body);
         }
         else {
-            res.status(400).send('Database error! Couldn\'t fetch zones.');
+            res.status(404).send('Database error! Couldn\'t fetch zones.');
         }
     });
 });
 
 server.get('/api/messages', function(req, res) {
-    var messages = nano.use(msgdb);
+    var msgTable = nano.use(msgdb);
 
-    messages.list(function(err, body) {
+    if(!request.query.zone) {
+        res.status(404).send("Zone parameter missing.");
+    }
+
+    msgTable.list(function(err, body) {
         if (!err) {
-            res.json(body);
+        
+            let result = {
+                "Type": "Messages",
+                "Messages": []
+            };
+            
+            for(i = 0; i < body.rows.length; i++) {
+                if(body.rows[i]["Zone-id"] === request.query.zone ) {
+                    result["Messages"].push(body.rows[i]);
+                }
+            }
+            
+            res.json(result);
         }
         else {
-            res.status(400).send('Database error! Couldn\'t fetch messages.');
+            res.status(404).send('Database error! Couldn\'t fetch messages.');
         }
     });
 });
 
-server.post('/api/addmessage', function(req, res) {
-    var messages = nano.use(msgdb);
-    messages.insert({
-        title: req.body.title,
-        body: req.body.body,
-        category: req.body.category,
-        timestamp: req.body.timestamp,
-        expirationdate: req.body.expirationdate,
-        zonename: req.body.zonename
-    });
+server.put('/api/addmessages', function(req, res) {
+
+    if(req.body.Type !== "Messages") {
+        res.status(404).send("Wrong data type " + req.body.type + ".");
+    }
+
+    var msgTable = nano.use(msgdb);
+    try {
+        for(i = 0; i < body.Messages.length; i++) {
+            let message = body.Messages[i];
+            msgTable.insert({
+                Header: {
+                    "Client-id": message["Client-id"],
+                    "Message-id": message["Message-id"],
+                    "Zone-id": message["Zone-id"],
+                    "Expired-at": message["Expired-at"],
+                    "Category": message["Category"]
+                },
+                Body: {
+                    "Title": message["Title"],
+                    "Message": message["Message"]
+                }
+            }, undefined, function(err, body) {
+                if(!err) {
+                    res.status(201).send("Message uploaded!");
+                }
+                else {
+                    res.status(404).send('Database error:' + err.message);
+                }
+            });
+        }
+    }
+    /* In case the message wasn't valid... TODO: better validation */
+    catch(err) {
+        res.status(404).send('JSON error:' + err);
+    }
 });
 
 server.post('/api/addzone', function(req, res) {
