@@ -38,11 +38,10 @@ server.get('/api/zones', function(req, res) {
         "Type": "Zones",
         "Zones": []
     };
-    zonesTbl.list(function(err, body, header) {
+    zonesTbl.list({include_docs: true}, function(err, body, header) {
         if(!err) {
-            console.log(JSON.stringify(body.rows[0]));
             for(var i = 0; i < body.rows.length; i++) {
-                zones.Zones.push(body.rows[i]);
+                zones.Zones.push(body.rows[i].doc);
             }
             res.json(zones);
         }
@@ -83,12 +82,12 @@ server.post('/api/addzone', function(req, res) {
 server.get('/api/messages', function(req, res) {
     var msgTable = nano.use(msgdb);
 
-    if(!request.query.zone) {
+    if(!req.query.zone) {
         res.status(404).send("Zone parameter missing.");
         return;
     }
 
-    msgTable.list(function(err, body) {
+    msgTable.list({include_docs: true}, function(err, body) {
         if (!err) {
         
             let result = {
@@ -96,9 +95,9 @@ server.get('/api/messages', function(req, res) {
                 "Messages": []
             };
             
-            for(i = 0; i < body.rows.length; i++) {
-                if(body.rows[i]["Zone-id"] === request.query.zone ) {
-                    result["Messages"].push(body.rows[i]);
+            for(let i = 0; i < body.rows.length; i++) {
+                if(body.rows[i].doc["Header"]["Zone-id"] === parseInt(req.query.zone) ) {
+                    result["Messages"].push(body.rows[i].doc);
                 }
             }
             
@@ -120,7 +119,7 @@ server.post('/api/addmessages', function(req, res) {
     var msgTable = nano.use(msgdb);
     try {
         var error = null;
-        for(i = 0; i < body.Messages.length; i++) {
+        for(let i = 0; i < body.Messages.length; i++) {
             let message = body.Messages[i];
             msgTable.insert({
                 Header: {
