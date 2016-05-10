@@ -36,11 +36,19 @@ server.get('/api/zones', function(req, res) {
 
     zones.list(function(err, body) {
         if (!err) {
-            res.json(body);
+            res.json(body.rows);
         }
         else {
             res.status(404).send('Database error! Couldn\'t fetch zones.');
         }
+    });
+});
+
+server.post('/api/addzone', function(req, res) {
+    var zones = nano.use(zonedb);
+    zones.insert({
+        name: req.body.name,
+        geometry: req.body.geometry
     });
 });
 
@@ -49,6 +57,7 @@ server.get('/api/messages', function(req, res) {
 
     if(!request.query.zone) {
         res.status(404).send("Zone parameter missing.");
+        return;
     }
 
     msgTable.list(function(err, body) {
@@ -73,7 +82,7 @@ server.get('/api/messages', function(req, res) {
     });
 });
 
-server.put('/api/addmessages', function(req, res) {
+server.post('/api/addmessages', function(req, res) {
 
     if(req.body.Type !== "Messages") {
         res.status(404).send("Wrong data type " + req.body.type + ".");
@@ -81,6 +90,7 @@ server.put('/api/addmessages', function(req, res) {
 
     var msgTable = nano.use(msgdb);
     try {
+        var error = null;
         for(i = 0; i < body.Messages.length; i++) {
             let message = body.Messages[i];
             msgTable.insert({
@@ -96,27 +106,22 @@ server.put('/api/addmessages', function(req, res) {
                     "Message": message["Message"]
                 }
             }, undefined, function(err, body) {
-                if(!err) {
-                    res.status(201).send("Message uploaded!");
-                }
-                else {
+                if(err) {
                     res.status(404).send('Database error:' + err.message);
+                    error = err.message;
+                    break;
                 }
             });
+        }
+        
+        if(!error) {
+            res.status(201).send("Message uploaded!");
         }
     }
     /* In case the message wasn't valid... TODO: better validation */
     catch(err) {
         res.status(404).send('JSON error:' + err);
     }
-});
-
-server.post('/api/addzone', function(req, res) {
-    var zones = nano.use(zonedb);
-    zones.insert({
-        name: req.body.name,
-        geometry: req.body.geometry
-    });
 });
 
 /* We start the server from the specified port. */
