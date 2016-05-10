@@ -32,11 +32,19 @@ server.use(bodyParser.json());
 
 /* Handle basic requests... */
 server.get('/api/zones', function(req, res) {
-    var zones = nano.use(zonesdb);
+    var zonesTbl = nano.use(zonesdb);
 
-    zones.list(function(err, body) {
-        if (!err) {
-            res.json(body.rows);
+    var zones = {
+        "Type": "Zones",
+        "Zones": []
+    };
+    zonesTbl.list(function(err, body, header) {
+        if(!err) {
+            console.log(JSON.stringify(body.rows[0]));
+            for(var i = 0; i < body.rows.length; i++) {
+                zones.Zones.push(body.rows[i]);
+            }
+            res.json(zones);
         }
         else {
             res.status(404).send('Database error! Couldn\'t fetch zones.');
@@ -45,11 +53,31 @@ server.get('/api/zones', function(req, res) {
 });
 
 server.post('/api/addzone', function(req, res) {
-    var zones = nano.use(zonedb);
-    zones.insert({
-        name: req.body.name,
-        geometry: req.body.geometry
-    });
+    var zonesTbl = nano.use(zonedb);
+    
+    if(req.body.Type !== "Zone") {
+        res.status(404).send("Wrong data type " + req.body.type + ".");
+        return;
+    }
+    
+    try {
+        let zone = {
+            "Geometry": {
+                "Type": req.body.Geometry.Type,
+                "Coordinates": req.body.Geometry.Coordinates
+            },
+            "Properties": {
+                "Name": req.body.Properties.Name,
+                "Zone-id": req.body.Properties["Zone-id"],
+                "Expired-at": req.body.Properties["Expired-at"]
+            }
+        }
+        zonesTbl.insert(zone);
+    }
+    catch(err) {
+      res.status(404).send('JSON error:' + err);
+    }
+    
 });
 
 server.get('/api/messages', function(req, res) {
@@ -86,6 +114,7 @@ server.post('/api/addmessages', function(req, res) {
 
     if(req.body.Type !== "Messages") {
         res.status(404).send("Wrong data type " + req.body.type + ".");
+        return;
     }
 
     var msgTable = nano.use(msgdb);
@@ -109,9 +138,10 @@ server.post('/api/addmessages', function(req, res) {
                 if(err) {
                     res.status(404).send('Database error:' + err.message);
                     error = err.message;
-                    break;
+                    return;
                 }
             });
+            if(error) break;
         }
         
         if(!error) {
