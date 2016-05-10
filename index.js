@@ -72,10 +72,7 @@ server.post('/api/addzone', function(req, res) {
     var zones = nano.use(zonedb);
     zones.insert({
         name: req.body.name,
-		id: req.body.id,
-        geometry: req.body.geometry,
-		coordinates: req.body.coordinates,
-		expirydate: req.body.expirydate
+        geometry: req.body.geometry
     });
 });
 
