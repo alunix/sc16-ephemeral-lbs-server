@@ -1,5 +1,5 @@
 $.ajax({
-   url: 'http://giv-oct.uni-muenster.de:5984/',
+   url: 'http://localhost:5984/',
    type: 'get',
    dataType: 'jsonp',
    success: function(data) {
