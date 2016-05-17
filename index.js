@@ -19,6 +19,7 @@ var bodyParser = require("body-parser");
  */
 var server = express();
 server.use(express.static('./public'));
+
 /* This adds CORS-string into the header of each response. */
 server.use(function(req, res, next) {
     res.header('Access-Control-Allow-Origin', '*');
@@ -31,49 +32,125 @@ server.use(bodyParser.json());
 
 /* Handle basic requests... */
 server.get('/api/zones', function(req, res) {
-    var zones = nano.use(zonesdb);
+    var zonesTbl = nano.use(zonesdb);
 
-    zones.list(function(err, body) {
-        if (!err) {
-            res.json(body);
+    var zones = {
+        "Type": "Zones",
+        "Zones": []
+    };
+    zonesTbl.list({include_docs: true}, function(err, body, header) {
+        if(!err) {
+            for(var i = 0; i < body.rows.length; i++) {
+                zones.Zones.push(body.rows[i].doc);
+            }
+            res.json(zones);
         }
         else {
-            res.status(400).send('Database error! Couldn\'t fetch zones.');
+            res.status(404).send('Database error! Couldn\'t fetch zones.');
         }
-    });
-});
-
-server.get('/api/messages', function(req, res) {
-    var messages = nano.use(msgdb);
-
-    messages.list(function(err, body) {
-        if (!err) {
-            res.json(body);
-        }
-        else {
-            res.status(400).send('Database error! Couldn\'t fetch messages.');
-        }
-    });
-});
-
-server.post('/api/addmessage', function(req, res) {
-    var messages = nano.use(msgdb);
-    messages.insert({
-        title: req.body.title,
-        body: req.body.body,
-        category: req.body.category,
-        timestamp: req.body.timestamp,
-        expirationdate: req.body.expirationdate,
-        zonename: req.body.zonename
     });
 });
 
 server.post('/api/addzone', function(req, res) {
-    var zones = nano.use(zonedb);
-    zones.insert({
-        name: req.body.name,
-        geometry: req.body.geometry
+    var zonesTbl = nano.use(zonedb);
+    
+    if(req.body.Type !== "Zone") {
+        res.status(404).send("Wrong data type " + req.body.type + ".");
+        return;
+    }
+    
+    try {
+        let zone = {
+            "Geometry": {
+                "Type": req.body.Geometry.Type,
+                "Coordinates": req.body.Geometry.Coordinates
+            },
+            "Properties": {
+                "Name": req.body.Properties.Name,
+                "Zone-id": req.body.Properties["Zone-id"],
+                "Expired-at": req.body.Properties["Expired-at"]
+            }
+        }
+        zonesTbl.insert(zone);
+    }
+    catch(err) {
+      res.status(404).send('JSON error:' + err);
+    }
+    
+});
+
+server.get('/api/messages', function(req, res) {
+    var msgTable = nano.use(msgdb);
+
+    if(!req.query.zone) {
+        res.status(404).send("Zone parameter missing.");
+        return;
+    }
+
+    msgTable.list({include_docs: true}, function(err, body) {
+        if (!err) {
+        
+            let result = {
+                "Type": "Messages",
+                "Messages": []
+            };
+            
+            for(let i = 0; i < body.rows.length; i++) {
+                if(body.rows[i].doc["Header"]["Zone-id"] === parseInt(req.query.zone) ) {
+                    result["Messages"].push(body.rows[i].doc);
+                }
+            }
+            
+            res.json(result);
+        }
+        else {
+            res.status(404).send('Database error! Couldn\'t fetch messages.');
+        }
     });
+});
+
+server.post('/api/addmessages', function(req, res) {
+
+    if(req.body.Type !== "Messages") {
+        res.status(404).send("Wrong data type " + req.body.type + ".");
+        return;
+    }
+
+    var msgTable = nano.use(msgdb);
+    try {
+        var error = null;
+        for(let i = 0; i < body.Messages.length; i++) {
+            let message = body.Messages[i];
+            msgTable.insert({
+                Header: {
+                    "Client-id": message["Client-id"],
+                    "Message-id": message["Message-id"],
+                    "Zone-id": message["Zone-id"],
+                    "Expired-at": message["Expired-at"],
+                    "Category": message["Category"]
+                },
+                Body: {
+                    "Title": message["Title"],
+                    "Message": message["Message"]
+                }
+            }, undefined, function(err, body) {
+                if(err) {
+                    res.status(404).send('Database error:' + err.message);
+                    error = err.message;
+                    return;
+                }
+            });
+            if(error) break;
+        }
+        
+        if(!error) {
+            res.status(201).send("Message uploaded!");
+        }
+    }
+    /* In case the message wasn't valid... TODO: better validation */
+    catch(err) {
+        res.status(404).send('JSON error:' + err);
+    }
 });
 
 /* We start the server from the specified port. */
