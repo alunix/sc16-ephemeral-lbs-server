@@ -27,7 +27,9 @@ server.use(function(req, res, next) {
 });
 
 /* This configures body-parser. */
-server.use(bodyParser.urlencoded({ extended: false }));
+server.use(bodyParser.urlencoded({
+    extended: false
+}));
 server.use(bodyParser.json());
 
 /* Handle basic requests... */
@@ -38,14 +40,15 @@ server.get('/api/zones', function(req, res) {
         "Type": "Zones",
         "Zones": []
     };
-    zonesTbl.list({include_docs: true}, function(err, body, header) {
-        if(!err) {
-            for(var i = 0; i < body.rows.length; i++) {
+    zonesTbl.list({
+        include_docs: true
+    }, function(err, body, header) {
+        if (!err) {
+            for (var i = 0; i < body.rows.length; i++) {
                 zones.Zones.push(body.rows[i].doc);
             }
             res.json(zones);
-        }
-        else {
+        } else {
             res.status(404).send('Database error! Couldn\'t fetch zones.');
         }
     });
@@ -54,7 +57,7 @@ server.get('/api/zones', function(req, res) {
 server.post('/api/addzone', function(req, res) {
     var zonesTbl = nano.use(zonedb);
 
-    if(req.body.Type !== "Zone") {
+    if (req.body.Type !== "Zone") {
         res.status(404).send("Wrong data type " + req.body.type + ".");
         return;
     }
@@ -72,9 +75,8 @@ server.post('/api/addzone', function(req, res) {
             }
         }
         zonesTbl.insert(zone);
-    }
-    catch(err) {
-      res.status(404).send('JSON error:' + err);
+    } catch (err) {
+        res.status(404).send('JSON error:' + err);
     }
 
 });
@@ -82,12 +84,14 @@ server.post('/api/addzone', function(req, res) {
 server.get('/api/messages', function(req, res) {
     var msgTable = nano.use(msgdb);
 
-    if(!req.query.zone) {
+    if (!req.query.zone) {
         res.status(404).send("Zone parameter missing.");
         return;
     }
 
-    msgTable.list({include_docs: true}, function(err, body) {
+    msgTable.list({
+        include_docs: true
+    }, function(err, body) {
         if (!err) {
 
             let result = {
@@ -95,15 +99,14 @@ server.get('/api/messages', function(req, res) {
                 "Messages": []
             };
 
-            for(let i = 0; i < body.rows.length; i++) {
-                if(body.rows[i].doc["Header"]["Zone-id"] === parseInt(req.query.zone) ) {
+            for (let i = 0; i < body.rows.length; i++) {
+                if (body.rows[i].doc["Header"]["Zone-id"] == parseInt(req.query.zone)) {
                     result["Messages"].push(body.rows[i].doc);
                 }
             }
 
             res.json(result);
-        }
-        else {
+        } else {
             res.status(404).send('Database error! Couldn\'t fetch messages.');
         }
     });
@@ -111,7 +114,7 @@ server.get('/api/messages', function(req, res) {
 
 server.post('/api/addmessages', function(req, res) {
 
-    if(req.body.Type !== "Messages") {
+    if (req.body.Type !== "Messages") {
         res.status(404).send("Wrong data type " + req.body.type + ".");
         return;
     }
@@ -119,41 +122,29 @@ server.post('/api/addmessages', function(req, res) {
     var msgTable = nano.use(msgdb);
     try {
         var error = null;
-        for(let i = 0; i < req.body.Messages.length; i++) {
+        for (let i = 0; i < req.body.Messages.length; i++) {
             let message = req.body.Messages[i];
-            msgTable.insert({
-                Header: {
-                    "Client-id": message["Client-id"],
-                    "Message-id": message["Message-id"],
-                    "Zone-id": message["Zone-id"],
-                    "Expired-at": message["Expired-at"],
-                    "Category": message["Category"]
-                },
-                Body: {
-                    "Title": message["Title"],
-                    "Message": message["Message"]
-                }
-            }, undefined, function(err, body) {
-                if(err) {
+            msgTable.insert(message, undefined, function(err, body) {
+                if (err) {
                     res.status(404).send('Database error:' + err.message);
                     error = err.message;
                     return;
                 }
             });
-            if(error) break;
+            if (error) break;
         }
 
-        if(!error) {
+        if (!error) {
             res.status(201).send("Message uploaded!");
         }
     }
     /* In case the message wasn't valid... TODO: better validation */
-    catch(err) {
+    catch (err) {
         res.status(404).send('JSON error:' + err);
     }
 });
 
 /* We start the server from the specified port. */
-server.listen(webport, function(){
+server.listen(webport, function() {
     console.log('Smart Cities SS16 server now running on port ' + webport);
 });
