@@ -53,12 +53,12 @@ server.get('/api/zones', function(req, res) {
 
 server.post('/api/addzone', function(req, res) {
     var zonesTbl = nano.use(zonedb);
-    
+
     if(req.body.Type !== "Zone") {
         res.status(404).send("Wrong data type " + req.body.type + ".");
         return;
     }
-    
+
     try {
         let zone = {
             "Geometry": {
@@ -76,7 +76,7 @@ server.post('/api/addzone', function(req, res) {
     catch(err) {
       res.status(404).send('JSON error:' + err);
     }
-    
+
 });
 
 server.get('/api/messages', function(req, res) {
@@ -89,18 +89,18 @@ server.get('/api/messages', function(req, res) {
 
     msgTable.list({include_docs: true}, function(err, body) {
         if (!err) {
-        
+
             let result = {
                 "Type": "Messages",
                 "Messages": []
             };
-            
+
             for(let i = 0; i < body.rows.length; i++) {
                 if(body.rows[i].doc["Header"]["Zone-id"] === parseInt(req.query.zone) ) {
                     result["Messages"].push(body.rows[i].doc);
                 }
             }
-            
+
             res.json(result);
         }
         else {
@@ -119,8 +119,8 @@ server.post('/api/addmessages', function(req, res) {
     var msgTable = nano.use(msgdb);
     try {
         var error = null;
-        for(let i = 0; i < body.Messages.length; i++) {
-            let message = body.Messages[i];
+        for(let i = 0; i < req.body.Messages.length; i++) {
+            let message = req.body.Messages[i];
             msgTable.insert({
                 Header: {
                     "Client-id": message["Client-id"],
@@ -142,7 +142,7 @@ server.post('/api/addmessages', function(req, res) {
             });
             if(error) break;
         }
-        
+
         if(!error) {
             res.status(201).send("Message uploaded!");
         }
