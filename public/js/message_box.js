@@ -1,7 +1,7 @@
 // Get message box
 function update(){
   $.ajax({
-     url: 'http://localhost:8080/api/messages?zone=1',
+     url: '/api/messages?zone=1',
      type: 'get',
      dataType: 'json',
      success: function(data) {
