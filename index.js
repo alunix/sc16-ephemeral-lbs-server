@@ -124,6 +124,7 @@ server.post('/api/addmessages', function(req, res) {
         var error = null;
         for (let i = 0; i < req.body.Messages.length; i++) {
             let message = req.body.Messages[i];
+            //TODO validation
             msgTable.insert(message, undefined, function(err, body) {
                 if (err) {
                     res.status(404).send('Database error:' + err.message);

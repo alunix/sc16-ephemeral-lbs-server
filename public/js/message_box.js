@@ -6,7 +6,6 @@ function update(){
      dataType: 'json',
      success: function(data) {
        for(var i = 0; i< data['Messages'].length; i++) {
-         console.log(data['Messages'][i]);
          $('#messagearea').append('<div class="message">'+data['Messages'][i]['Body']['Title']+'</div>');
        }
      }
