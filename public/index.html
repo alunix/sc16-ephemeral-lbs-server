@@ -12,6 +12,7 @@
     <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.2/jquery.min.js"></script>
     <script type="text/javascript" src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/vue/1.0.22/vue.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/vue-resource/0.7.0/vue-resource.min.js"></script>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/leaflet.js"></script>
 
 </head>
@@ -64,27 +65,28 @@
         </div>
         <!-- /.row -->
 
+        <div id="map">
+        </div>
 
         <div id="messagebox" class="container">
-            <label for="messagebutton" class="lead">Messages:</label>
-            <button id="messagebutton"  onclick="update()" type="button" class="btn btn-default"> update </button>
-            <div id="messagearea"></div>
+            Messages:
+            <div id="messagearea">
+              <div class="message" v-for="m in messages">
+                <div class="message-title">
+                  {{ m.Body.Title }}
+                </div>
+                <div class="message-content">
+                  {{ m.Body.Message }}
+                </div>
+              </div>
+            </div>
         </div>
-
-
-
-
-
-        <div id="mapid">
-
-        </div>
-
     </div>
     <!-- /.container -->
 </body>
-
+<script type="text/javascript" src="js/messages.js"></script>
 <script type="text/javascript" src="js/map.js"></script>
-<script type="text/javascript" src="js/message_box.js"></script>
+<!-- <script type="text/javascript" src="js/message_box.js"></script> -->
 
 
 </html>

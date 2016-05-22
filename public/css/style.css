@@ -2,7 +2,7 @@ body {
     padding-top: 70px;
     /* Required padding for .navbar-fixed-top. Remove if using .navbar-static-top. Change if height of navigation changes. */
 }
-#mapid {
+#map {
     /* Make sure the map container has a defined height and width*/
     max-height: 700px;
     max-width: 1000px;
@@ -12,23 +12,23 @@ body {
     left: 5px;
 }
 #messagebox {
-    /* Make sure the map container has a defined height and width */
     max-height: 700px;
     max-width: 250px;
     height: 97%;
     width: 18%;
     position: absolute;
     right: 5px;
-    border: 3px solid black;
-}
-
-#messagebutton{
-  float: right;
-  margin-bottom: 10px;
-  margin-top:10px;
+    border: 1px solid black;
 }
 .message {
-  padding: 4px;
-  margin: 4px;
-  border: 1px solid black;
+    margin: 4px;
+    padding: 4px;
+    background-color: #C6EBF7;
+}
+.message-title {
+    font-weight: bold;
+}
+.message-content {
+    padding-left: 5px;
+    color: grey;
 }
