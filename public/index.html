@@ -1,90 +1,98 @@
 <!DOCTYPE html>
 <html>
 
-<head>
-    <meta charset="utf-8"></meta>
-    <!-- style imports -->
-    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" rel="stylesheet">
-    <link href="http://cdn.leafletjs.com/leaflet/v0.7.7/leaflet.css" rel="stylesheet">
-    <link href="/css/style.css" rel="stylesheet">
+	<head>
+		<meta charset="utf-8"></meta>
+		<!-- style imports -->
+		<link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" rel="stylesheet">
+		<link href="http://cdn.leafletjs.com/leaflet/v0.7.7/leaflet.css" rel="stylesheet">
+		<link href="/css/style.css" rel="stylesheet">
 
-    <!-- library imports -->
-    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.2/jquery.min.js"></script>
-    <script type="text/javascript" src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/vue/1.0.22/vue.min.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/leaflet.js"></script>
+		<!-- library imports -->
+		<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.2/jquery.min.js"></script>
+		<script type="text/javascript" src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+		<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/vue/1.0.22/vue.min.js"></script>
+		<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/leaflet.js"></script>
 
-</head>
+	</head>
 
-<body>
-    <!-- Navigation -->
-    <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
-        <div class="container">
-            <!-- Brand and toggle get grouped for better mobile display -->
-            <div class="navbar-header">
-                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
-                    <span class="sr-only">Toggle navigation</span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                </button>
-                <a class="navbar-brand" href="#">Home</a>
-            </div>
-            <!-- Collect the nav links, forms, and other content for toggling -->
-            <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-                <ul class="nav navbar-nav">
-                    <li>
-                        <a href="#">About</a>
-                    </li>
-                    <li>
-                        <a href="#">Services</a>
-                    </li>
-                    <li>
-                        <a href="#">Contact</a>
-                    </li>
-                </ul>
-            </div>
-            <!-- /.navbar-collapse -->
-        </div>
-        <!-- /.container -->
-    </nav>
+	<body>
+		<!-- Navigation -->
+		<nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+			<div class="container">
+				<!-- Brand and toggle get grouped for better mobile display -->
+				<div class="navbar-header">
+					<button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+						<span class="sr-only">Toggle navigation</span>
+						<span class="icon-bar"></span>
+						<span class="icon-bar"></span>
+						<span class="icon-bar"></span>
+					</button>
+					<a class="navbar-brand" href="#">Home</a>
+				</div>
+				<!-- Collect the nav links, forms, and other content for toggling -->
+				<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+					<ul class="nav navbar-nav">
+						<li>
+							<a href="#">About</a>
+						</li>
+						<li>
+							<a href="#">Services</a>
+						</li>
+						<li>
+							<a href="#">Contact</a>
+						</li>
+					</ul>
+				</div>
+				<!-- /.navbar-collapse -->
+			</div>
+			<!-- /.container -->
+		</nav>
 
-    <!-- Page Content -->
-    <div class="container">
+		<!-- Page Content -->
+		<div class="container">
 
-        <div class="row">
-            <div class="col-lg-12 text-center">
-                <h1>An Ephemeral Experience</h1>
-                <p class="lead">Explore the map!</p>
-                <ul class="list-unstyled">
-                    <li>Find help in the bar above!</li>
-                    <li>Get started!</li>
-                </ul>
-            </div>
-        </div>
-        <!-- /.row -->
+			<script>
+				$(document).ready(function () {
+					$('#overlay-back').fadeIn(500, function () {
+						$('#popup').show();
+					});
+					document.getElementById('close').className = 'closePopup';
+					$(".closePopup").on('click', function () {
+						$('#popup').hide();
+						$('#overlay-back').fadeOut(500);
+					});
+				});
+			</script>
+			<div id="overlay-back"></div>
+			<div id="popup">
+				<h1>An Ephemeral Experience</h1>
+				<h3>Explore the map!</h3>
+				<p>Find help in the bar above!</p>
+				<button id="close">Get Started!</button>
+
+			</div>
+
+			<div id="messagebox" class="container">
+				<label for="messagebutton" class="lead">Messages:</label>
+				<button id="messagebutton"  onclick="update()" type="button" class="btn btn-default"> update </button>
+				<div id="messagearea"></div>
+			</div>
 
 
-        <div id="messagebox" class="container">
-            <label for="messagebutton" class="lead">Messages:</label>
-            <button id="messagebutton"  onclick="update()" type="button" class="btn btn-default"> update </button>
-            <div id="messagearea"></div>
-        </div>
 
 
 
+			<div id="mapid">
 
+			</div>
 
-        <div id="mapid">
+		</div>
+		<!-- /.container -->
+	</body>
 
-        </div>
-
-    </div>
-    <!-- /.container -->
-</body>
-
-<script type="text/javascript" src="js/map.js"></script>
-<script type="text/javascript" src="js/message_box.js"></script>
+	<script type="text/javascript" src="js/map.js"></script>
+	<script type="text/javascript" src="js/message_box.js"></script>
 
 
 </html>
