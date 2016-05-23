@@ -49,6 +49,26 @@
         </div>
         <!-- /.container -->
     </nav>
+    <script>
+      $(document).ready(function () {
+        $('#overlay-back').fadeIn(500, function () {
+          $('#popup').show();
+        });
+        document.getElementById('close').className = 'closePopup';
+        $(".closePopup").on('click', function () {
+          $('#popup').hide();
+          $('#overlay-back').fadeOut(500);
+        });
+      });
+    </script>
+    <div id="overlay-back"></div>
+    <div id="popup">
+      <h1>An Ephemeral Experience</h1>
+      <h3>Explore the map!</h3>
+      <p>Find help in the bar above!</p>
+      <button id="close">Get Started!</button>
+
+    </div>
 
     <!-- Page Content -->
     <div class="container">
