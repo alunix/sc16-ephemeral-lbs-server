@@ -49,18 +49,6 @@
         </div>
         <!-- /.container -->
     </nav>
-    <script>
-      $(document).ready(function () {
-        $('#overlay-back').fadeIn(500, function () {
-          $('#popup').show();
-        });
-        document.getElementById('close').className = 'closePopup';
-        $(".closePopup").on('click', function () {
-          $('#popup').hide();
-          $('#overlay-back').fadeOut(500);
-        });
-      });
-    </script>
     <div id="overlay-back"></div>
     <div id="popup">
       <h1>An Ephemeral Experience</h1>
@@ -108,5 +96,6 @@
 </body>
 <script type="text/javascript" src="js/messages.js"></script>
 <script type="text/javascript" src="js/map.js"></script>
+<script type="text/javascript" src="js/dialog.js"></script>
 
 </html>
