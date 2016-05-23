@@ -52,7 +52,7 @@
 
     <!-- Page Content -->
     <div class="container">
-
+<!--
         <div class="row">
             <div class="col-lg-12 text-center">
                 <h1>An Ephemeral Experience</h1>
@@ -65,10 +65,11 @@
         </div>
         <!-- /.row -->
 
-        <div id="map">
+        <div class="row">
+        <div id="map" class="col-md-6">
         </div>
 
-        <div id="messagebox" class="container">
+        <div id="messagebox" class="col-md-3">
             Messages:
             <div id="messagearea">
               <div class="message" v-for="m in messages">
@@ -81,6 +82,7 @@
               </div>
             </div>
         </div>
+      </div>
     </div>
     <!-- /.container -->
 </body>
