@@ -1,10 +1,11 @@
 #!/usr/bin/env bash
 
 sudo apt-get update
-sudo apt-get upgrade
+sudo apt-get upgrade -y
 
 # Installing CouchDB
 # based on https://www.digitalocean.com/community/tutorials/how-to-install-couchdb-and-futon-on-ubuntu-14-04
+
 sudo add-apt-repository ppa:couchdb/stable -y
 sudo apt-get update
 sudo apt-get install couchdb -y

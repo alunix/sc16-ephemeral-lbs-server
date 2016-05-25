@@ -12,6 +12,7 @@
     <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.2/jquery.min.js"></script>
     <script type="text/javascript" src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/vue/1.0.22/vue.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/vue-resource/0.7.0/vue-resource.min.js"></script>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/leaflet.js"></script>
 
 </head>
@@ -48,10 +49,18 @@
         </div>
         <!-- /.container -->
     </nav>
+    <div id="overlay-back"></div>
+    <div id="popup">
+      <h1>An Ephemeral Experience</h1>
+      <h3>Explore the map!</h3>
+      <p>Find help in the bar above!</p>
+      <button id="close">Get Started!</button>
+
+    </div>
 
     <!-- Page Content -->
     <div class="container">
-
+<!--
         <div class="row">
             <div class="col-lg-12 text-center">
                 <h1>An Ephemeral Experience</h1>
@@ -64,27 +73,29 @@
         </div>
         <!-- /.row -->
 
-
-        <div id="messagebox" class="container">
-            <label for="messagebutton" class="lead">Messages:</label>
-            <button id="messagebutton"  onclick="update()" type="button" class="btn btn-default"> update </button>
-            <div id="messagearea"></div>
+        <div class="row">
+        <div id="map" class="col-md-6">
         </div>
 
-
-
-
-
-        <div id="mapid">
-
+        <div id="messagebox" class="col-md-3">
+            Messages:
+            <div id="messagearea">
+              <div class="message" v-for="m in messages">
+                <div class="message-title">
+                  {{ m.Body.Title }}
+                </div>
+                <div class="message-content">
+                  {{ m.Body.Message }}
+                </div>
+              </div>
+            </div>
         </div>
-
+      </div>
     </div>
     <!-- /.container -->
 </body>
-
+<script type="text/javascript" src="js/messages.js"></script>
 <script type="text/javascript" src="js/map.js"></script>
-<script type="text/javascript" src="js/message_box.js"></script>
-
+<script type="text/javascript" src="js/dialog.js"></script>
 
 </html>

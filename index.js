@@ -55,7 +55,7 @@ server.get('/api/zones', function(req, res) {
 });
 
 server.post('/api/addzone', function(req, res) {
-    var zonesTbl = nano.use(zonedb);
+    var zonesTbl = nano.use(zonesdb);
 
     if (req.body.Type !== "Zone") {
         res.status(404).send("Wrong data type " + req.body.type + ".");
@@ -75,6 +75,7 @@ server.post('/api/addzone', function(req, res) {
             }
         }
         zonesTbl.insert(zone);
+        res.status(201).send('Zone created');
     } catch (err) {
         res.status(404).send('JSON error:' + err);
     }
