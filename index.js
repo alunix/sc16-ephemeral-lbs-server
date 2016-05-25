@@ -94,12 +94,11 @@ server.get('/api/messages', function(req, res) {
         if (!err) {
 
             let result = {
-                "Type": "Messages",
                 "Messages": []
             };
 
             for (let i = 0; i < body.rows.length; i++) {
-                if (body.rows[i].doc["Header"]["Zone-id"] == parseInt(req.query.zone)) {
+                if (body.rows[i].doc["Zone-id"] == parseInt(req.query.zone)) {
                     result["Messages"].push(body.rows[i].doc);
                 }
             }
@@ -113,35 +112,28 @@ server.get('/api/messages', function(req, res) {
 
 server.post('/api/addmessages', function(req, res) {
 
-    if (req.body.Type !== "Messages") {
-        res.status(404).send("Wrong data type " + req.body.type + ".");
-        return;
-    }
+    //TODO sane validation, possibly by json schema
 
     var msgTable = nano.use(msgdb);
-    try {
-        var error = null;
-        for (let i = 0; i < req.body.Messages.length; i++) {
-            let message = req.body.Messages[i];
-            //TODO validation
-            msgTable.insert(message, undefined, function(err, body) {
-                if (err) {
-                    res.status(404).send('Database error:' + err.message);
-                    error = err.message;
-                    return;
-                }
-            });
-            if (error) break;
-        }
 
-        if (!error) {
-            res.status(201).send("Message uploaded!");
-        }
+    var error = null;
+    for (let i = 0; i < req.body.Messages.length; i++) {
+        let message = req.body.Messages[i];
+        //TODO validation
+        msgTable.insert(message, undefined, function(err, body) {
+            if (err) {
+                res.status(404).send('Database error:' + err.message);
+                error = err.message;
+                return;
+            }
+        });
+        if (error) break;
     }
-    /* In case the message wasn't valid... TODO: better validation */
-    catch (err) {
-        res.status(404).send('JSON error:' + err);
+
+    if (!error) {
+        res.status(201).send("Message uploaded!");
     }
+
 });
 
 /* We start the server from the specified port. */
