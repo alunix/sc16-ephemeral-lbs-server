@@ -103,6 +103,21 @@ server.get('/api/messages', function(req, res) {
             }, function(err, zbody) {
                 if (!err) {
 
+                    let nowDate = new Date();
+
+                    // check if the zone expired    
+                    for (let zCount = 0; zCount < zbody.rows.length; zCount++) {
+                        if(zbody.rows[zCount].doc["Zone-id"] == parseInt(req.query.zone)) {
+                            let zoneDate = new Date(zbody.rows[zCount].doc["Expired-at"])
+                            if(zoneDate <= nowDate.getTime()) {
+                                // if it expired, send an empty messages object
+                                res.json({Messages:[]});
+                                return;
+                            }
+                            break;
+                        }
+                    }
+
                     let result = {
                         "Messages": []
                     };
@@ -112,20 +127,8 @@ server.get('/api/messages', function(req, res) {
                         if (mbody.rows[mCount].doc["Zone-id"] == parseInt(req.query.zone)) {
                             //check if the message expired
                             let msgDate = new Date(mbody.rows[mCount].doc["Expired-at"]);
-                            let nowDate = new Date();
                             if(msgDate > nowDate.getTime()) {
-                            
-                                // check if the zone expired    
-                                for (let zCount = 0; zCount < zbody.rows.length; zCount++) {
-                                    if(zbody.rows[zCount].doc["Zone-id"] == mbody.rows[mCount].doc["Zone-id"]) {
-                                        let zoneDate = new Date(zbody.rows[zCount].doc["Expired-at"])
-                                        if(zoneDate > nowDate.getTime()) {
-                                            result["Messages"].push(mbody.rows[mCount].doc);
-                                        }
-                                        break;
-                                    }
-                                }
-                                
+                                result["Messages"].push(mbody.rows[mCount].doc);
                             }
                         }
                     }
