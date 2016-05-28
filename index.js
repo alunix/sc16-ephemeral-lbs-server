@@ -43,8 +43,12 @@ server.get('/api/zones', function(req, res) {
         include_docs: true
     }, function(err, body, header) {
         if (!err) {
-            for (var i = 0; i < body.rows.length; i++) {
-                zones.Zones.push(body.rows[i].doc);
+            for (var zCount = 0; zCount < body.rows.length; zCount++) {
+                let zoneDate = new Date(body.rows[zCount].doc["Expired-at"]);
+                let nowDate = new Date();
+                if(zoneDate > nowDate.getTime()) {
+                    zones.Zones.push(body.rows[zCount].doc);
+                }
             }
             res.json(zones);
         } else {
@@ -82,6 +86,7 @@ server.post('/api/addzone', function(req, res) {
 
 server.get('/api/messages', function(req, res) {
     var msgTable = nano.use(msgdb);
+    var zonesTable = nano.use(zonesdb);
 
     if (!req.query.zone) {
         res.status(404).send("Zone parameter missing.");
@@ -90,20 +95,51 @@ server.get('/api/messages', function(req, res) {
 
     msgTable.list({
         include_docs: true
-    }, function(err, body) {
+    }, function(err, mbody) {
         if (!err) {
 
-            let result = {
-                "Messages": []
-            };
+            zonesTable.list({
+                include_docs: true
+            }, function(err, zbody) {
+                if (!err) {
 
-            for (let i = 0; i < body.rows.length; i++) {
-                if (body.rows[i].doc["Zone-id"] == parseInt(req.query.zone)) {
-                    result["Messages"].push(body.rows[i].doc);
+                    let nowDate = new Date();
+
+                    // check if the zone expired    
+                    for (let zCount = 0; zCount < zbody.rows.length; zCount++) {
+                        if(zbody.rows[zCount].doc["Zone-id"] == parseInt(req.query.zone)) {
+                            let zoneDate = new Date(zbody.rows[zCount].doc["Expired-at"])
+                            if(zoneDate <= nowDate.getTime()) {
+                                // if it expired, send an empty messages object
+                                res.json({Messages:[]});
+                                return;
+                            }
+                            break;
+                        }
+                    }
+
+                    let result = {
+                        "Messages": []
+                    };
+                    
+                    for (let mCount = 0; mCount < mbody.rows.length; mCount++) {
+                        // filter the zone id
+                        if (mbody.rows[mCount].doc["Zone-id"] == parseInt(req.query.zone)) {
+                            //check if the message expired
+                            let msgDate = new Date(mbody.rows[mCount].doc["Expired-at"]);
+                            if(msgDate > nowDate.getTime()) {
+                                result["Messages"].push(mbody.rows[mCount].doc);
+                            }
+                        }
+                    }
+
+                    res.json(result);
+            
+                } else {
+                    res.status(404).send('Database error! Couldn\'t fetch messages.');
                 }
-            }
-
-            res.json(result);
+            });
+            
         } else {
             res.status(404).send('Database error! Couldn\'t fetch messages.');
         }
@@ -117,8 +153,8 @@ server.post('/api/addmessages', function(req, res) {
     var msgTable = nano.use(msgdb);
 
     var error = null;
-    for (let i = 0; i < req.body.Messages.length; i++) {
-        let message = req.body.Messages[i];
+    for (let mCount = 0; mCount < req.body.Messages.length; mCount++) {
+        let message = req.body.Messages[mCount];
         //TODO validation
         msgTable.insert(message, undefined, function(err, body) {
             if (err) {
