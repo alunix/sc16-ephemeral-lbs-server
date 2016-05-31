@@ -12,6 +12,8 @@ var msgdb = "messages";
 var express = require('express');
 var nano = require('nano')(dbserver + ':' + dbport);
 var bodyParser = require("body-parser");
+var Validator = require('jsonschema').Validator;
+var schemata = require('./schemata');
 
 /*
  * We set up the server to serve static files from /public,
@@ -31,6 +33,7 @@ server.use(bodyParser.urlencoded({
     extended: false
 }));
 server.use(bodyParser.json());
+
 
 /* Handle basic requests... */
 server.get('/api/zones', function(req, res) {
@@ -60,7 +63,12 @@ server.get('/api/zones', function(req, res) {
 server.post('/api/addzone', function(req, res) {
     let zonesTbl = nano.use(zonesdb);
 
-    //TODO sane validation, possibly by json schema
+    let validator = new Validator();
+    let vresult = validator.validate(req.body, schemata.zone);
+    if(!vresult.valid) {
+        res.status(404).send('Validation error:' + vresult.errors);
+        return;
+    }
     
     let zone = {
         "Geometry": {
@@ -148,14 +156,19 @@ server.get('/api/messages', function(req, res) {
 
 server.post('/api/addmessages', function(req, res) {
 
-    //TODO sane validation, possibly by json schema
+    let validator = new Validator();
+    let vresult = validator.validate(req.body, schemata.messages);
+    if(!vresult.valid) {
+        res.status(404).send('Validation error:' + vresult.errors);
+        return;
+    }
 
     var msgTable = nano.use(msgdb);
 
     var error = null;
     for (let mCount = 0; mCount < req.body.Messages.length; mCount++) {
         let message = req.body.Messages[mCount];
-        //TODO validation
+
         msgTable.insert(message, undefined, function(err, body) {
             if (err) {
                 res.status(404).send('Database error:' + err.message);
