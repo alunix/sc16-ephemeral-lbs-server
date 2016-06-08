@@ -15,17 +15,17 @@ exports.zone = {
                             "type": "number"
                         }
                     }
-                
+
                 }
             },
             "required": ["Type", "Coordinates"]
-            
+
         },
         "Name": {
             "type": "string"
         },
         "Zone-id": {
-            "type": "integer"
+            "type": "string"
         },
         "Expired-at": {
             "type": "string"
@@ -44,7 +44,7 @@ exports.zone = {
 exports.messages = {
     "type": "object",
     "properties": {
-    
+
         "Messages": {
             "type": "array",
             "items": {
@@ -74,7 +74,7 @@ exports.messages = {
                     "Location": {
                         "type": "object",
                         "properties": {
-                    
+
                             "Type": {
                                 "enum": ["Point"]
                             },
@@ -88,7 +88,7 @@ exports.messages = {
                         "required": ["Type", "Coordinate"]
                     }
                 },
-                "required": ["Client-id", "Message-id", "Zone-id", "Expired-at", "Topic", "Title", "Message"]
+                "required": ["Client-id", "Message-id", "Zone-id", "Expired-at","Created-at", "Topic", "Title", "Message"]
             },
             "uniqueItems": true
         }
