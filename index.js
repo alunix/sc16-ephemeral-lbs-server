@@ -119,6 +119,7 @@ server.get('/api/messages', function(req, res) {
     }else{
       zone = req.query.zone;
     }
+    console.log(zone);
 
     zonesTable.view("zone_design", "by_id_and_date",
         {startkey:[zone, nowDate.toJSON()],
@@ -127,7 +128,8 @@ server.get('/api/messages', function(req, res) {
         function(err, zbody) {
         if (!err) {
             // check if the zone exists
-            if (zbody.rows.length !== 1) {
+            console.log(zbody);
+            if (zbody.rows.length == 0) {
                 res.status(404).send('Zone ID nonexistent or expired.');
                 return;
             }else{
