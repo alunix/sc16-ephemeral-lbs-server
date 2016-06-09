@@ -18,9 +18,6 @@ function insertMocks(zns, msgs) {
         })
     }
     for (var msg in msgs) {
-        console.log(msg);
-        console.log(msgs[msg]);
-        console.log(JSON.stringify(msgs[msg]));
         msgdb.insert(msgs[msg], function(err, body) {
             if (err) {
                 console.log('DB error:' + err)
@@ -45,7 +42,7 @@ function generateMessages(number) {
 
         message['Client-id'] = getRandom(200);
         message['Message-id'] = getRandom(10000);
-        message['Zone-id'] = getRandom(3);
+        message['Zone-id'] = getRandom(3).toString();
         message['Topic'] = topics[Math.floor(Math.random() * topics.length)];
         message['Title'] = generateTitle();
         message['Message'] = generateMsg();
