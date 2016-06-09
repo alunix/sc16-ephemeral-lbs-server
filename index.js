@@ -4,6 +4,9 @@
 var webport = 8080;
 var dbport = 5984;
 var dbserver = "http://localhost";
+/* The last date we care about. */
+var lastDate = new Date(7500,10,30);
+
 /* These two databases have to exist in your CouchDB instance. */
 var zonesdb = "zones";
 var msgdb = "messages";
@@ -64,7 +67,11 @@ server.get('/api/zones/:zoneid', function(req, res) {
     var zonesTbl = nano.use(zonesdb);
     var nowDate = new Date();
 
-    zonesTbl.view('zone_design', 'by_id_and_date', { startkey:[req.params.zoneid, nowDate.toJSON()], include_docs: true}, function(err, body) {
+    zonesTbl.view('zone_design', 'by_id_and_date', {
+        startkey:[req.params.zoneid, nowDate.toJSON()],
+        endkey:[req.params.zoneid, lastDate.toJSON()],
+        include_docs: true
+    }, function(err, body) {
         if (!err) {
             if (body.rows.length != 0){
               res.json(body.rows[0].doc);
@@ -113,50 +120,38 @@ server.post('/api/addzone', function(req, res) {
 server.get('/api/messages', function(req, res) {
     var msgTable = nano.use(msgdb);
     var zonesTable = nano.use(zonesdb);
+    
+    var nowDate = new Date();
 
     if (!req.query.zone) {
         res.status(404).send("Zone parameter missing.");
         return;
     }
 
-    msgTable.list({
-        include_docs: true
+    msgTable.view("message_design", "by_zoneid_and_date", {
+        include_docs: true,
+        startkey:[req.query.zone, nowDate.toJSON()],
+        endkey:[req.query.zone, lastDate.toJSON()]
     }, function(err, mbody) {
         if (!err) {
 
-            zonesTable.list({
+            zonesTable.view("zone_design", "by_id_and_date", {
+                startkey:[req.query.zone, nowDate.toJSON()],
+                endkey:[req.query.zone, lastDate.toJSON()],
                 include_docs: true
             }, function(err, zbody) {
                 if (!err) {
 
-                    let nowDate = new Date();
-
-                    // check if the zone expired    
-                    for (let zCount = 0; zCount < zbody.rows.length; zCount++) {
-                        if(zbody.rows[zCount].doc["Zone-id"] == parseInt(req.query.zone)) {
-                            let zoneDate = new Date(zbody.rows[zCount].doc["Expired-at"])
-                            if(zoneDate <= nowDate.getTime()) {
-                                // if it expired, send an empty messages object
-                                res.json({Messages:[]});
-                                return;
-                            }
-                            break;
-                        }
+                    // check if the zone exists    
+                    if (zbody.rows.length !== 1) {
+                        res.status(404).send('Zone ID nonexistent or expired.');
+                        return;
                     }
 
-                    let result = {
-                        "Messages": []
-                    };
+                    let result = { "Messages": [] };
                     
                     for (let mCount = 0; mCount < mbody.rows.length; mCount++) {
-                        // filter the zone id
-                        if (mbody.rows[mCount].doc["Zone-id"] == parseInt(req.query.zone)) {
-                            //check if the message expired
-                            let msgDate = new Date(mbody.rows[mCount].doc["Expired-at"]);
-                            if(msgDate > nowDate.getTime()) {
-                                result["Messages"].push(mbody.rows[mCount].doc);
-                            }
-                        }
+                        result["Messages"].push(mbody.rows[mCount].doc);
                     }
 
                     res.json(result);
