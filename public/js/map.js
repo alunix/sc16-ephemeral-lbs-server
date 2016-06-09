@@ -14,11 +14,10 @@ function displayZones() {
 		dataType: 'json',
 		success: function (data) {
 			for (var i = 0; i < data['Zones'].length; i++) {
-
-				polygon = L.polygon([
+				polygon = L.polygon(
 					data['Zones'][i]['Geometry']['Coordinates']
-				]).addTo(map);
-				polygon.bindPopup(data['Zones'][i]['Properties']['Name']);
+				).addTo(map);
+				polygon.bindPopup(data['Zones'][i]['Name']);
 				polygon.on('mouseover', function () {
 					this.openPopup();
 				});
