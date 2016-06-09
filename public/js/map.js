@@ -17,7 +17,7 @@ function displayZones() {
 				polygon = L.polygon(
 					data['Zones'][i]['Geometry']['Coordinates']
 				).addTo(map);
-				polygon.bindPopup(data['Zones'][i]['Properties']['Name']);
+				polygon.bindPopup(data['Zones'][i]['Name']);
 				polygon.on('mouseover', function () {
 					this.openPopup();
 				});
