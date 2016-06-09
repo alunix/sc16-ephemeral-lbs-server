@@ -38,20 +38,19 @@ server.use(bodyParser.json());
 /* Handle basic requests... */
 server.get('/api/zones', function(req, res) {
     var zonesTbl = nano.use(zonesdb);
+    var nowDate = new Date();
 
     var zones = {
         "Zones": []
     };
-    zonesTbl.list({
-        include_docs: true
+
+    zonesTbl.view('zone_design', 'by_date', {
+        include_docs: true,
+        startkey: [ nowDate.toJSON() ]
     }, function(err, body, header) {
         if (!err) {
             for (var zCount = 0; zCount < body.rows.length; zCount++) {
-                let zoneDate = new Date(body.rows[zCount].doc["Expired-at"]);
-                let nowDate = new Date();
-                if(zoneDate > nowDate.getTime()) {
-                    zones.Zones.push(body.rows[zCount].doc);
-                }
+                zones.Zones.push(body.rows[zCount].doc);
             }
             res.json(zones);
         } else {
