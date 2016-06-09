@@ -57,7 +57,10 @@ exports.messages = {
                         "type": "string"
                     },
                     "Zone-id": {
-                        "type": "integer"
+                        "type": "string"
+                    },
+                    "Created-at": {
+                      "type": "string"
                     },
                     "Expired-at": {
                         "type": "string"
