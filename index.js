@@ -59,6 +59,25 @@ server.get('/api/zones', function(req, res) {
     });
 });
 
+server.get('/api/zones/:zoneid', function(req, res) {
+
+    var zonesTbl = nano.use(zonesdb);
+    var nowDate = new Date();
+
+    zonesTbl.view('zone_design', 'by_id_and_date', { startkey:[req.params.zoneid, nowDate.toJSON()], include_docs: true}, function(err, body) {
+        if (!err) {
+            if (body.rows.length != 0){
+              res.json(body.rows[0].doc);
+            }else{
+              res.status(404).send('Zone non-existent or expired');
+            }
+
+        } else {
+            res.status(404).send('Database error: ' + err);
+        }
+    });
+});
+
 server.post('/api/addzone', function(req, res) {
     let zonesTbl = nano.use(zonesdb);
 
