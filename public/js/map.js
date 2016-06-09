@@ -18,12 +18,6 @@ function displayZones() {
 					data['Zones'][i]['Geometry']['Coordinates']
 				).addTo(map);
 				polygon.bindPopup(data['Zones'][i]['Name']);
-				polygon.on('mouseover', function () {
-					this.openPopup();
-				});
-				polygon.on('mouseout', function () {
-					this.closePopup();
-				});
 			}
 		}
 	});
