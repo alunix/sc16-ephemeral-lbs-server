@@ -43,6 +43,7 @@ server.get('/api/zones', function(req, res) {
     var zonesTbl = nano.use(zonesdb);
     var nowDate = new Date();
 
+
     var zones = {
         "Zones": []
     };
@@ -94,19 +95,7 @@ server.post('/api/addzone', function(req, res) {
         res.status(404).send('Validation error:' + vresult.errors);
         return;
     }
-    
-    let zone = {
-        "Geometry": {
-            "Type": req.body.Geometry.Type,
-            "Coordinates": req.body.Geometry.Coordinates
-        },
-        "Name": req.body.Name,
-        "Zone-id": req.body["Zone-id"],
-        "Expired-at": req.body["Expired-at"],
-        "Topics": req.body["Topics"]
-    };
-
-    zonesTbl.insert(zone, {}, function(err, body) {
+    zonesTbl.insert(req.body, {}, function(err, body) {
         if(err) {
             res.status(404).send('DB error:' + err);
         }
@@ -120,49 +109,49 @@ server.post('/api/addzone', function(req, res) {
 server.get('/api/messages', function(req, res) {
     var msgTable = nano.use(msgdb);
     var zonesTable = nano.use(zonesdb);
-    
+
     var nowDate = new Date();
+    var zone;
 
     if (!req.query.zone) {
         res.status(404).send("Zone parameter missing.");
         return;
+    }else{
+      zone = req.query.zone;
     }
 
-    msgTable.view("message_design", "by_zoneid_and_date", {
-        include_docs: true,
-        startkey:[req.query.zone, nowDate.toJSON()],
-        endkey:[req.query.zone, lastDate.toJSON()]
-    }, function(err, mbody) {
+    zonesTable.view("zone_design", "by_id_and_date",
+        {startkey:[zone, nowDate.toJSON()],
+        endkey:[zone, lastDate.toJSON()],
+        include_docs: true},
+        function(err, zbody) {
         if (!err) {
+            // check if the zone exists
+            if (zbody.rows.length !== 1) {
+                res.status(404).send('Zone ID nonexistent or expired.');
+                return;
+            }else{
+                msgTable.view("message_design", "by_zoneid_and_date",
+                    {include_docs: true,
+                    startkey:[zone, nowDate.toJSON()],
+                    endkey:[zone, lastDate.toJSON()]},
+                    function(err, mbody) {
+                        if (!err) {
+                          let result = { "Messages": [] };
 
-            zonesTable.view("zone_design", "by_id_and_date", {
-                startkey:[req.query.zone, nowDate.toJSON()],
-                endkey:[req.query.zone, lastDate.toJSON()],
-                include_docs: true
-            }, function(err, zbody) {
-                if (!err) {
+                          for (let mCount = 0; mCount < mbody.rows.length; mCount++) {
+                              result["Messages"].push(mbody.rows[mCount].doc);
+                          }
 
-                    // check if the zone exists    
-                    if (zbody.rows.length !== 1) {
-                        res.status(404).send('Zone ID nonexistent or expired.');
-                        return;
+                          res.json(result);
+                        } else {
+                            res.status(404).send('Database error! Couldn\'t fetch messages: ' + err);
+                        }
                     }
-
-                    let result = { "Messages": [] };
-                    
-                    for (let mCount = 0; mCount < mbody.rows.length; mCount++) {
-                        result["Messages"].push(mbody.rows[mCount].doc);
-                    }
-
-                    res.json(result);
-            
-                } else {
-                    res.status(404).send('Database error! Couldn\'t fetch messages.');
-                }
-            });
-            
+                );
+            }
         } else {
-            res.status(404).send('Database error! Couldn\'t fetch messages.');
+            res.status(404).send('Database error! Couldn\'t fetch messages: '+ err);
         }
     });
 });
