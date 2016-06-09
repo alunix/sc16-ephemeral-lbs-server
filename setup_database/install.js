@@ -3,11 +3,11 @@ var zonedesign = {
     {
         "_id": "_design/zone_design",
         "views": {
-            "id_zones": {
-                "map": "function(doc){emit(doc['Zone-id'], null)}"
+            "by_date": {
+                "map": "function(doc){ emit([doc['Expired-at']], doc)}"
             },
-            "expire_zones": {
-                "map": "function(doc){emit(doc['Expired-at'],null)}"
+            "by_id_and_date": {
+                "map": "function(doc){ emit([doc['Zone-id'], doc['Expired-at']], doc)}"
             }
         }
     }
@@ -16,8 +16,8 @@ var messagedesign = {
     {
         "_id": "_design/message_design",
         "views": {
-            "message_view": {
-                "map": "function(doc){emit([doc.Zone-id, doc.Expired-at], null)}"
+            "by_zoneid_and_date": {
+               "map": "function(doc){ emit([doc['Zone-id'],doc['Expired-at']], doc)}"
             }
         }
     }
