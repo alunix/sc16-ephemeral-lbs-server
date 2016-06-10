@@ -37,7 +37,6 @@ server.get('/api/zones', function(req, res) {
     var zonesTbl = nano.use(zonesdb);
 
     var zones = {
-        "Type": "Zones",
         "Zones": []
     };
     zonesTbl.list({
@@ -55,29 +54,29 @@ server.get('/api/zones', function(req, res) {
 });
 
 server.post('/api/addzone', function(req, res) {
-    var zonesTbl = nano.use(zonedb);
+    let zonesTbl = nano.use(zonesdb);
 
-    if (req.body.Type !== "Zone") {
-        res.status(404).send("Wrong data type " + req.body.type + ".");
-        return;
-    }
+    //TODO sane validation, possibly by json schema
+    
+    let zone = {
+        "Geometry": {
+            "Type": req.body.Geometry.Type,
+            "Coordinates": req.body.Geometry.Coordinates
+        },
+        "Name": req.body.Name,
+        "Zone-id": req.body["Zone-id"],
+        "Expired-at": req.body["Expired-at"],
+        "Topics": req.body["Topics"]
+    };
 
-    try {
-        let zone = {
-            "Geometry": {
-                "Type": req.body.Geometry.Type,
-                "Coordinates": req.body.Geometry.Coordinates
-            },
-            "Properties": {
-                "Name": req.body.Properties.Name,
-                "Zone-id": req.body.Properties["Zone-id"],
-                "Expired-at": req.body.Properties["Expired-at"]
-            }
+    zonesTbl.insert(zone, {}, function(err, body) {
+        if(err) {
+            res.status(404).send('DB error:' + err);
         }
-        zonesTbl.insert(zone);
-    } catch (err) {
-        res.status(404).send('JSON error:' + err);
-    }
+        else {
+            res.status(201).send('Zone created');
+        }
+    });
 
 });
 
@@ -95,12 +94,11 @@ server.get('/api/messages', function(req, res) {
         if (!err) {
 
             let result = {
-                "Type": "Messages",
                 "Messages": []
             };
 
             for (let i = 0; i < body.rows.length; i++) {
-                if (body.rows[i].doc["Header"]["Zone-id"] == parseInt(req.query.zone)) {
+                if (body.rows[i].doc["Zone-id"] == parseInt(req.query.zone)) {
                     result["Messages"].push(body.rows[i].doc);
                 }
             }
@@ -114,35 +112,28 @@ server.get('/api/messages', function(req, res) {
 
 server.post('/api/addmessages', function(req, res) {
 
-    if (req.body.Type !== "Messages") {
-        res.status(404).send("Wrong data type " + req.body.type + ".");
-        return;
-    }
+    //TODO sane validation, possibly by json schema
 
     var msgTable = nano.use(msgdb);
-    try {
-        var error = null;
-        for (let i = 0; i < req.body.Messages.length; i++) {
-            let message = req.body.Messages[i];
-            //TODO validation
-            msgTable.insert(message, undefined, function(err, body) {
-                if (err) {
-                    res.status(404).send('Database error:' + err.message);
-                    error = err.message;
-                    return;
-                }
-            });
-            if (error) break;
-        }
 
-        if (!error) {
-            res.status(201).send("Message uploaded!");
-        }
+    var error = null;
+    for (let i = 0; i < req.body.Messages.length; i++) {
+        let message = req.body.Messages[i];
+        //TODO validation
+        msgTable.insert(message, undefined, function(err, body) {
+            if (err) {
+                res.status(404).send('Database error:' + err.message);
+                error = err.message;
+                return;
+            }
+        });
+        if (error) break;
     }
-    /* In case the message wasn't valid... TODO: better validation */
-    catch (err) {
-        res.status(404).send('JSON error:' + err);
+
+    if (!error) {
+        res.status(201).send("Message uploaded!");
     }
+
 });
 
 /* We start the server from the specified port. */
