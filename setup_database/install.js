@@ -1,24 +1,20 @@
 // the two designs inserted into the tables zones and messages
 var zonedesign = {
-    {
-        "_id": "_design/zone_design",
-        "views": {
-            "by_date": {
-                "map": "function(doc){ emit([doc['Expired-at']], doc)}"
-            },
-            "by_id_and_date": {
-                "map": "function(doc){ emit([doc['Zone-id'], doc['Expired-at']], doc)}"
-            }
+    "_id": "_design/zone_design",
+    "views": {
+        "by_date": {
+            "map": "function(doc){ emit([doc['Expired-at']], doc)}"
+        },
+        "by_id_and_date": {
+            "map": "function(doc){ emit([doc['Zone-id'], doc['Expired-at']], doc)}"
         }
     }
 };
 var messagedesign = {
-    {
-        "_id": "_design/message_design",
-        "views": {
-            "by_zoneid_and_date": {
-               "map": "function(doc){ emit([doc['Zone-id'],doc['Expired-at']], doc)}"
-            }
+    "_id": "_design/message_design",
+    "views": {
+        "by_zoneid_and_date": {
+           "map": "function(doc){ emit([doc['Zone-id'],doc['Expired-at']], doc)}"
         }
     }
 };

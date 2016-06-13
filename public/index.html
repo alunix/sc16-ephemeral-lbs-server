@@ -58,26 +58,20 @@
 
     <!-- Page Content -->
     <div class="container">
-<!--
-        <div class="row">
-            <div class="col-lg-12 text-center">
-                <h1>An Ephemeral Experience</h1>
-                <p class="lead">Explore the map!</p>
-                <ul class="list-unstyled">
-                    <li>Find help in the bar above!</li>
-                    <li>Get started!</li>
-                </ul>
-            </div>
-        </div>
         <!-- /.row -->
 
         <div class="row">
         <div id="map" class="col-md-6">
         </div>
 
-        <div id="messagebox" class="col-md-3">
-            Messages:
+        <div id="contentbox" class="col-md-3">
+            <div id="zonearea">
+              {{zone.Name}}</br>
+              {{zone['Expired-at']}}</br>
+              {{zone.Topics}}
+            </div>
             <div id="messagearea">
+              Messages:
               <div class="message" v-for="m in messages">
                 <div class="message-title">
                   {{ m.Title }}
@@ -95,5 +89,6 @@
 <script type="text/javascript" src="js/messages.js"></script>
 <script type="text/javascript" src="js/map.js"></script>
 <script type="text/javascript" src="js/dialog.js"></script>
+<script type="text/javascript" src="js/zone.js"></script>
 
 </html>
