@@ -23,10 +23,9 @@ sudo apt-get install nodejs -y
 # To compile and install native addons from npm
 sudo apt-get install -y build-essential
 
-# Creating Databases
-curl -X PUT localhost:5984/zones
-curl -X PUT localhost:5984/messages
 
 # setup project
 cd /vagrant
 npm install
+
+nodejs setup_database/install.js

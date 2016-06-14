@@ -11,13 +11,16 @@ body {
     position: absolute;
     left: 0px;
 }
-#messagebox {
+#contentbox {
     height: 97%;
     width: 25%;
     padding-right: 5px;
     position: absolute;
     right: 0px;
     border: 1px solid black;
+}
+#zonearea {
+    background-color: lightgreen;
 }
 .message {
     margin: 4px;

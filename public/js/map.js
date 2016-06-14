@@ -17,13 +17,7 @@ function displayZones() {
 				polygon = L.polygon(
 					data['Zones'][i]['Geometry']['Coordinates']
 				).addTo(map);
-				polygon.bindPopup(data['Zones'][i]['Properties']['Name']);
-				polygon.on('mouseover', function () {
-					this.openPopup();
-				});
-				polygon.on('mouseout', function () {
-					this.closePopup();
-				});
+				polygon.bindPopup(data['Zones'][i]['Name']);
 			}
 		}
 	});
