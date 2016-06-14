@@ -22,6 +22,10 @@ body {
 #zonearea {
     background-color: lightgreen;
 }
+#messagearea {
+    max-height: 100%;
+    overflow: scroll;
+}
 .message {
     margin: 4px;
     padding: 4px;
