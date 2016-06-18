@@ -13,7 +13,8 @@ var msgdb = "messages";
 
 
 var express = require('express');
-var nano = require('nano')(dbserver + ':' + dbport);
+var nano = require('nano')({'url': dbserver + ':' + dbport,
+    'requestDefaults' : { 'proxy' : null }});
 var bodyParser = require("body-parser");
 var Validator = require('jsonschema').Validator;
 var schemata = require('./schemata');
@@ -43,15 +44,14 @@ server.get('/api/zones', function(req, res) {
     var zonesTbl = nano.use(zonesdb);
     var nowDate = new Date();
 
-
     var zones = {
         "Zones": []
     };
 
     zonesTbl.view('zone_design', 'by_date', {
         include_docs: true,
-        startkey: [ nowDate.toJSON() ]
-    }, function(err, body, header) {
+        startkey: [ nowDate.toJSON() ]},
+        function(err, body, header) {
         if (!err) {
             for (var zCount = 0; zCount < body.rows.length; zCount++) {
                 zones.Zones.push(body.rows[zCount].doc);

@@ -3,7 +3,8 @@ var lorem = require('lorem-ipsum');
 
 var dbport = 5984;
 var dbserver = 'http://localhost';
-var nano = require('nano')(dbserver + ':' + dbport);
+var nano = require('nano')({'url': dbserver + ':' + dbport,
+    'requestDefaults' : { 'proxy' : null }});
 var msgdb = nano.use('messages');
 var zonedb = nano.use('zones');
 
