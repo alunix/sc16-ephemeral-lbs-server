@@ -21,7 +21,8 @@ var messagedesign = {
 
 var dbport = 5984;
 var dbserver = "http://localhost";
-var nano = require('nano')(dbserver + ':' + dbport);
+var nano = require('nano')({'url': dbserver + ':' + dbport,
+    'requestDefaults' : { 'proxy' : null }});
 
 // creating the databases
 nano.db.create('zones', function(err, body) {
