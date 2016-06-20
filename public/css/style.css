@@ -95,3 +95,17 @@ body {
     display: none
 }
 
+#createzonePopup {
+    position: absolute;
+    display: hidden;
+    top: 160px;
+    left: 50%;
+    width: 500px;
+    height: auto;
+    margin-left: -250px;
+    background-color: white;
+    z-index: 6;
+    padding: 20px;
+    border: solid 5px #333333;
+    border-radius: 5px;
+}

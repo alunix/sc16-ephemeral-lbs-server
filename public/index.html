@@ -1,124 +1,139 @@
 <!DOCTYPE html>
 <html>
 
-<head>
-    <meta charset="utf-8"></meta>
-    <!-- style imports -->
-    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" rel="stylesheet">
-    <link href="http://cdn.leafletjs.com/leaflet/v0.7.7/leaflet.css" rel="stylesheet">
-    <link href="/css/style.css" rel="stylesheet">
-    <link href="/css/dist/leaflet.draw.css" rel="stylesheet">
-    <link href='https://api.mapbox.com/mapbox.js/v2.4.0/mapbox.css' rel='stylesheet' />
+	<head>
+		<meta charset="utf-8"></meta>
+		<!-- style imports -->
+		<link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" rel="stylesheet">
+		<link href="http://cdn.leafletjs.com/leaflet/v0.7.7/leaflet.css" rel="stylesheet">
+		<link href="/css/style.css" rel="stylesheet">
+		<link href="/css/dist/leaflet.draw.css" rel="stylesheet">
+		<link href='https://api.mapbox.com/mapbox.js/v2.4.0/mapbox.css' rel='stylesheet' />
 
-    <!-- library imports -->
-    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.2/jquery.min.js"></script>
-    <script type="text/javascript" src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/vue/1.0.22/vue.min.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/vue-resource/0.7.0/vue-resource.min.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/leaflet.js"></script>
-    <script type="text/javascript" src='https://api.mapbox.com/mapbox.js/v2.4.0/mapbox.js'></script>
+		<!-- library imports -->
+		<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.2/jquery.min.js"></script>
+		<script type="text/javascript" src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+		<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/vue/1.0.22/vue.min.js"></script>
+		<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/vue-resource/0.7.0/vue-resource.min.js"></script>
+		<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/leaflet.js"></script>
+		<script type="text/javascript" src='https://api.mapbox.com/mapbox.js/v2.4.0/mapbox.js'></script>
 
-</head>
+	</head>
 
-<body>
-    <!-- Navigation -->
-    <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
-        <div class="container">
-            <!-- Brand and toggle get grouped for better mobile display -->
-            <div class="navbar-header">
-                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
-                    <span class="sr-only">Toggle navigation</span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                </button>
-                <a class="navbar-brand" href="index.html">Home</a>
-            </div>
-            <!-- Collect the nav links, forms, and other content for toggling -->
-            <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-                <ul class="nav navbar-nav">
-                    <li>
-                        <a href="help.html">Help</a>
-                    </li>
-                    <li>
-                        <a href="about.html">About</a>
-                    </li>
-                </ul>
-            </div>
-            <!-- /.navbar-collapse -->
-        </div>
-        <!-- /.container -->
-    </nav>
-    <div id="overlay-back"></div>
-    <div id="popup">
-      <h1>An Ephemeral Experience</h1>
-      <h3>Explore the map!</h3>
-      <p>Find help in the bar above!</p>
-      <button id="close">Get Started!</button>
-      <input type=button onClick="location.href='help.html'" value='Help'>
+	<body>
+		<!-- Navigation -->
+		<nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+			<div class="container">
+				<!-- Brand and toggle get grouped for better mobile display -->
+				<div class="navbar-header">
+					<button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+						<span class="sr-only">Toggle navigation</span>
+						<span class="icon-bar"></span>
+						<span class="icon-bar"></span>
+						<span class="icon-bar"></span>
+					</button>
+					<a class="navbar-brand" href="index.html">Home</a>
+				</div>
+				<!-- Collect the nav links, forms, and other content for toggling -->
+				<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+					<ul class="nav navbar-nav">
+						<li>
+							<a href="help.html">Help</a>
+						</li>
+						<li>
+							<a href="about.html">About</a>
+						</li>
+					</ul>
+				</div>
+				<!-- /.navbar-collapse -->
+			</div>
+			<!-- /.container -->
+		</nav>
+		<div id="overlay-back"></div>
+		<div id="popup">
+			<h1>An Ephemeral Experience</h1>
+			<h3>Explore the map!</h3>
+			<p>Find help in the bar above!</p>
+			<button id="close">Get Started!</button>
+			<input type=button onClick="location.href = 'help.html'" value='Help'>
 
-    </div>
+		</div>
 
-    <!-- Page Content -->
-    <div class="container">
-        <!-- /.row -->
+		<!-- Page Content -->
+		<div class="container">
+			<!-- /.row -->
 
-        <div class="row">
-        <div id="map" class="col-md-6">
-            <div class="leaflet-control-mapbox-geocoder leaflet-bar leaflet-control active" style=" position: absolute; bottom: 1%;">
-                <a class="leaflet-control-mapbox-geocoder-toggle mapbox-icon mapbox-icon-geocoder" href="#">&nbsp;</a>
-                <div class="leaflet-control-mapbox-geocoder-results"></div>
-                <div class="leaflet-control-mapbox-geocoder-wrap">
-                    <form class="leaflet-control-mapbox-geocoder-form">
-                        <input class="" type="text" placeholder="Search">
-                    </form>
-                </div>
-            </div>
-            <div class="leaflet-draw leaflet-control"  style="position:absolute; right:1%; top: 1%;">
-                <div class="leaflet-draw-section">
-                    <div class="leaflet-draw-toolbar leaflet-bar leaflet-draw-toolbar-top">
-                        <!--  <a class="leaflet-draw-draw-polyline" href="#" title="Draw a polyline"></a>  
-                        TO DO onclick -> form -->
-                      
-                        <a class="leaflet-draw-draw-polygon"  href="createzone.html"  target="popup" onclick="popup('createzone.html', 'Create Zone')" title="Draw a polygon"></a>
-                        
-                        <!--<a class="leaflet-draw-draw-rectangle" href="#" title="Draw a rectangle"></a>
-                        <a class="leaflet-draw-draw-marker" href="#" title="Draw a marker"></a>-->
-                    </div>
-                        <ul class="leaflet-draw-actions"></ul></div>
+			<div class="row">
+				<div id="map" class="col-md-6">
+					<div class="leaflet-control-mapbox-geocoder leaflet-bar leaflet-control active" style=" position: absolute; bottom: 1%;">
+						<a class="leaflet-control-mapbox-geocoder-toggle mapbox-icon mapbox-icon-geocoder" href="#">&nbsp;</a>
+						<div class="leaflet-control-mapbox-geocoder-results"></div>
+						<div class="leaflet-control-mapbox-geocoder-wrap">
+							<form class="leaflet-control-mapbox-geocoder-form">
+								<input class="" type="text" placeholder="Search">
+							</form>
+						</div>
+					</div>
+					<div class="leaflet-draw leaflet-control"  style="position:absolute; right:1%; top: 1%;">
+						<div class="leaflet-draw-section">
+							<div class="leaflet-draw-toolbar leaflet-bar leaflet-draw-toolbar-top">
+								<div id="drawPolygonButton">
+								<!--  <a class="leaflet-draw-draw-polyline" href="#" title="Draw a polyline"></a>  
+								TO DO onclick -> form -->
+
+								<a class="leaflet-draw-draw-polygon"   title="Draw a polygon"></a>
+								</div>
+								<!--<a class="leaflet-draw-draw-rectangle" href="#" title="Draw a rectangle"></a>
+								<a class="leaflet-draw-draw-marker" href="#" title="Draw a marker"></a>-->
+							</div>
+							<ul class="leaflet-draw-actions"></ul></div>
 
                         <div class="leaflet-draw-section">
                             <div class="leaflet-draw-toolbar leaflet-bar"><a class="leaflet-draw-edit-edit" href="#" title="Edit layers."></a>
-                            <a class="leaflet-draw-edit-remove" href="#" title="Delete layers."></a></div><ul class="leaflet-draw-actions"></ul>
+								<a class="leaflet-draw-edit-remove" href="#" title="Delete layers."></a></div><ul class="leaflet-draw-actions"></ul>
                         </div>
                     </div>
-        </div>
+				</div>
 
-        <div id="contentbox" class="col-md-3">
-            <div id="zonearea">
-              {{zone.Name}}</br>
-              {{zone['Expired-at']}}</br>
-              {{zone.Topics}}
-            </div>
-            <div id="messagearea">
-              <h3>Messages:</h3>
-              <div class="message" v-for="m in messages">
-                <div class="message-title">
-                  {{ m.Title }}
-                </div>
-                <div class="message-content">
-                  {{ m.Message }}
-                </div>
-              </div>
-            </div>
-        </div>
-      </div>
-    </div>
-    <!-- /.container -->
-</body>
-<script type="text/javascript" src="js/messages.js"></script>
-<script type="text/javascript" src="js/map.js"></script>
-<script type="text/javascript" src="js/dialog.js"></script>
-<script type="text/javascript" src="js/zone.js"></script>
+				<div id="createzonePopup">
+					<form id="createzone">
+						<label id="h2" form="createzone">Create Zone</label> </br>
+						<label for="zonename">Zonename</label> 
+						<input type="text" id="zonename" maxlength="30"> </br>
+
+						<label for="duration">Duration (in days)</label>  
+						<input type="number" id="duration" maxlength="3"> </br>
+						<button type="reset">reset</button>
+						<button type="submit" id="close">draw Polygon</button>
+						<button id="closeCreateZone"> cancel</button>
+					</form>
+				</div>
+
+				<div id="contentbox" class="col-md-3">
+					<div id="zonearea">
+						{{zone.Name}}</br>
+						{{zone['Expired-at']}}</br>
+						{{zone.Topics}}
+					</div>
+					<div id="messagearea">
+						<h3>Messages:</h3>
+						<div class="message" v-for="m in messages">
+							<div class="message-title">
+								{{ m.Title }}
+							</div>
+							<div class="message-content">
+								{{ m.Message }}
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<!-- /.container -->
+	</body>
+	<script type="text/javascript" src="js/messages.js"></script>
+	<script type="text/javascript" src="js/map.js"></script>
+	<script type="text/javascript" src="js/dialog.js"></script>
+	<script type="text/javascript" src="js/zone.js"></script>
 
 </html>
