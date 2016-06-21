@@ -149,7 +149,12 @@ server.get('/api/messages', function(req, res) {
                             let result = { "Messages": [] };
 
                             for (let mCount = 0; mCount < mbody.rows.length; mCount++) {
-                                result["Messages"].push(mbody.rows[mCount].doc);
+                                let message = mbody.rows[mCount].doc;
+                                delete message["_rev"];
+                                let messageID = message["_id"];
+                                message["Message-id"] = messageID;
+                                delete message["_id"];
+                                result["Messages"].push(message);
                             }
 
                             res.json(result);
@@ -176,9 +181,44 @@ server.post('/api/addmessages', function(req, res) {
 
     var msgTable = nano.use(msgdb);
 
+    var nowDate = new Date();
+
+
+    // check for all messages if their ID exists already
+    var idExists = "";
+    for (let mCount = 0; mCount < req.body.Messages.length; mCount++) {
+        msgTable.view("message_design", "by_id_and_date",
+            {include_docs: true,
+            startkey:[req.body.Messages["Message-id"], nowDate.toJSON()],
+            endkey:[req.body.Messages["Message-id"], lastDate.toJSON()]},
+            function(err, mbody) {
+                if (!err) {
+                    if(mbody.rows.length !== 0) {
+                        idExists = req.body.Messages["Message-id"];
+                        return;
+                    }
+                } else {
+                    res.status(404).send('Database error! Couldn\'t fetch ID check messages: ' + err);
+                }
+            }
+        );
+        if(idExists !== "") break;
+    }
+
+    if (idExists !== "") {
+        res.status(404).send('ID already existing: ' + idExists);
+        return;
+    }
+
     var error = null;
+
+    // replacing Message-id with _id and storing the data
     for (let mCount = 0; mCount < req.body.Messages.length; mCount++) {
         let message = req.body.Messages[mCount];
+
+        let messageID = message["Message-id"];
+        message["_id"] = messageID;
+        delete message["Message-id"];
 
         msgTable.insert(message, undefined, function(err, body) {
             if (err) {

@@ -15,6 +15,9 @@ var messagedesign = {
     "views": {
         "by_zoneid_and_date": {
            "map": "function(doc){ emit([doc['Zone-id'],doc['Expired-at']], doc)}"
+        },
+        "by_id_and_date": {
+           "map": "function(doc){ emit([doc['_id'],doc['Expired-at']], doc)}"
         }
     }
 };
