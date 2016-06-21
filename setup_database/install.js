@@ -6,7 +6,7 @@ var zonedesign = {
             "map": "function(doc){ emit([doc['Expired-at']], doc)}"
         },
         "by_id_and_date": {
-            "map": "function(doc){ emit([doc['Zone-id'], doc['Expired-at']], doc)}"
+            "map": "function(doc){ emit([doc['_id'], doc['Expired-at']], doc)}"
         }
     }
 };
