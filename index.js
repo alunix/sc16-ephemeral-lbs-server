@@ -181,15 +181,10 @@ server.post('/api/addmessages', function(req, res) {
 
     var msgTable = nano.use(msgdb);
 
-    var nowDate = new Date();
-
-
     // check for all messages if their ID exists already and delete them
     for (let mCount = 0; mCount < req.body.Messages.length; mCount++) {
-        msgTable.view("message_design", "by_id_and_date",
-            {include_docs: true,
-            startkey:[req.body.Messages[mCount]["Message-id"], nowDate.toJSON()],
-            endkey:[req.body.Messages[mCount]["Message-id"], lastDate.toJSON()]},
+        msgTable.get( req.body.Messages[mCount]["Message-id"],
+            { include_docs: true },
             function(err, mbody) {
                 if (!err) {
                     if(mbody.rows.length !== 0) {
