@@ -184,17 +184,16 @@ server.post('/api/addmessages', function(req, res) {
     var nowDate = new Date();
 
 
-    // check for all messages if their ID exists already
-    var idExists = "";
+    // check for all messages if their ID exists already and delete them
     for (let mCount = 0; mCount < req.body.Messages.length; mCount++) {
         msgTable.view("message_design", "by_id_and_date",
             {include_docs: true,
-            startkey:[req.body.Messages["Message-id"], nowDate.toJSON()],
-            endkey:[req.body.Messages["Message-id"], lastDate.toJSON()]},
+            startkey:[req.body.Messages[mCount]["Message-id"], nowDate.toJSON()],
+            endkey:[req.body.Messages[mCount]["Message-id"], lastDate.toJSON()]},
             function(err, mbody) {
                 if (!err) {
                     if(mbody.rows.length !== 0) {
-                        idExists = req.body.Messages["Message-id"];
+                        delete req.body.Messages[mCount];
                         return;
                     }
                 } else {
@@ -202,18 +201,17 @@ server.post('/api/addmessages', function(req, res) {
                 }
             }
         );
-        if(idExists !== "") break;
-    }
-
-    if (idExists !== "") {
-        res.status(404).send('ID already existing: ' + idExists);
-        return;
     }
 
     var error = null;
 
     // replacing Message-id with _id and storing the data
     for (let mCount = 0; mCount < req.body.Messages.length; mCount++) {
+        // skip deleted messages
+        if (req.body.Messages[mCount] == null) {
+            break;
+        }
+        
         let message = req.body.Messages[mCount];
 
         let messageID = message["Message-id"];
