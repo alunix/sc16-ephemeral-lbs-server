@@ -54,6 +54,10 @@ server.get('/api/zones', function(req, res) {
         function(err, body, header) {
         if (!err) {
             for (var zCount = 0; zCount < body.rows.length; zCount++) {
+                let zoneID = body.rows[zCount].doc["_id"];
+                body.rows[zCount].doc["Zone-id"] = zoneID;
+                delete body.rows[zCount].doc["_id"];
+                delete body.rows[zCount].doc["_rev"];
                 zones.Zones.push(body.rows[zCount].doc);
             }
             res.json(zones);
@@ -75,9 +79,14 @@ server.get('/api/zones/:zoneid', function(req, res) {
     }, function(err, body) {
         if (!err) {
             if (body.rows.length != 0){
-              res.json(body.rows[0].doc);
+                let result = body.rows[0].doc;
+                let zoneID = result["_id"];
+                result["Zone-id"] = zoneID;
+                delete result["_id"];
+                delete result["_rev"];
+                res.json(result);
             }else{
-              res.status(404).send('Zone non-existent or expired');
+                res.status(404).send('Zone non-existent or expired');
             }
 
         } else {
@@ -117,7 +126,7 @@ server.get('/api/messages', function(req, res) {
         res.status(404).send("Zone parameter missing.");
         return;
     }else{
-      zone = req.query.zone;
+        zone = req.query.zone; 
     }
 
     zonesTable.view("zone_design", "by_id_and_date",
@@ -137,13 +146,18 @@ server.get('/api/messages', function(req, res) {
                     endkey:[zone, lastDate.toJSON()]},
                     function(err, mbody) {
                         if (!err) {
-                          let result = { "Messages": [] };
+                            let result = { "Messages": [] };
 
-                          for (let mCount = 0; mCount < mbody.rows.length; mCount++) {
-                              result["Messages"].push(mbody.rows[mCount].doc);
-                          }
+                            for (let mCount = 0; mCount < mbody.rows.length; mCount++) {
+                                let message = mbody.rows[mCount].doc;
+                                delete message["_rev"];
+                                let messageID = message["_id"];
+                                message["Message-id"] = messageID;
+                                delete message["_id"];
+                                result["Messages"].push(message);
+                            }
 
-                          res.json(result);
+                            res.json(result);
                         } else {
                             res.status(404).send('Database error! Couldn\'t fetch messages: ' + err);
                         }
@@ -167,9 +181,37 @@ server.post('/api/addmessages', function(req, res) {
 
     var msgTable = nano.use(msgdb);
 
-    var error = null;
+    // check for all messages if their ID exists already and delete them
     for (let mCount = 0; mCount < req.body.Messages.length; mCount++) {
+        msgTable.get( req.body.Messages[mCount]["Message-id"],
+            { include_docs: true },
+            function(err, mbody) {
+                if (!err) {
+                    if(mbody.rows.length !== 0) {
+                        delete req.body.Messages[mCount];
+                        return;
+                    }
+                } else {
+                    res.status(404).send('Database error! Couldn\'t fetch ID check messages: ' + err);
+                }
+            }
+        );
+    }
+
+    var error = null;
+
+    // replacing Message-id with _id and storing the data
+    for (let mCount = 0; mCount < req.body.Messages.length; mCount++) {
+        // skip deleted messages
+        if (req.body.Messages[mCount] == null) {
+            break;
+        }
+        
         let message = req.body.Messages[mCount];
+
+        let messageID = message["Message-id"];
+        message["_id"] = messageID;
+        delete message["Message-id"];
 
         msgTable.insert(message, undefined, function(err, body) {
             if (err) {
