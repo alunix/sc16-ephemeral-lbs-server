@@ -18,7 +18,7 @@ $(document).ready(function() {
 var clicked =false;
 
 $(document).ready(function() {
-    document.getElementById('drawPolygonButton').className ='openPopup';
+    $("[title='Draw a Polygon']").className ='openPopup';
 		if (clicked===false){
 		   $('#createzonePopup').hide();	
 		}
@@ -29,11 +29,10 @@ $(document).ready(function() {
         });
 	});
 	    document.getElementById('closeCreateZone').className = 'closeZonePopup';
-    $(".closeZonePopup").on('click', function() {
+        $(".closeZonePopup").on('click', function() {
         $('#createzonePopup').hide();
         $('#overlay-back').fadeOut(500);
 		console.log("bla");
 		clicked=false;
     });
 });
-

@@ -9,6 +9,8 @@
 		<link href="/css/style.css" rel="stylesheet">
 		<link href="/css/dist/leaflet.draw.css" rel="stylesheet">
 		<link href='https://api.mapbox.com/mapbox.js/v2.4.0/mapbox.css' rel='stylesheet' />
+		<link rel="stylesheet" href="http://leaflet.github.io/Leaflet.draw/lib/leaflet/leaflet.css"/>
+        <link rel="stylesheet" href="http://leaflet.github.io/Leaflet.draw/leaflet.draw.css"/>
 
 		<!-- library imports -->
 		<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.2/jquery.min.js"></script>
@@ -17,6 +19,11 @@
 		<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/vue-resource/0.7.0/vue-resource.min.js"></script>
 		<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/leaflet.js"></script>
 		<script type="text/javascript" src='https://api.mapbox.com/mapbox.js/v2.4.0/mapbox.js'></script>
+		<script type="text/javascript" src="http://leaflet.github.io/Leaflet.draw/leaflet.draw.js"></script>
+		<script type="text/javascript" src="http://leaflet.github.io/Leaflet.draw/lib/leaflet/leaflet.js"></script>
+		<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.draw/0.2.3/leaflet.draw-src.js"></script>
+		
+   
 
 	</head>
 
@@ -74,26 +81,8 @@
 							</form>
 						</div>
 					</div>
-					<div class="leaflet-draw leaflet-control"  style="position:absolute; right:1%; top: 1%;">
-						<div class="leaflet-draw-section">
-							<div class="leaflet-draw-toolbar leaflet-bar leaflet-draw-toolbar-top">
-								<div id="drawPolygonButton">
-								<!--  <a class="leaflet-draw-draw-polyline" href="#" title="Draw a polyline"></a>  
-								TO DO onclick -> form -->
-
-								<a class="leaflet-draw-draw-polygon"   title="Draw a polygon"></a>
-								</div>
-								<!--<a class="leaflet-draw-draw-rectangle" href="#" title="Draw a rectangle"></a>
-								<a class="leaflet-draw-draw-marker" href="#" title="Draw a marker"></a>-->
-							</div>
-							<ul class="leaflet-draw-actions"></ul></div>
-
-                        <div class="leaflet-draw-section">
-                            <div class="leaflet-draw-toolbar leaflet-bar"><a class="leaflet-draw-edit-edit" href="#" title="Edit layers."></a>
-								<a class="leaflet-draw-edit-remove" href="#" title="Delete layers."></a></div><ul class="leaflet-draw-actions"></ul>
-                        </div>
-                    </div>
-				</div>
+					
+				</div> 
 
 				<div id="createzonePopup">
 					<form id="createzone">
@@ -104,7 +93,7 @@
 						<label for="duration">Duration (in days)</label>  
 						<input type="number" id="duration" maxlength="3"> </br>
 						<button type="reset">reset</button>
-						<button type="submit" id="close">draw Polygon</button>
+						<button type="submit">finish</button>
 						<button id="closeCreateZone"> cancel</button>
 					</form>
 				</div>
@@ -135,5 +124,6 @@
 	<script type="text/javascript" src="js/map.js"></script>
 	<script type="text/javascript" src="js/dialog.js"></script>
 	<script type="text/javascript" src="js/zone.js"></script>
+
 
 </html>
