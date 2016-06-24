@@ -115,6 +115,56 @@ server.post('/api/addzone', function(req, res) {
 
 });
 
+server.get('/api/zones/Name', function(req, res) {
+
+    var zonesTbl = nano.use(zonesdb);
+    var nowDate = new Date();
+
+    zonesTbl.view('zone_design', 'by_Zone_Name_and_date', {
+        startkey:[req.params.Name, nowDate.toJSON()],
+        endkey:[req.params.Name, lastDate.toJSON()],
+        include_docs: true
+    }, function(err, body) {
+        if (!err) {
+            if (body.rows.length != 0){
+                let result = body.rows[0].doc;
+                let zoneName = result["Name"];
+                result["Zone-id"] = zoneName;
+                delete result["name"];
+                delete result["_rev"];
+                res.json(result);
+            }else{
+                res.status(404).send('Zone non-existent or expired');
+            }
+
+        } else {
+            res.status(404).send('Database error: ' + err);
+        }
+    });
+});
+
+
+server.post('/api/addzone', function(req, res) {
+    let zonesTbl = nano.use(zonesdb);
+
+    let validator = new Validator();
+    let vresult = validator.validate(req.body, schemata.zone);
+    if(!vresult.valid) {
+        res.status(404).send('Validation error:' + vresult.errors);
+        return;
+    }
+    zonesTbl.insert(req.body, {}, function(err, body) {
+        if(err) {
+            res.status(404).send('DB error:' + err);
+        }
+        else {
+            res.status(201).send('Zone created');
+        }
+    });
+
+});
+
+
 server.get('/api/messages', function(req, res) {
     var msgTable = nano.use(msgdb);
     var zonesTable = nano.use(zonesdb);
@@ -197,6 +247,93 @@ server.post('/api/addmessages', function(req, res) {
             }
         );
     }
+	
+	
+
+server.get('/api/messages', function(req, res) {
+    var msgTable = nano.use(msgdb);
+    var zonesTable = nano.use(zonesdb);
+
+    var nowDate = new Date();
+    var zone;
+
+    if (!req.query.zone) {
+        res.status(404).send("Zone parameter missing.");
+        return;
+    }else{
+        zone = req.query.zone; 
+    }
+
+    zonesTable.view("zone_design", "by_Name_and_date",
+        {startkey:[zone, nowDate.toJSON()],
+        endkey:[zone, lastDate.toJSON()],
+        include_docs: true},
+        function(err, zbody) {
+        if (!err) {
+            // check if the zone exists
+            if (zbody.rows.length == 0) {
+                res.status(404).send('Zone nonexistent or expired.');
+                return;
+            }else{
+                msgTable.view("message_design", "by_Zone_Name",
+                    {include_docs: true,
+                    startkey:[zone, nowDate.toJSON()],
+                    endkey:[zone, lastDate.toJSON()]},
+                    function(err, mbody) {
+                        if (!err) {
+                            let result = { "Messages": [] };
+
+                            for (let mCount = 0; mCount < mbody.rows.length; mCount++) {
+                                let message = mbody.rows[mCount].doc;
+                                delete message["_rev"];
+                                let messageID = message["_id"];
+                                message["Message-id"] = messageID;
+                                delete message["_id"];
+                                result["Messages"].push(message);
+                            }
+
+                            res.json(result);
+                        } else {
+                            res.status(404).send('Database error! Couldn\'t fetch messages: ' + err);
+                        }
+                    }
+                );
+            }
+        } else {
+            res.status(404).send('Database error! Couldn\'t fetch messages: '+ err);
+        }
+    });
+});
+
+
+
+server.post('/api/addmessages', function(req, res) {
+
+    let validator = new Validator();
+    let vresult = validator.validate(req.body, schemata.messages);
+    if(!vresult.valid) {
+        res.status(404).send('Validation error:' + vresult.errors);
+        return;
+    }
+
+    var msgTbl = nano.use(msgdb);
+
+    for (let mCount = 0; mCount < req.body.Messages.length; mCount++) {
+        msgTable.get( req.body.Messages[mCount]["Message-id"],
+            { include_docs: true },
+            function(err, mbody) {
+                if (!err) {
+                    if(mbody.rows.length !== 0) {
+                        delete req.body.Messages[mCount];
+                        return;
+                    }
+                } else {
+                    res.status(404).send('Database error! Couldn\'t fetch ID check messages: ' + err);
+                }
+            }
+        );
+    }
+
 
     var error = null;
 
