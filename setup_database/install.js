@@ -7,8 +7,8 @@ var zonedesign = {
         },
         "by_id_and_date": {
             "map": "function(doc){ emit([doc['_id'], doc['Expired-at']], doc)}"
-        }
-		"by_Zone_Name_and_date": {
+        },
+        "by_zone_name_and_date": {
             "map": "function(doc){ emit([doc['Name'], doc['Expired-at']], doc)}"
         }
     }
@@ -21,8 +21,8 @@ var messagedesign = {
         },
         "by_id_and_date": {
            "map": "function(doc){ emit([doc['_id'],doc['Expired-at']], doc)}"
-        }
-		"by_Zone_Name_and_date": {
+        },
+        "by_zone_name_and_date": {
            "map": "function(doc){ emit([doc['Name'],doc['Expired-at']], doc)}"
         }
     }
