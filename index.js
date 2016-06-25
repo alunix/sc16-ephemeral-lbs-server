@@ -115,14 +115,19 @@ server.post('/api/addzone', function(req, res) {
 
 });
 
-server.get('/api/zones/name', function(req, res) {
+server.get('/api/zones-by-name', function(req, res) {
 
     var zonesTbl = nano.use(zonesdb);
     var nowDate = new Date();
     
+    if (!req.query.name) {
+        res.status(404).send("Name parameter missing.");
+        return;
+    }
+
     zonesTbl.view('zone_design', 'by_zone_name_and_date', {
-        startkey:[req.params.name, nowDate.toJSON()],
-        endkey:[req.params.name, lastDate.toJSON()],
+        startkey:[req.query.name, nowDate.toJSON()],
+        endkey:[req.query.name, lastDate.toJSON()],
         include_docs: true
     }, function(err, body) {
         if (!err) {
