@@ -121,24 +121,27 @@ server.get('/api/zones/name', function(req, res) {
     var nowDate = new Date();
     
     zonesTbl.view('zone_design', 'by_zone_name_and_date', {
-        startkey:[req.params.Name, nowDate.toJSON()],
-        endkey:[req.params.Name, lastDate.toJSON()],
+        startkey:[req.params.name, nowDate.toJSON()],
+        endkey:[req.params.name, lastDate.toJSON()],
         include_docs: true
     }, function(err, body) {
         if (!err) {
-			if (body.rows.length != 0){
-			    for (var zCount = 0; zCount < body.rows.length; zCount++){
-                    let result = body.rows[0].doc;
+            if (body.rows.length != 0) {
+                let zoneResult = { "Zones": [] };
+
+                for (let zCount = 0; zCount < body.rows.length; zCount++){
+                    let result = body.rows[zCount].doc;
                     let zoneID = result["_id"];
                     result["Zone-id"] = zoneID;
                     delete result["_id"];
                     delete result["_rev"];
-					var zoneResult = [result]
+                    zoneResult.Zones.push(result);
                 }
-                    res.json(zoneResult);				
+                
+                res.json(zoneResult);
             
             }
-			else{
+            else{
                 res.status(404).send('Zone non-existent or expired');
             }
 
