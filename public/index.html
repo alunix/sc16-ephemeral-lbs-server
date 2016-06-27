@@ -12,6 +12,7 @@
 		<link rel="stylesheet" href="http://leaflet.github.io/Leaflet.draw/lib/leaflet/leaflet.css"/>
         <link rel="stylesheet" href="http://leaflet.github.io/Leaflet.draw/leaflet.draw.css"/>
 		<link rel="stylesheet" href="https://raw.githubusercontent.com/CliffCloud/Leaflet.EasyButton/master/src/easy-button.css"/>
+		<link href="/calendar/tcal.css" rel="stylesheet">
 
 		<!-- library imports -->
 		<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.2/jquery.min.js"></script>
@@ -91,9 +92,8 @@
 						<label id="h2" form="createzone">Create Zone</label> </br>
 						<label for="zonename">Zonename</label> 
 						<input type="text" id="zonename" maxlength="30"> </br>
-
 						<label for="duration">Duration (in days)</label>  
-						<input type="number" id="duration" maxlength="3"> </br>
+						<input  type="text" id="duration" class="tcal" > </br>
 						<button type="reset">reset</button>
 						<button type="submit">finish</button>
 						<button id="closeCreateZone"> cancel</button>
@@ -120,14 +120,23 @@
 					<div id="createZone">
 						<form id="createZoneform">
 						<h3>Create Zone</h3>
-						<label for="zonename">Zonename</label> 
+						<div style="width: 30%; float:left;">
+						<label for="zonename">Zonename</label></br>
+						<label for="duration">Duration</label> </br>
+						<label for="time">Time</label>   </br>
+						<label for="topics">Topics</label> </br>
+						<label for="area">Area</label> </br>
+						</div>
+						<div style="width: 70%; float:right;">
 						<input type="text" id="zonename" maxlength="30"> </br>
-						<label for="duration">Duration</label>  
-						<input type="number" id="duration" maxlength="3"> </br>
-						<label for="topics">Topics</label> 
+						<input type="text" id="duration" class="tcal"> </br>
+						<form action="input.htm"> 
+    					<input type="time" id"time" placeholder="23:59:59">
+  						</form> </br>
 						<input type="text" id="topics" maxlength="50"> </br>
-						<label for="area">Area</label> 
-						<input type="text" id="area"> </br>
+						<input type="text" id="area"> </br> 
+						</div>
+						<p>&nbsp;</p>
 						<button form="createZoneform" type="reset">reset</button>
 						<button type="submit">finish</button>
 						<button id="closeCreateZone"> cancel</button>
@@ -142,6 +151,7 @@
 	<script type="text/javascript" src="js/map.js"></script>
 	<script type="text/javascript" src="js/dialog.js"></script>
 	<script type="text/javascript" src="js/zone.js"></script>
+	<script type="text/javascript" src="calendar/tcal.js"></script>
 
 
 </html>
