@@ -6,6 +6,9 @@ var polygon;
             attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
         }).addTo(map);
 
+L.easyButton('<img src="/images/addZone.png">', function(btn, map){
+	console.log("create Zone");
+}).addTo(map); // probably just `map`
 
 function displayZones() {
 	$.ajax({
@@ -177,10 +180,14 @@ map.on('draw:created', function (e) {
     var type = e.layerType,
         layer = e.layer;
 
-    if (type === 'marker') {
-        // Do marker specific actions
+    if (type === 'polygon') {
+	coordinates =[];
+	LatLongs = layer.getLatLngs();
+	for (i=0;i<LatLongs.length;i++){
+		coordinates.push([LatLongs[i].lng, LatLongs[i].lat]);    
     }
-
+	document.getElementById("area").value= coordinates;
+}
     // Do whatever else you need to. (save to db, add to map etc)
     drawnItems.addLayer(layer);
 });

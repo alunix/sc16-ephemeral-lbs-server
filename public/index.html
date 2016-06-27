@@ -11,6 +11,7 @@
 		<link href='https://api.mapbox.com/mapbox.js/v2.4.0/mapbox.css' rel='stylesheet' />
 		<link rel="stylesheet" href="http://leaflet.github.io/Leaflet.draw/lib/leaflet/leaflet.css"/>
         <link rel="stylesheet" href="http://leaflet.github.io/Leaflet.draw/leaflet.draw.css"/>
+		<link rel="stylesheet" href="https://raw.githubusercontent.com/CliffCloud/Leaflet.EasyButton/master/src/easy-button.css"/>
 
 		<!-- library imports -->
 		<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.2/jquery.min.js"></script>
@@ -22,6 +23,7 @@
 		<script type="text/javascript" src="http://leaflet.github.io/Leaflet.draw/leaflet.draw.js"></script>
 		<script type="text/javascript" src="http://leaflet.github.io/Leaflet.draw/lib/leaflet/leaflet.js"></script>
 		<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.draw/0.2.3/leaflet.draw-src.js"></script>
+		<script type="text/javascript" src="https://raw.githubusercontent.com/CliffCloud/Leaflet.EasyButton/master/src/easy-button.js"></script>
 		
    
 
@@ -114,6 +116,22 @@
 								{{ m.Message }}
 							</div>
 						</div>
+					</div>
+					<div id="createZone">
+						<form id="createZoneform">
+						<h3>Create Zone</h3>
+						<label for="zonename">Zonename</label> 
+						<input type="text" id="zonename" maxlength="30"> </br>
+						<label for="duration">Duration</label>  
+						<input type="number" id="duration" maxlength="3"> </br>
+						<label for="topics">Topics</label> 
+						<input type="text" id="topics" maxlength="50"> </br>
+						<label for="area">Area</label> 
+						<input type="text" id="area"> </br>
+						<button form="createZoneform" type="reset">reset</button>
+						<button type="submit">finish</button>
+						<button id="closeCreateZone"> cancel</button>
+						</form>
 					</div>
 				</div>
 			</div>
