@@ -1,4 +1,4 @@
-var vue_dispatcher = new Vue({
+var vue_broadcaster = new Vue({
   events:{
     'zoneSelected': function(zoneid){
       this.$broadcast('switchZone', zoneid);
