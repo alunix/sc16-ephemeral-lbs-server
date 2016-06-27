@@ -1,14 +1,17 @@
 new Vue({
+    parent: vue_broadcaster,
     el: '#messagearea',
     data: {
         messages: []
     },
-    created: function() {
-        this.getMessages();
+    events:{
+      'switchZone': function(id){
+        this.getMessages(id);
+      }
     },
     methods: {
-        getMessages: function() {
-            this.$http.get('/api/messages?zone=1', function(data) {
+        getMessages: function(zoneid) {
+            this.$http.get('/api/messages?zone='+zoneid, function(data) {
                 this.$set('messages', data['Messages']);
             });
         }

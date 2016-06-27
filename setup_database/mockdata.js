@@ -41,7 +41,7 @@ function generateMessages(number) {
     for (var i = 0; i < number; i++) {
         var message = {};
 
-        message['Message-id'] = getRandom(10000);
+        message['Message-id'] = getRandom(10000).toString();
         message['Zone-id'] = getRandom(3).toString();
         message['Topic'] = topics[Math.floor(Math.random() * topics.length)];
         message['Title'] = generateTitle();
