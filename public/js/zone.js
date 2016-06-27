@@ -1,10 +1,13 @@
 new Vue({
+    parent: vue_dispatcher,
     el: '#zonearea',
     data: {
         zone: {}
     },
-    created: function() {
-        this.getZone(1);
+    events:{
+      'switchZone': function(id){
+        this.getZone(id);
+      }
     },
     methods: {
         getZone: function(id) {
