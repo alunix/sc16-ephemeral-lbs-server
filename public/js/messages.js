@@ -1,5 +1,5 @@
 new Vue({
-    parent: vue_dispatcher,
+    parent: vue_broadcaster,
     el: '#messagearea',
     data: {
         messages: []
