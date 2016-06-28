@@ -115,19 +115,21 @@ server.post('/api/addzone', function(req, res) {
 
 });
 
-server.get('/api/zones-by-name', function(req, res) {
+server.get('/api/zones-search', function(req, res) {
 
     var zonesTbl = nano.use(zonesdb);
     var nowDate = new Date();
     
-    if (!req.query.name) {
-        res.status(404).send("Name parameter missing.");
+    if (!req.query.q) {
+        res.status(404).send("Query parameter 'q' missing.");
         return;
     }
+    
+    let search_string = req.query.q.toLowerCase();
 
     zonesTbl.view('zone_design', 'by_zone_name_and_date', {
-        startkey:[req.query.name, nowDate.toJSON()],
-        endkey:[req.query.name, lastDate.toJSON()],
+        startkey:[search_string, nowDate.toJSON()],
+        endkey:[search_string, lastDate.toJSON()],
         include_docs: true
     }, function(err, body) {
         if (!err) {
@@ -242,11 +244,6 @@ server.post('/api/addmessages', function(req, res) {
             }
         );
     }
-
-
-
-
-
 
     var error = null;
 

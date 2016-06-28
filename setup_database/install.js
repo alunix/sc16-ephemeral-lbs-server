@@ -9,7 +9,7 @@ var zonedesign = {
             "map": "function(doc){ emit([doc['_id'], doc['Expired-at']], doc)}"
         },
         "by_zone_name_and_date": {
-            "map": "function(doc){ emit([doc['Name'], doc['Expired-at']], doc)}"
+            "map": "function(doc) {  var i; var text = doc['Name'].toLowerCase();for (i = 0; i < text.length; i += 1) { emit([ text.slice(0, i+1),  doc['Expired-at']], doc); }}"
         }
     }
 };
