@@ -6,13 +6,15 @@ new Vue({
   },
   created: function(){
 	this.$set('map', L.map('map'));
-    this.map.setView([51.959, 7.623], 14);
-    L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
+  this.map.setView([51.959, 7.623], 14);
+  L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
       attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
       }).addTo(this.map);
-	L.easyButton('<img src="/images/addZone.png">', dispatchZoneEdit(this))
+	L.easyButton('glyphicon-plus', function(btn, map){
+    startEditing(map);
+  })
 			.addTo(this.map);
-    this.get_zones();
+  this.get_zones();
   },
   methods: {
     switch_zone: function(zoneid){
@@ -32,182 +34,186 @@ new Vue({
 });
 
 
+function startEditing(map){
+  var drawnItems = new L.FeatureGroup();
+  map.addLayer(drawnItems);
 
+  L.Draw.Polygon = L.Draw.Polyline.extend({
+  	statics: {
+  		TYPE: 'polygon'
+  	},
 
-/*
-var drawnItems = new L.FeatureGroup();
-map.addLayer(drawnItems);
+  	Poly: L.Polygon,
 
-L.Draw.Polygon = L.Draw.Polyline.extend({
-	statics: {
-		TYPE: 'polygon'
-	},
+  	options: {
+  		showArea: false,
+  		shapeOptions: {
+  			stroke: true,
+  			color: '#f06eaa',
+  			weight: 4,
+  			opacity: 0.5,
+  			fill: true,
+  			fillColor: null, //same as color by default
+  			fillOpacity: 0.2,
+  			clickable: true
+  		}
+  	},
 
-	Poly: L.Polygon,
+  	initialize: function (map, options) {
+  		L.Draw.Polyline.prototype.initialize.call(this, map, options);
 
-	options: {
-		showArea: false,
-		shapeOptions: {
-			stroke: true,
-			color: '#f06eaa',
-			weight: 4,
-			opacity: 0.5,
-			fill: true,
-			fillColor: null, //same as color by default
-			fillOpacity: 0.2,
-			clickable: true
-		}
-	},
+  		// Save the type so super can fire, need to do this as cannot do this.TYPE :(
+  		this.type = L.Draw.Polygon.TYPE;
+  	},
 
-	initialize: function (map, options) {
-		L.Draw.Polyline.prototype.initialize.call(this, map, options);
+  	_updateFinishHandler: function () {
+  		var markerCount = this._markers.length;
 
-		// Save the type so super can fire, need to do this as cannot do this.TYPE :(
-		this.type = L.Draw.Polygon.TYPE;
-	},
+  		// The first marker should have a click handler to close the polygon
+  		if (markerCount === 1) {
+  			this._markers[0].on('click', this._finishShape, this);
+  		}
 
-	_updateFinishHandler: function () {
-		var markerCount = this._markers.length;
+  		// Add and update the double click handler
+  		if (markerCount > 2) {
+  			this._markers[markerCount - 1].on('dblclick', this._finishShape, this);
+  			// Only need to remove handler if has been added before
+  			if (markerCount > 3) {
+  				this._markers[markerCount - 2].off('dblclick', this._finishShape, this);
+  			}
+  		}
+  	},
 
-		// The first marker should have a click handler to close the polygon
-		if (markerCount === 1) {
-			this._markers[0].on('click', this._finishShape, this);
-		}
+  	_getTooltipText: function () {
+  		var text, subtext;
 
-		// Add and update the double click handler
-		if (markerCount > 2) {
-			this._markers[markerCount - 1].on('dblclick', this._finishShape, this);
-			// Only need to remove handler if has been added before
-			if (markerCount > 3) {
-				this._markers[markerCount - 2].off('dblclick', this._finishShape, this);
-			}
-		}
-	},
+  		if (this._markers.length === 0) {
+  			text = L.drawLocal.draw.handlers.polygon.tooltip.start;
+  		} else if (this._markers.length < 3) {
+  			text = L.drawLocal.draw.handlers.polygon.tooltip.cont;
+  		} else {
+  			text = L.drawLocal.draw.handlers.polygon.tooltip.end;
+  			subtext = this._getMeasurementString();
+  		}
 
-	_getTooltipText: function () {
-		var text, subtext;
+  		return {
+  			text: text,
+  			subtext: subtext
+  		};
+  	},
 
-		if (this._markers.length === 0) {
-			text = L.drawLocal.draw.handlers.polygon.tooltip.start;
-		} else if (this._markers.length < 3) {
-			text = L.drawLocal.draw.handlers.polygon.tooltip.cont;
-		} else {
-			text = L.drawLocal.draw.handlers.polygon.tooltip.end;
-			subtext = this._getMeasurementString();
-		}
+  	_getMeasurementString: function () {
+  		var area = this._area;
 
-		return {
-			text: text,
-			subtext: subtext
-		};
-	},
+  		if (!area) {
+  			return null;
+  		}
 
-	_getMeasurementString: function () {
-		var area = this._area;
+  		return L.GeometryUtil.readableArea(area, this.options.metric);
+  	},
 
-		if (!area) {
-			return null;
-		}
+  	_shapeIsValid: function () {
+  		return this._markers.length >= 3;
+  	},
 
-		return L.GeometryUtil.readableArea(area, this.options.metric);
-	},
+  	_vertexChanged: function (latlng, added) {
+  		var latLngs;
 
-	_shapeIsValid: function () {
-		return this._markers.length >= 3;
-	},
+  		// Check to see if we should show the area
+  		if (!this.options.allowIntersection && this.options.showArea) {
+  			latLngs = this._poly.getLatLngs();
 
-	_vertexChanged: function (latlng, added) {
-		var latLngs;
+  			this._area = L.GeometryUtil.geodesicArea(latLngs);
+  		}
 
-		// Check to see if we should show the area
-		if (!this.options.allowIntersection && this.options.showArea) {
-			latLngs = this._poly.getLatLngs();
+  		L.Draw.Polyline.prototype._vertexChanged.call(this, latlng, added);
+  	},
 
-			this._area = L.GeometryUtil.geodesicArea(latLngs);
-		}
+  	_cleanUpShape: function () {
+  		var markerCount = this._markers.length;
 
-		L.Draw.Polyline.prototype._vertexChanged.call(this, latlng, added);
-	},
+  		if (markerCount > 0) {
+  			this._markers[0].off('click', this._finishShape, this);
 
-	_cleanUpShape: function () {
-		var markerCount = this._markers.length;
+  			if (markerCount > 2) {
+  				this._markers[markerCount - 1].off('dblclick', this._finishShape, this);
+  			}
+  		}
+  	}
+  });
 
-		if (markerCount > 0) {
-			this._markers[0].off('click', this._finishShape, this);
+  L.DrawToolbar.include({
+      getModeHandlers: function (map) {
+          return [ {
+              enabled: true,
+              handler: new L.Draw.Polygon(map, this.options.polygon),
+              title: 'Draw a Polygon',
+  			id: 'drawP'
+          }];
+      }
+  });
 
-			if (markerCount > 2) {
-				this._markers[markerCount - 1].off('dblclick', this._finishShape, this);
-			}
-		}
-	}
-});
+  var drawControl = new L.Control.Draw({
+      position: 'topright',
+      draw: {
 
-L.DrawToolbar.include({
-    getModeHandlers: function (map) {
-        return [ {
-            enabled: true,
-            handler: new L.Draw.Polygon(map, this.options.polygon),
-            title: 'Draw a Polygon',
-			id: 'drawP'
-        }];
-    }
-});
+          polygon: {
+              allowIntersection: false,
+              showArea: true,
+              drawError: {
+                  color: '#b00b00',
+                  timeout: 1000
+              },
+              shapeOptions: {
+                  stroke: true,
+                  color: '#f06eaa',
+                  weight: 4,
+                  opacity: 0.5,
+                  fill: true,
+                  fillColor: null, //same as color by default
+                  fillOpacity: 0.2,
+                  clickable: false
+              }
+          }
+      },
+      edit: {
+          featureGroup: drawnItems
+      }
+  });
 
-var drawControl = new L.Control.Draw({
-    position: 'topright',
-    draw: {
-        
-        polygon: {
-            allowIntersection: false,
-            showArea: true,
-            drawError: {
-                color: '#b00b00',
-                timeout: 1000
-            },
-            shapeOptions: {
-                stroke: true,
-                color: '#f06eaa',
-                weight: 4,
-                opacity: 0.5,
-                fill: true,
-                fillColor: null, //same as color by default
-                fillOpacity: 0.2,
-                clickable: false
-            }
-        }
-    },
-    edit: {
-        featureGroup: drawnItems
-    }
-});
+  map.addControl(drawControl);
 
-map.addControl(drawControl);
+  map.on('draw:created', function (e) {
+      var type = e.layerType,
+          layer = e.layer;
 
-map.on('draw:created', function (e) {
-    var type = e.layerType,
-        layer = e.layer;
+      if (type === 'polygon') {
+  	coordinates =[];
+  	LatLongs = layer.getLatLngs();
+  	for (i=0;i<LatLongs.length;i++){
+  		coordinates.push([LatLongs[i].lng, LatLongs[i].lat]);
+      }
+  	document.getElementById("area").value= coordinates;
+  }
+      // Do whatever else you need to. (save to db, add to map etc)
+      drawnItems.addLayer(layer);
+  });
 
-    if (type === 'polygon') {
-	coordinates =[];
-	LatLongs = layer.getLatLngs();
-	for (i=0;i<LatLongs.length;i++){
-		coordinates.push([LatLongs[i].lng, LatLongs[i].lat]);    
-    }
-	document.getElementById("area").value= coordinates;
+  map.on('draw:edited', function () {
+      // Update db to save latest changes.
+  });
+
+  map.on('draw:deleted', function () {
+  	delete(layer)
+      // Update db to save latest changes.
+  });
 }
-    // Do whatever else you need to. (save to db, add to map etc)
-    drawnItems.addLayer(layer);
-});
 
-map.on('draw:edited', function () {
-    // Update db to save latest changes.
-});
-
-map.on('draw:deleted', function () {
-	delete(layer)
-    // Update db to save latest changes.
-});
-*/
+function dispatch(vue, event, data){
+  return function(){
+    vue.$dispatch(event, data)
+  }
+}
 
 function dispatchZoneID(id, vue){
   return function(){
