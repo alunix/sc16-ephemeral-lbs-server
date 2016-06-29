@@ -50,9 +50,6 @@ exports.messages = {
             "items": {
                 "type": "object",
                 "properties": {
-                    "Client-id": {
-                        "type": "string"
-                    },
                     "Message-id": {
                         "type": "string"
                     },
@@ -91,7 +88,7 @@ exports.messages = {
                         "required": ["Type", "Coordinate"]
                     }
                 },
-                "required": ["Client-id", "Message-id", "Zone-id", "Expired-at","Created-at", "Topic", "Title", "Message"]
+                "required": ["Message-id", "Zone-id", "Expired-at","Created-at", "Topic", "Title", "Message"]
             },
             "uniqueItems": true
         }

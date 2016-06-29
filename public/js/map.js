@@ -1,33 +1,40 @@
-// Create map
-var map = L.map('map').setView([51.959, 7.623], 14);
-var polygon;
-// Add layer to map
+new Vue({
+  parent: vue_broadcaster,
+  el: '#map',
+  data: {
+      map: null
+  },
+  created: function(){
+	this.$set('map', L.map('map'));
+    this.map.setView([51.959, 7.623], 14);
     L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
-            attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
-        }).addTo(map);
+      attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
+      }).addTo(this.map);
+	L.easyButton('<img src="/images/addZone.png">', dispatchZoneEdit(this))
+			.addTo(this.map);
+    this.get_zones();
+  },
+  methods: {
+    switch_zone: function(zoneid){
+      this.$dispatch('zoneSelected', zoneid);
+    },
+    get_zones: function(){
+      this.$http.get('/api/zones/', function(data) {
+          for (var i = 0; i < data['Zones'].length; i++) {
+            polygon = L.polygon(data['Zones'][i]['Geometry']['Coordinates'])
+              .bindPopup(data['Zones'][i]['Name'])
+              .on('click', dispatchZoneID(data['Zones'][i]['Zone-id'], this))
+              .addTo(this.map);
+          }
+      });
+    }
+  }
+});
 
-L.easyButton('<img src="/images/addZone.png">', function(btn, map){
-	console.log("create Zone");
-}).addTo(map); // probably just `map`
 
-function displayZones() {
-	$.ajax({
-		url: '/api/zones',
-		type: 'get',
-		dataType: 'json',
-		success: function (data) {
-			for (var i = 0; i < data['Zones'].length; i++) {
-				polygon = L.polygon(
-					data['Zones'][i]['Geometry']['Coordinates']
-				).addTo(map);
-				polygon.bindPopup(data['Zones'][i]['Name']);
-			}
-		}
-	});
-}
 
-displayZones();
 
+/*
 var drawnItems = new L.FeatureGroup();
 map.addLayer(drawnItems);
 
@@ -200,3 +207,16 @@ map.on('draw:deleted', function () {
 	delete(layer)
     // Update db to save latest changes.
 });
+*/
+
+function dispatchZoneID(id, vue){
+  return function(){
+    vue.$dispatch('zoneSelected', id);
+  }
+}
+
+function dispatchZoneEdit(vue){
+  return function(){
+    vue.$dispatch('addZone');
+  }
+}
