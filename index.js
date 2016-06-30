@@ -119,12 +119,12 @@ server.get('/api/zones-search', function(req, res) {
 
     var zonesTbl = nano.use(zonesdb);
     var nowDate = new Date();
-    
+
     if (!req.query.q) {
         res.status(404).send("Query parameter 'q' missing.");
         return;
     }
-    
+
     let search_string = req.query.q.toLowerCase();
 
     zonesTbl.view('zone_design', 'by_zone_name_and_date', {
@@ -144,9 +144,9 @@ server.get('/api/zones-search', function(req, res) {
                     delete result["_rev"];
                     zoneResult.Zones.push(result);
                 }
-                
+
                 res.json(zoneResult);
-            
+
             }
             else{
                 res.status(404).send('Zone non-existent or expired');
@@ -173,7 +173,7 @@ server.get('/api/messages', function(req, res) {
         res.status(404).send("Zone parameter missing.");
         return;
     }else{
-        zone = req.query.zone; 
+        zone = req.query.zone;
     }
 
     zonesTable.view("zone_design", "by_id_and_date",
@@ -234,12 +234,11 @@ server.post('/api/addmessages', function(req, res) {
             { include_docs: true },
             function(err, mbody) {
                 if (!err) {
-                    if(mbody.rows.length !== 0) {
-                        delete req.body.Messages[mCount];
-                        return;
-                    }
+                    delete req.body.Messages[mCount];
                 } else {
+                  if(err.error != 'not_found')
                     res.status(404).send('Database error! Couldn\'t fetch ID check messages: ' + err);
+                    return;
                 }
             }
         );
@@ -249,11 +248,12 @@ server.post('/api/addmessages', function(req, res) {
 
     // replacing Message-id with _id and storing the data
     for (let mCount = 0; mCount < req.body.Messages.length; mCount++) {
+
         // skip deleted messages
         if (req.body.Messages[mCount] == null) {
             break;
         }
-        
+
         let message = req.body.Messages[mCount];
 
         let messageID = message["Message-id"];
@@ -263,17 +263,11 @@ server.post('/api/addmessages', function(req, res) {
         msgTable.insert(message, undefined, function(err, body) {
             if (err) {
                 res.status(404).send('Database error:' + err.message);
-                error = err.message;
                 return;
             }
         });
-        if (error) break;
     }
-
-    if (!error) {
-        res.status(201).send("Message uploaded!");
-    }
-
+    res.status(201).send("Message uploaded!");
 });
 
 /* We start the server from the specified port. */
