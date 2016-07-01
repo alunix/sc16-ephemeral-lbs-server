@@ -228,34 +228,25 @@ server.post('/api/addmessages', function(req, res) {
 
     var msgTable = nano.use(msgdb);
 
-    // check for all messages if their ID exists already and not upload them in this case
-    for (let mCount = 0; mCount < req.body.Messages.length; mCount++) {
-        msgTable.get( req.body.Messages[mCount]["Message-id"],
-            { include_docs: true },
-            function(err, mbody) {
-                if (err) {
-                    if(err.error != 'not_found') {
-                        res.status(404).send('Database error! Couldn\'t fetch ID check messages: ' + err);
-                        return;
-                    } else {
-                        let message = req.body.Messages[mCount];
-                        let messageID = message["Message-id"];
-                        message["_id"] = messageID;
-                        delete message["Message-id"];
-                        msgTable.insert(message, undefined, function(err, body) {
-                            if (err) {
-                                res.status(404).send('Database error:' + err.message);
-                                return;
-                            }
-                            if(mCount+1 == req.body.Messages.length) {
-                                res.status(201).send("Message(s) uploaded!");
-                            }
-                        });
-                    }
-                }
-            }
-        );
+    let messages = req.body.Messages;
+    
+    // modify messages to save space
+    for(let mCount = 0; mCount < messages.length; mCount += 1) {
+        let messageID = messages[mCount]["Message-id"];
+        messages[mCount]["_id"] = messageID;
+        delete messages[mCount]["Message-id"];
     }
+
+    // bulk insert/update into database
+    msgTable.bulk({ "docs" : messages }, undefined, function(err, body) {
+        if (err) {
+            res.status(404).send('Database error:' + err.message);
+            return;
+        } else {
+            res.status(201).send("Message(s) uploaded!");
+        }
+
+    });
 
 });
 
