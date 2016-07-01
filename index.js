@@ -228,46 +228,35 @@ server.post('/api/addmessages', function(req, res) {
 
     var msgTable = nano.use(msgdb);
 
-    // check for all messages if their ID exists already and delete them
+    // check for all messages if their ID exists already and not upload them in this case
     for (let mCount = 0; mCount < req.body.Messages.length; mCount++) {
         msgTable.get( req.body.Messages[mCount]["Message-id"],
             { include_docs: true },
             function(err, mbody) {
-                if (!err) {
-                    delete req.body.Messages[mCount];
-                } else {
-                  if(err.error != 'not_found')
-                    res.status(404).send('Database error! Couldn\'t fetch ID check messages: ' + err);
-                    return;
+                if (err) {
+                    if(err.error != 'not_found') {
+                        res.status(404).send('Database error! Couldn\'t fetch ID check messages: ' + err);
+                        return;
+                    } else {
+                        let message = req.body.Messages[mCount];
+                        let messageID = message["Message-id"];
+                        message["_id"] = messageID;
+                        delete message["Message-id"];
+                        msgTable.insert(message, undefined, function(err, body) {
+                            if (err) {
+                                res.status(404).send('Database error:' + err.message);
+                                return;
+                            }
+                            if(mCount+1 == req.body.Messages.length) {
+                                res.status(201).send("Message(s) uploaded!");
+                            }
+                        });
+                    }
                 }
             }
         );
     }
 
-    var error = null;
-
-    // replacing Message-id with _id and storing the data
-    for (let mCount = 0; mCount < req.body.Messages.length; mCount++) {
-
-        // skip deleted messages
-        if (req.body.Messages[mCount] == null) {
-            break;
-        }
-
-        let message = req.body.Messages[mCount];
-
-        let messageID = message["Message-id"];
-        message["_id"] = messageID;
-        delete message["Message-id"];
-
-        msgTable.insert(message, undefined, function(err, body) {
-            if (err) {
-                res.status(404).send('Database error:' + err.message);
-                return;
-            }
-        });
-    }
-    res.status(201).send("Message uploaded!");
 });
 
 /* We start the server from the specified port. */
