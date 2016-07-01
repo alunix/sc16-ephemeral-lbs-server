@@ -40,6 +40,9 @@
                     <li>
                         <a href="about.html">About</a>
                     </li>
+                    <li>
+                        <button type="button" v-on:click="toggleContainer"> Toggle Container </button>
+                    </li>
                 </ul>
             </div>
             <!-- /.navbar-collapse -->
@@ -48,11 +51,11 @@
     </nav>
     <div id="overlay-back"></div>
     <div id="popup">
-      <h1>An Ephemeral Experience</h1>
-      <h3>Explore the map!</h3>
-      <p>Find help in the bar above!</p>
-      <button id="close">Get Started!</button>
-      <input type=button onClick="location.href='help.html'" value='Help'>
+        <h1>An Ephemeral Experience</h1>
+        <h3>Explore the map!</h3>
+        <p>Find help in the bar above!</p>
+        <button id="close">Get Started!</button>
+        <input type=button onClick="location.href='help.html'" value='Help'>
 
     </div>
 
@@ -61,35 +64,37 @@
         <!-- /.row -->
 
         <div class="row">
-        <div id="map" class="col-md-6">
-        </div>
+            <div id="map" class="col-md-6">
+            </div>
 
-        <div id="contentbox" class="col-md-3">
-            <div id="zonearea">
-              {{zone.Name}}</br>
-              {{zone['Expired-at']}}</br>
-              {{zone.Topics}}
-            </div>
-            <div id="messagearea">
-              <h3>Messages:</h3>
-              <div class="message" v-for="m in messages">
-                <div class="message-title">
-                  {{ m.Title }}
+            <div id="contentbox" class="col-md-3">
+                <div id="zonearea">
+                    <zoneinfo :name="zone.Name" :expire="zone['Expired-at']" :topic="zone.Topics"></zoneinfo> 
                 </div>
-                <div class="message-content">
-                  {{ m.Message }}
+                <template id="zone-info-template">
+                    <h2>{{name}}</h2>
+                    </br>
+                    <h3>{{expire}}</h3>
+                    </br>
+                    <h3>{{topic}}</h3>
+                </template>
+                <div id="messagearea">
+                        <messageinfo v-for="message in messages" :title="message.title" :message="message.message"></messageinfo>
                 </div>
-              </div>
+                <template id="message-info-template">
+                        <li> {{ title }} </li>
+                        <li> {{ message }} </li>
+                </template>
+
             </div>
         </div>
-      </div>
     </div>
     <!-- /.container -->
 </body>
 <script type="text/javascript" src="js/vue_broadcaster.js"></script>
-<script type="text/javascript" src="js/messages.js"></script>
+<script type="text/javascript" src="js/messageVue.js"></script>
 <script type="text/javascript" src="js/map.js"></script>
 <script type="text/javascript" src="js/dialog.js"></script>
-<script type="text/javascript" src="js/zone.js"></script>
+<script type="text/javascript" src="js/zoneVue.js"></script>
 
 </html>

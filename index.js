@@ -234,6 +234,7 @@ server.post('/api/addmessages', function(req, res) {
             { include_docs: true },
             function(err, mbody) {
                 if (!err) {
+                    console.log(mbody);
                     if(mbody.rows.length !== 0) {
                         delete req.body.Messages[mCount];
                         return;

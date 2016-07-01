@@ -27,10 +27,14 @@ body {
     overflow-y: scroll;
 }
 #zonearea {
-    background-color: lightgreen;
+    color: #000;
 }
 #messagearea {
     background-color: lightblue;
+}
+#info-template {
+    background-color: lightgreen;
+    color: #000;
 }
 .message {
     margin: 4px;
