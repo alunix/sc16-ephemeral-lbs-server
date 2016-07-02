@@ -26,7 +26,6 @@ exports.mock_zones=[
       ]
     },
   	"Name": "Münster",
-  	"Zone-id":"1",
   	"Expired-at":"2200-01-01T00:00:00.881Z",
   	"Topics":["general","sports","activities", "BBQ"]
   },
@@ -93,7 +92,6 @@ exports.mock_zones=[
       ]
     },
   	"Name": "RHW",
-  	"Zone-id":"2",
   	"Expired-at":"2025-01-01T00:00:00.881Z",
   	"Topics":["BBQ","general"]
 
@@ -125,7 +123,6 @@ exports.mock_zones=[
       ]
     },
   	"Name": "BBQ at the Aasee",
-  	"Zone-id":"3",
   	"Expired-at":"2016-09-30T00:00:00.881Z",
   	"Topics":["BBQ"]
 
