@@ -16,11 +16,16 @@ var vm = new Vue({
                 title: "cool",
                 message: "toll"
             }
-        ]
+        ],
+        state: true
     },
     events: {
         'switchZone': function (id) {
             //this.getMessages(id);
+        },
+        'switchVue': function () {
+            this.state = !this.state;
+            console.log(this.state)
         }
     },
     methods: {

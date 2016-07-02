@@ -23,7 +23,7 @@
         <div class="container">
             <!-- Brand and toggle get grouped for better mobile display -->
             <div class="navbar-header">
-                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#topbar">
                     <span class="sr-only">Toggle navigation</span>
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
@@ -32,7 +32,7 @@
                 <a class="navbar-brand" href="index.html">Home</a>
             </div>
             <!-- Collect the nav links, forms, and other content for toggling -->
-            <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+            <div class="collapse navbar-collapse" id="topbar">
                 <ul class="nav navbar-nav">
                     <li>
                         <a href="help.html">Help</a>
@@ -40,9 +40,9 @@
                     <li>
                         <a href="about.html">About</a>
                     </li>
-                    <li>
-                        <button type="button" v-on:click="toggleContainer"> Toggle Container </button>
-                    </li>
+                    <div id="togglebtn">
+                        <button type="button" v-on:click="switchView"> Toggle Container </button>
+                    </div>
                 </ul>
             </div>
             <!-- /.navbar-collapse -->
@@ -69,7 +69,7 @@
 
             <div id="contentbox" class="col-md-3">
                 <div id="zonearea">
-                    <zoneinfo :name="zone.Name" :expire="zone['Expired-at']" :topic="zone.Topics"></zoneinfo> 
+                    <zoneinfo v-if ="state" :name="zone.Name" :expire="zone['Expired-at']" :topic="zone.Topics"></zoneinfo>
                 </div>
                 <template id="zone-info-template">
                     <h2>{{name}}</h2>
@@ -79,13 +79,22 @@
                     <h3>{{topic}}</h3>
                 </template>
                 <div id="messagearea">
-                        <messageinfo v-for="message in messages" :title="message.title" :message="message.message"></messageinfo>
+                    <messageinfo v-if ="state" v-for="message in messages" :title="message.title" :message="message.message"></messageinfo>
                 </div>
                 <template id="message-info-template">
-                        <li> {{ title }} </li>
-                        <li> {{ message }} </li>
+                    <li> {{ title }} </li>
+                    <li> {{ message }} </li>
                 </template>
-
+                <div id="addzone">
+                    <addzone v-show ="state"> </addzone>
+                </div>
+                <template id="add-zone-template">
+                    <div>
+                        <span>Message is: {{ message }}</span>
+                        <br>
+                        <input type="text" v-model="message" placeholder="edit me">
+                    </div>
+                </template>
             </div>
         </div>
     </div>
@@ -96,5 +105,8 @@
 <script type="text/javascript" src="js/map.js"></script>
 <script type="text/javascript" src="js/dialog.js"></script>
 <script type="text/javascript" src="js/zoneVue.js"></script>
+<script type="text/javascript" src="js/addZoneVue.js"></script>
+<script type="text/javascript" src="js/buttonVue.js"></script>
+
 
 </html>

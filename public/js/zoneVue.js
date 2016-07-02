@@ -8,11 +8,15 @@ var vm = new Vue({
     el: '#zonearea',
     parent: vue_broadcaster,
     data: {
-        zone: null
+        zone: null,
+        state: true
     },
     events: {
         'switchZone': function (id) {
             this.getZone(id);
+        },
+        'switchVue': function () {
+            this.state = !this.state;
         }
     },
     methods: {
