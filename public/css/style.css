@@ -6,18 +6,25 @@ body {
 }
 #map {
     /* Make sure the map container has a defined height and width*/
-    height: 97%;
-    width: 75%;
+    min-height: 1px;
+    width: 60%;
     position: absolute;
     left: 0px;
+    top: 50px;
+    bottom: 0px;
+    right: 60%;
 }
 #contentbox {
-    height: 97%;
-    width: 25%;
+
+    width: 40%;
     padding-right: 5px;
     position: absolute;
     right: 0px;
+    top: 50px;
+    bottom: 0px;
+    left: 60%;
     border: 1px solid black;
+    overflow-y: scroll;
 }
 #zonearea {
     background-color: lightgreen;
@@ -25,6 +32,7 @@ body {
 #messagearea {
     max-height: 100%;
     overflow: scroll;
+    background-color: lightblue;
 }
 .message {
     margin: 4px;
