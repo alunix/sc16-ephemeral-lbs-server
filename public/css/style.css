@@ -4,6 +4,11 @@ body {
     height: 100%;
     width: 100%;
 }
+#search{
+  margin-top: 8px;
+  margin-bottom: 8px;
+  background-color: lightyellow;
+}
 #map {
     /* Make sure the map container has a defined height and width*/
     min-height: 1px;
@@ -15,7 +20,7 @@ body {
     right: 60%;
 }
 #contentbox {
-   
+
     width: 40%;
     padding-right: 5px;
     position: absolute;
