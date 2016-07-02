@@ -14,6 +14,7 @@
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/vue/1.0.22/vue.min.js"></script>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/vue-resource/0.7.0/vue-resource.min.js"></script>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/leaflet.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.1.6/Chart.bundle.min.js"></script>
 
 </head>
 
@@ -68,7 +69,9 @@
             <div id="zonearea">
               {{zone.Name}}</br>
               {{zone['Expired-at']}}</br>
-              {{zone.Topics}}
+              {{zone.Topics}}</br>
+              {{zone['Zone-id']}}</br>
+              <canvas id="zoneChart"></canvas>
             </div>
             <div id="messagearea">
               <h3>Messages:</h3>
