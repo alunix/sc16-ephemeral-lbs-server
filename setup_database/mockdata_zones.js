@@ -3,7 +3,6 @@ exports.mock_zones=[
     "Geometry": {
       "Type": "Polygon",
       "Coordinates": [
-        [
           [
             51.89217277879109,
             7.511215209960937
@@ -24,7 +23,6 @@ exports.mock_zones=[
             51.89217277879109,
             7.511215209960937
           ]
-        ]
       ]
     },
   	"Name": "Münster",
@@ -36,7 +34,6 @@ exports.mock_zones=[
     "Geometry": {
       "Type": "Polygon",
       "Coordinates": [
-        [
           [
             51.977796273481204,
             7.588720321655273
@@ -93,7 +90,6 @@ exports.mock_zones=[
             51.977796273481204,
             7.588720321655273
           ]
-        ]
       ]
     },
   	"Name": "RHW",
@@ -106,7 +102,6 @@ exports.mock_zones=[
     "Geometry": {
       "Type": "Polygon",
       "Coordinates": [
-        [
           [
             51.95746358653244,
             7.617602348327638
@@ -127,7 +122,6 @@ exports.mock_zones=[
             51.95746358653244,
             7.617602348327638
           ]
-        ]
       ]
     },
   	"Name": "BBQ at the Aasee",
