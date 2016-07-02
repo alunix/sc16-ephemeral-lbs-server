@@ -19,7 +19,6 @@ new Vue({
     get_zones: function(){
       this.$http.get('/api/zones/', function(data) {
           for (var i = 0; i < data['Zones'].length; i++) {
-            console.log('zone' + data['Zones'][i])
             polygon = L.polygon(data['Zones'][i]['Geometry']['Coordinates'])
               .bindPopup(data['Zones'][i]['Name'])
               .on('click', dispatchZoneID(data['Zones'][i]['Zone-id'], this))
