@@ -8,11 +8,7 @@ var vm = new Vue({
     el: '#zonearea',
     parent: vue_broadcaster,
     data: {
-        zone: {
-            'Name': "Münster",
-            'Expired-at': "25-63-2018",
-            'Topics':['Münster', 'Aasee']
-        },
+        zone: null,
         state: true
     },
     events: {

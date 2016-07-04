@@ -7,15 +7,7 @@ var vm = new Vue({
     el: '#messagearea',
     parent: vue_broadcaster,
     data: {
-        messages:  [
-            {
-                Title: "bla",
-                Message: "rofl kopter roflt rum"
-            },
-            {
-                Title: "cool",
-                Message: "toll"
-            }],
+        messages:  [],
 
         state: true
     },
