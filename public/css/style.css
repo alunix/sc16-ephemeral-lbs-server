@@ -124,7 +124,7 @@ body {
 }
 
 #createzone {
-    position: absolute;
+    position: relative;
     display: hidden;
     top: 160px;
     left: 80%;
