@@ -7,31 +7,31 @@ var vm = new Vue({
     el: '#messagearea',
     parent: vue_broadcaster,
     data: {
-        messages: [
+        messages:  [
             {
-                title: "bla",
-                message: "rofl kopter roflt rum"
+                Title: "bla",
+                Message: "rofl kopter roflt rum"
             },
             {
-                title: "cool",
-                message: "toll"
-            }
-        ],
+                Title: "cool",
+                Message: "toll"
+            }],
+
         state: true
     },
     events: {
         'switchZone': function (id) {
-            //this.getMessages(id);
+            this.getMessages(id);
         },
         'switchVue': function () {
             this.state = !this.state;
-            console.log(this.state)
         }
     },
     methods: {
         getMessages: function (zoneid) {
             this.$http.get('/api/messages?zone=' + zoneid, function (data) {
                 this.$set('messages', data['Messages']);
+                console.log(this.messages)
             });
         }
     }

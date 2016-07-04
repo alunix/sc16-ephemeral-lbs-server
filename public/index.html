@@ -40,9 +40,6 @@
                     <li>
                         <a href="about.html">About</a>
                     </li>
-                    <div id="togglebtn">
-                        <button type="button" v-on:click="switchView"> Toggle Container </button>
-                    </div>
                 </ul>
             </div>
             <!-- /.navbar-collapse -->
@@ -67,32 +64,51 @@
             <div id="map" class="col-md-6">
             </div>
 
-            <div id="contentbox" class="col-md-3">
+            <div id="contentbox" class="col-md-3 jumbotron">
+                <div id="togglebtn">
+                    <button type="button" class="btn-primary btn-lg" v-on:click="switchView"> Add Zone </button>
+                    </br></br>
+
+                </div>
                 <div id="zonearea">
-                    <zoneinfo v-if ="state" :name="zone.Name" :expire="zone['Expired-at']" :topic="zone.Topics"></zoneinfo>
+                    <zoneinfo v-if="state" :name="zone.Name" :expire="zone['Expired-at']" :topic="zone.Topics"></zoneinfo>
                 </div>
                 <template id="zone-info-template">
-                    <h2>{{name}}</h2>
-                    </br>
-                    <h3>{{expire}}</h3>
-                    </br>
-                    <h3>{{topic}}</h3>
+                    <div class="panel panel-default">
+                        <div class="panel-heading">{{name}}</div>
+                        <div class="panel-body">{{expire}}</br>{{topic}}</div>
+                    </div>
                 </template>
                 <div id="messagearea">
-                    <messageinfo v-if ="state" v-for="message in messages" :title="message.title" :message="message.message"></messageinfo>
+                    <messageinfo v-if="state" v-for="message in messages" :title="message.Title" :message="message.Message"></messageinfo>
                 </div>
+
                 <template id="message-info-template">
-                    <li> {{ title }} </li>
-                    <li> {{ message }} </li>
+                    <ul class="list-group">
+                        <li class="list-group-item"><span class="badge">Title</span> {{ title }} </li>
+                        <li class="list-group-item"><span class="badge">Message</span> {{ message }} </li>
+                    </ul>
                 </template>
                 <div id="addzone">
-                    <addzone v-show ="state"> </addzone>
+                    <addzone v-show="state"> </addzone>
                 </div>
                 <template id="add-zone-template">
                     <div>
-                        <span>Message is: {{ message }}</span>
+                        <form id="createzone">
+                            <label id="h2" form="createzone">Create Zone</label> </br>
+                            <label for="zonename">Zonename</label>
+                            <input type="text" id="zonename" maxlength="30"> </br>
+
+                            <label for="duration">Duration (in days)</label>
+                            <input type="number" id="duration" maxlength="3"> </br>
+
+                            <button type="reset">reset</button>
+                            <button type="submit" id="close">submit</button>
+                            <input type=button onClick="location.href='index.html'" value='cancel'>
+                        </form>
+                        <!--<span>Add zone form: {{ message }}</span>
                         <br>
-                        <input type="text" v-model="message" placeholder="edit me">
+                        <input type="text" v-model="message" placeholder="edit me">-->
                     </div>
                 </template>
             </div>

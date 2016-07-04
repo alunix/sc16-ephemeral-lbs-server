@@ -25,12 +25,13 @@ body {
     left: 60%;
     border: 1px solid black;
     overflow-y: scroll;
+    background-color: aliceblue
 }
 #zonearea {
     color: #000;
 }
 #messagearea {
-    background-color: lightblue;
+    /*background-color: lightgray;*/
 }
 #info-template {
     background-color: lightgreen;
@@ -99,3 +100,33 @@ body {
     z-index: 5;
     display: none
 }
+
+.panel-default {
+    color: black;
+}
+
+.panel-heading {
+    height: 150%;
+    background-color: cornflowerblue!important;
+    font-weight: bold;
+    font-size: 150%;
+}
+
+.jumbotron {
+}
+
+#createzone {
+    position: absolute;
+    display: hidden;
+    top: 160px;
+    left: 80%;
+    width: 500px;
+    height: auto;
+    margin-left: -500px;
+    background-color: white;
+    z-index: 6;
+    padding: 20px;
+    border: solid 5px #333333;
+    border-radius: 5px;
+}
+
