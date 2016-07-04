@@ -24,7 +24,7 @@
         <div class="container">
             <!-- Brand and toggle get grouped for better mobile display -->
             <div class="navbar-header">
-                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#topbar">
                     <span class="sr-only">Toggle navigation</span>
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
@@ -33,7 +33,7 @@
                 <a class="navbar-brand" href="index.html">Home</a>
             </div>
             <!-- Collect the nav links, forms, and other content for toggling -->
-            <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+            <div class="collapse navbar-collapse" id="topbar">
                 <ul class="nav navbar-nav">
                     <li>
                         <a href="help.html">Help</a>
@@ -49,11 +49,11 @@
     </nav>
     <div id="overlay-back"></div>
     <div id="popup">
-      <h1>An Ephemeral Experience</h1>
-      <h3>Explore the map!</h3>
-      <p>Find help in the bar above!</p>
-      <button id="close">Get Started!</button>
-      <input type=button onClick="location.href='help.html'" value='Help'>
+        <h1>An Ephemeral Experience</h1>
+        <h3>Explore the map!</h3>
+        <p>Find help in the bar above!</p>
+        <button id="close">Get Started!</button>
+        <input type=button onClick="location.href='help.html'" value='Help'>
 
     </div>
 
@@ -62,48 +62,88 @@
         <!-- /.row -->
 
         <div class="row">
-        <div id="map" class="col-md-6">
-        </div>
 
-        <div id="contentbox" class="col-md-3">
-            <div id="search">
-              <input type="text" class="form-control" placeholder="Search" v-model="search" debounce="500"></input>
-              <div id="search_results">
-                <div v-for="zone in result">
-                  {{zone.Name}}</br>
-                  {{zone['Expired-at']}}</br>
-                  {{zone.Topics}}
-                </div>
-              </div>
+
+            <div id="map" class="col-md-6">
             </div>
-            <div id="zonearea">
-              {{zone.Name}}</br>
-              {{zone['Expired-at']}}</br>
-              {{zone.Topics}}</br>
-              {{zone['Zone-id']}}</br>
-              <canvas id="zoneChart"></canvas>
-            </div>
-            <div id="messagearea">
-              <h3>Messages:</h3>
-              <div class="message" v-for="m in messages">
-                <div class="message-title">
-                  {{ m.Title }}
+
+            <div id="contentbox" class="col-md-3 jumbotron">
+                <div id="togglebtn">
+                    <button type="button" class="btn-primary btn-lg" v-on:click="switchView"> Add Zone </button>
+                    </br>
+                    </br>
                 </div>
-                <div class="message-content">
-                  {{ m.Message }}
+                <div id="search">
+                    <input type="text" class="form-control" placeholder="Search" v-model="search" debounce="500"></input>
+                    <div id="search_results">
+                        <div v-for="zone in result">
+                            {{zone.Name}}</br>
+                            {{zone['Expired-at']}}</br>
+                            {{zone.Topics}}
+                        </div>
+                    </div>
                 </div>
-              </div>
+                <div id="chartarea">
+                    <!--{{zone.Name}}</br>
+                    {{zone['Expired-at']}}</br>
+                    {{zone.Topics}}</br>
+                    {{zone['Zone-id']}}</br>-->
+                    <canvas id="zoneChart"></canvas>
+                </div>
+                <div id="zonearea">
+                    <zoneinfo v-if="state" :name="zone.Name" :expire="zone['Expired-at']" :topic="zone.Topics"></zoneinfo>
+                </div>
+                <template id="zone-info-template">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">{{name}}</div>
+                        <div class="panel-body">{{expire}}</br>{{topic}}</div>
+                    </div>
+                </template>
+                <div id="messagearea">
+                    <messageinfo v-if="state" v-for="message in messages" :title="message.Title" :message="message.Message"></messageinfo>
+                </div>
+
+                <template id="message-info-template">
+                    <ul class="list-group">
+                        <li class="list-group-item"><span class="badge">Title</span> {{ title }} </li>
+                        <li class="list-group-item"><span class="badge">Message</span> {{ message }} </li>
+                    </ul>
+                </template>
+                <div id="addzone">
+                    <addzone v-show="state"> </addzone>
+                </div>
+                <template id="add-zone-template">
+                    <div>
+                        <form id="createzone">
+                            <label id="h2" form="createzone">Create Zone</label> </br>
+                            <label for="zonename">Zonename</label>
+                            <input type="text" id="zonename" maxlength="30"> </br>
+
+                            <label for="duration">Duration (in days)</label>
+                            <input type="number" id="duration" maxlength="3"> </br>
+
+                            <button type="reset">reset</button>
+                            <button type="submit" id="close">submit</button>
+                            <input type=button onClick="location.href='index.html'" value='cancel'>
+                        </form>
+                        <!--<span>Add zone form: {{ message }}</span>
+                        <br>
+                        <input type="text" v-model="message" placeholder="edit me">-->
+                    </div>
+                </template>
             </div>
         </div>
-      </div>
     </div>
     <!-- /.container -->
 </body>
 <script type="text/javascript" src="js/vue_broadcaster.js"></script>
-<script type="text/javascript" src="js/messages.js"></script>
+<script type="text/javascript" src="js/messageVue.js"></script>
 <script type="text/javascript" src="js/map.js"></script>
 <script type="text/javascript" src="js/dialog.js"></script>
-<script type="text/javascript" src="js/zone.js"></script>
+<script type="text/javascript" src="js/zoneVue.js"></script>
+<script type="text/javascript" src="js/addZoneVue.js"></script>
+<script type="text/javascript" src="js/buttonVue.js"></script>
+<script type="text/javascript" src="js/chart.js"></script>
 <script type="text/javascript" src="js/search.js"></script>
 
 </html>

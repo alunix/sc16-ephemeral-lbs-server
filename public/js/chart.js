@@ -1,6 +1,6 @@
 new Vue({
     parent: vue_broadcaster,
-    el: '#zonearea',
+    el: '#chartarea',
     data: {
         zone: {}
     },
