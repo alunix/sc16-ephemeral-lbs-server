@@ -134,7 +134,7 @@ server.get('/api/zones-search', function(req, res) {
     }, function(err, body) {
         if (!err) {
             if (body.rows.length != 0) {
-                let zoneResult = { "Zones": [] };
+                let zoneResult = [];
 
                 for (let zCount = 0; zCount < body.rows.length; zCount++){
                     let result = body.rows[zCount].doc;
@@ -142,14 +142,13 @@ server.get('/api/zones-search', function(req, res) {
                     result["Zone-id"] = zoneID;
                     delete result["_id"];
                     delete result["_rev"];
-                    zoneResult.Zones.push(result);
+                    zoneResult.push(result);
                 }
-
                 res.json(zoneResult);
 
             }
             else{
-                res.status(404).send('Zone non-existent or expired');
+                res.json([]);
             }
 
         } else {

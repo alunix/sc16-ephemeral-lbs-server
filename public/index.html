@@ -66,6 +66,16 @@
         </div>
 
         <div id="contentbox" class="col-md-3">
+            <div id="search">
+              <input type="text" class="form-control" placeholder="Search" v-model="search" debounce="500"></input>
+              <div id="search_results">
+                <div v-for="zone in result">
+                  {{zone.Name}}</br>
+                  {{zone['Expired-at']}}</br>
+                  {{zone.Topics}}
+                </div>
+              </div>
+            </div>
             <div id="zonearea">
               {{zone.Name}}</br>
               {{zone['Expired-at']}}</br>
@@ -94,5 +104,6 @@
 <script type="text/javascript" src="js/map.js"></script>
 <script type="text/javascript" src="js/dialog.js"></script>
 <script type="text/javascript" src="js/zone.js"></script>
+<script type="text/javascript" src="js/search.js"></script>
 
 </html>
