@@ -14,6 +14,7 @@
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/vue/1.0.22/vue.min.js"></script>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/vue-resource/0.7.0/vue-resource.min.js"></script>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/leaflet.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.1.6/Chart.bundle.min.js"></script>
 
 </head>
 
@@ -61,14 +62,33 @@
         <!-- /.row -->
 
         <div class="row">
+
+
             <div id="map" class="col-md-6">
             </div>
 
             <div id="contentbox" class="col-md-3 jumbotron">
                 <div id="togglebtn">
                     <button type="button" class="btn-primary btn-lg" v-on:click="switchView"> Add Zone </button>
-                    </br></br>
-
+                    </br>
+                    </br>
+                </div>
+                <div id="search">
+                    <input type="text" class="form-control" placeholder="Search" v-model="search" debounce="500"></input>
+                    <div id="search_results">
+                        <div v-for="zone in result">
+                            {{zone.Name}}</br>
+                            {{zone['Expired-at']}}</br>
+                            {{zone.Topics}}
+                        </div>
+                    </div>
+                </div>
+                <div id="chartarea">
+                    {{zone.Name}}</br>
+                    {{zone['Expired-at']}}</br>
+                    {{zone.Topics}}</br>
+                    {{zone['Zone-id']}}</br>
+                    <canvas id="zoneChart"></canvas>
                 </div>
                 <div id="zonearea">
                     <zoneinfo v-if="state" :name="zone.Name" :expire="zone['Expired-at']" :topic="zone.Topics"></zoneinfo>
@@ -123,6 +143,7 @@
 <script type="text/javascript" src="js/zoneVue.js"></script>
 <script type="text/javascript" src="js/addZoneVue.js"></script>
 <script type="text/javascript" src="js/buttonVue.js"></script>
-
+<script type="text/javascript" src="js/chart.js"></script>
+<script type="text/javascript" src="js/search.js"></script>
 
 </html>
