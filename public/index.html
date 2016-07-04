@@ -129,16 +129,15 @@
 						</div>
 						<div style="width: 70%; float:right;">
 						<input type="text" id="zonename" maxlength="30"> </br>
-						<input type="text" id="duration" class="tcal"> </br>
-						<form action="input.htm"> 
-    					<input type="time" id"time" placeholder="23:59:59">
+						<input type="date" id="duration" class="tcal" min="2016-07-04"></br>
+    					<input type="time" id="time" placeholder="23:59:59">
   						</form> </br>
 						<input type="text" id="topics" maxlength="50"> </br>
-						<input type="text" id="area"> </br> 
+						<input type="text" id="area" disabled> </br> 
 						</div>
 						<p>&nbsp;</p>
 						<button form="createZoneform" type="reset">reset</button>
-						<button type="submit">finish</button>
+						<button id="finish" onclick="validation()">finish</button>
 						<button id="closeCreateZone"> cancel</button>
 						</form>
 					</div>
