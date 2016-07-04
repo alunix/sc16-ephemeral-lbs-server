@@ -24,6 +24,14 @@ var messagedesign = {
         },
         "by_zone_name_and_date": {
            "map": "function(doc){ emit([doc['Name'],doc['Expired-at']], doc)}"
+        },
+        "zone_activity_by_time":{
+          "map": "function(doc){var date = new Date(doc['Created-at']); var day = date.getDay(); var hour = date.getHours(); emit([doc['Zone-id'],day, hour],1)}",
+          "reduce":"_sum"
+        },
+        "zone_activity_by_date":{
+          "map": "function(doc){ emit([doc['Zone-id'],doc['Created-at']],null)}",
+          "reduce" : "_count"
         }
     }
 };
@@ -50,16 +58,37 @@ nano.db.create('messages', function(err, body) {
 var msgdb = nano.use('messages');
 var zonedb = nano.use('zones')
 
-msgdb.insert(messagedesign, function(err, body) {
+msgdb.get('_design/message_design', function(err, body){
+  if(err &&  err.error!='not_found'){
+    console.log(err);
+  }
+  else{
+    if(!err){
+      messagedesign['_rev'] = body['_rev'];
+    }
+    msgdb.insert(messagedesign, function(err, body) {
+            if (err) {
+                console.log('There was an error: ' + err)
+            }
+        }
+
+    );
+  }
+})
+
+zonedb.get('_design/zone_design', function(err, body){
+  if(err &&  err.error!='not_found'){
+    console.log(err);
+  }
+  else{
+    if(!err){
+      zonedesign['_rev'] = body['_rev'];
+    }
+    zonedb.insert(zonedesign, function(err, body) {
         if (err) {
             console.log('There was an error: ' + err)
         }
-    }
+    });
 
-);
-
-zonedb.insert(zonedesign, function(err, body) {
-    if (err) {
-        console.log('There was an error: ' + err)
-    }
-});
+  }
+})

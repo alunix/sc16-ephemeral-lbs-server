@@ -35,6 +35,8 @@ body {
     background-color: lightgreen;
 }
 #messagearea {
+    max-height: 100%;
+    overflow: scroll;
     background-color: lightblue;
 }
 .message {

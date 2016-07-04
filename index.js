@@ -157,9 +157,31 @@ server.get('/api/zones-search', function(req, res) {
     });
 });
 
+server.get('/api/zones/:zoneid/dailyactivity', function(req, res) {
+  var msgTable = nano.use(msgdb);
 
-
-
+  msgTable.view("message_design", "zone_activity_by_time",
+      {startkey:[req.params.zoneid,0,0],
+      endkey:[req.params.zoneid,6,23],
+      group:true},
+      function(err, body) {
+        if (!err) {
+          var output=[];
+          for (var i = 0; i<=6; i++){
+            output[i]=[]
+            for (var j=0; j<=23; j++){
+              output[i][j] = 0
+            }
+          }
+          for(var row in body.rows){
+            output[body.rows[row]['key'][1]][body.rows[row]['key'][2]] = body.rows[row]['value'];
+          }
+          res.json(output);
+        } else {
+          res.status(404).send('Database error: ' + err);
+        }
+    });
+});
 
 server.get('/api/messages', function(req, res) {
     var msgTable = nano.use(msgdb);
@@ -228,7 +250,7 @@ server.post('/api/addmessages', function(req, res) {
     var msgTable = nano.use(msgdb);
 
     let messages = req.body.Messages;
-    
+
     // modify messages to save space
     for(let mCount = 0; mCount < messages.length; mCount += 1) {
         let messageID = messages[mCount]["Message-id"];
