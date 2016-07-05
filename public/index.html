@@ -67,7 +67,7 @@
             <div id="map" class="col-md-6">
             </div>
 
-            <div id="contentbox" class="col-md-3 jumbotron">
+            <div id="contentbox" class="col-md-3">
                 <div id="togglebtn">
                     <button type="button" class="btn-primary btn-lg" v-on:click="switchView"> Add Zone </button>
                     </br>
@@ -79,15 +79,12 @@
                         <div v-for="zone in result">
                             {{zone.Name}}</br>
                             {{zone['Expired-at']}}</br>
-                            {{zone.Topics}}
+                            {{zone.Topics}}</br>
+                            {{zone['Zone-id']}}</br>
                         </div>
                     </div>
                 </div>
                 <div id="chartarea">
-                    <!--{{zone.Name}}</br>
-                    {{zone['Expired-at']}}</br>
-                    {{zone.Topics}}</br>
-                    {{zone['Zone-id']}}</br>-->
                     <canvas id="zoneChart"></canvas>
                 </div>
                 <div id="zonearea">
