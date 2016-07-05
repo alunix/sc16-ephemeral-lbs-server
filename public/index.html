@@ -91,7 +91,7 @@
                     </div>
                 </div>
                 <div id="chartarea">
-                    <canvas v-if="state" id="zoneChart"></canvas>
+                    <canvas v-show="state" id="zoneChart"></canvas>
                 </div>
                 <div id="zonearea">
                     <zoneinfo v-if="state" :name="zone.Name" :expire="zone['Expired-at']" :topic="zone.Topics"></zoneinfo>
