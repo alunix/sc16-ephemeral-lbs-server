@@ -3,11 +3,17 @@
       el: '#search',
       data: {
           search: '',
-          result:[]
+          result:[],
+          state: false
       },
       watch:{
         'search': function(val, oldVal){
           this.searchZone(val);
+        }
+      },
+      events:{
+          'firstInit': function(){
+            this.state = true;
         }
       },
       methods: {

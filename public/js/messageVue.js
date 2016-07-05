@@ -9,7 +9,7 @@ var vm = new Vue({
     data: {
         messages:  [],
 
-        state: true
+        state: false
     },
     events: {
         'switchZone': function (id) {
@@ -17,13 +17,15 @@ var vm = new Vue({
         },
         'switchVue': function () {
             this.state = !this.state;
+        },
+        'firstInit': function(){
+            this.state = true;
         }
     },
     methods: {
         getMessages: function (zoneid) {
             this.$http.get('/api/messages?zone=' + zoneid, function (data) {
                 this.$set('messages', data['Messages']);
-                console.log(this.messages)
             });
         }
     }

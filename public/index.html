@@ -49,11 +49,7 @@
     </nav>
     <div id="overlay-back"></div>
     <div id="popup">
-        <h1>An Ephemeral Experience</h1>
-        <h3>Explore the map!</h3>
-        <p>Find help in the bar above!</p>
-        <button id="close">Get Started!</button>
-        <input type=button onClick="location.href='help.html'" value='Help'>
+
 
     </div>
 
@@ -68,13 +64,23 @@
             </div>
 
             <div id="contentbox" class="col-md-3">
+                <div id="welcome">
+                    <welcome v-if="state"></welcome>
+                </div>
+                <template id="welcome-template">
+                    <h1>An Ephemeral Experience</h1>
+                    <h3>Explore the map!</h3>
+                    <p>Find help in the bar above!</p>
+                    <button id="close" v-on:click="initView()" >Get Started!</button>
+                    <!--<input type=button onClick="location.href='help.html'" value='Help'>-->
+                </template>
                 <div id="togglebtn">
-                    <button type="button" class="btn-primary btn-lg" v-on:click="switchView"> Add Zone </button>
+                    <button type="button" v-if="state" class="toggle btn-primary btn-lg" :class="{ 'active': active }" @click="call">{{ active ? infoText : zoneText }}</button>
                     </br>
                     </br>
                 </div>
                 <div id="search">
-                    <input type="text" class="form-control" placeholder="Search" v-model="search" debounce="500"></input>
+                    <input type="text" v-if="state" class="form-control" placeholder="Search" v-model="search" debounce="500"></input>
                     <div id="search_results">
                         <div v-for="zone in result">
                             {{zone.Name}}</br>
@@ -85,12 +91,12 @@
                     </div>
                 </div>
                 <div id="chartarea">
-                    <canvas id="zoneChart"></canvas>
+                    <canvas v-if="state" id="zoneChart"></canvas>
                 </div>
                 <div id="zonearea">
                     <zoneinfo v-if="state" :name="zone.Name" :expire="zone['Expired-at']" :topic="zone.Topics"></zoneinfo>
                 </div>
-                <template id="zone-info-template">
+                <template v-if="state" id="zone-info-template">
                     <div class="panel panel-default">
                         <div class="panel-heading">{{name}}</div>
                         <div class="panel-body">{{expire}}</br>{{topic}}</div>
@@ -134,6 +140,7 @@
     <!-- /.container -->
 </body>
 <script type="text/javascript" src="js/vue_broadcaster.js"></script>
+<script type="text/javascript" src="js/welcomeVue.js"></script>
 <script type="text/javascript" src="js/messageVue.js"></script>
 <script type="text/javascript" src="js/map.js"></script>
 <script type="text/javascript" src="js/dialog.js"></script>
@@ -142,5 +149,4 @@
 <script type="text/javascript" src="js/buttonVue.js"></script>
 <script type="text/javascript" src="js/chart.js"></script>
 <script type="text/javascript" src="js/search.js"></script>
-
 </html>
