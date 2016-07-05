@@ -47,11 +47,6 @@
         </div>
         <!-- /.container -->
     </nav>
-    <div id="overlay-back"></div>
-    <div id="popup">
-
-
-    </div>
 
     <!-- Page Content -->
     <div class="container">
@@ -74,12 +69,12 @@
                     <button id="close" v-on:click="initView()" >Get Started!</button>
                     <!--<input type=button onClick="location.href='help.html'" value='Help'>-->
                 </template>
-                <div id="togglebtn">
+                <div id="togglebtn" v-cloak>
                     <button type="button" v-if="state" class="toggle btn-primary btn-lg" :class="{ 'active': active }" @click="call">{{ active ? infoText : zoneText }}</button>
                     </br>
                     </br>
                 </div>
-                <div id="search">
+                <div id="search" v-cloak>
                     <input type="text" v-if="state" class="form-control" placeholder="Search" v-model="search" debounce="500"></input>
                     <div id="search_results">
                         <div v-for="zone in result">
@@ -90,10 +85,10 @@
                         </div>
                     </div>
                 </div>
-                <div id="chartarea">
+                <div id="chartarea" v-cloak>
                     <canvas v-show="state" id="zoneChart"></canvas>
                 </div>
-                <div id="zonearea">
+                <div id="zonearea" v-cloak>
                     <zoneinfo v-if="state" :name="zone.Name" :expire="zone['Expired-at']" :topic="zone.Topics"></zoneinfo>
                 </div>
                 <template v-if="state" id="zone-info-template">
@@ -143,7 +138,6 @@
 <script type="text/javascript" src="js/welcomeVue.js"></script>
 <script type="text/javascript" src="js/messageVue.js"></script>
 <script type="text/javascript" src="js/map.js"></script>
-<script type="text/javascript" src="js/dialog.js"></script>
 <script type="text/javascript" src="js/zoneVue.js"></script>
 <script type="text/javascript" src="js/addZoneVue.js"></script>
 <script type="text/javascript" src="js/buttonVue.js"></script>
