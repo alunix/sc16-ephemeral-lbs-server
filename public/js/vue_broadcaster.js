@@ -7,6 +7,10 @@ var vue_broadcaster = new Vue({
     'togglebtn': function(){
       console.log("broadcasted: togglebtn clicked");
       this.$broadcast('switchVue');
+    },
+    'init': function(){
+      console.log("broadcasted: init");
+      this.$broadcast('firstInit');
     }
   }
 });

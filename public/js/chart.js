@@ -2,14 +2,19 @@ new Vue({
     parent: vue_broadcaster,
     el: '#chartarea',
     data: {
-        zone: {}
+        zone: {},
+        state: false
     },
     events:{
       'switchZone': function(id){
         console.log('switchZone'+ id)
         this.getZone(id);
-      }
+      },
+      'firstInit': function(){
+            this.state = true;
+        }
     },
+    
     methods: {
         getZone: function(id) {
             this.$http.get('/api/zones/'+id, function(data) {

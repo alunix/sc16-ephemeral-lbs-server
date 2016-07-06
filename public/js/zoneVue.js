@@ -9,7 +9,7 @@ var vm = new Vue({
     parent: vue_broadcaster,
     data: {
         zone: null,
-        state: true
+        state: false
     },
     events: {
         'switchZone': function (id) {
@@ -17,6 +17,9 @@ var vm = new Vue({
         },
         'switchVue': function () {
             this.state = !this.state;
+        },
+        'firstInit': function(){
+            this.state = true;
         }
     },
     methods: {
