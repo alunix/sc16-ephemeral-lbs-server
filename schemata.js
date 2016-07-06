@@ -72,7 +72,7 @@ exports.messages = {
                         "type": "string"
                     },
                     "Location": {
-                        "type": "object",
+                        "type": ["object", "null"],
                         "properties": {
 
                             "Type": {
