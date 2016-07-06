@@ -4,6 +4,11 @@ body {
     height: 100%;
     width: 100%;
 }
+#search{
+  margin-top: 8px;
+  margin-bottom: 8px;
+  background-color: lightyellow;
+}
 #map {
     /* Make sure the map container has a defined height and width*/
     min-height: 1px;
@@ -16,21 +21,28 @@ body {
 }
 #contentbox {
     width: 40%;
-    padding-right: 5px;
+    padding: 10px;
     position: absolute;
     right: 0px;
     top: 50px;
     bottom: 0px;
     left: 60%;
-    border: 1px solid black;
     overflow-y: scroll;
+    background-color: aliceblue
 }
 #zonearea {
-    background-color: lightgreen;
+    color: #000;
 }
 #messagearea {
-    background-color: lightblue;
+
 }
+/*#info-template {
+    background-color: lightgreen;
+    color: #000;
+    max-height: 100%;
+    overflow: scroll;
+    background-color: lightblue;
+}*/
 .message {
     margin: 4px;
     padding: 4px;
@@ -95,17 +107,25 @@ body {
     display: none
 }
 
-#createzonePopup {
-    position: absolute;
+.panel-default {
+    color: black;
+}
+
+.panel-heading {
+    height: 150%;
+    background-color: cornflowerblue!important;
+    font-weight: bold;
+    font-size: 150%;
+}
+
+#createzone {
+    position: relative;
     display: hidden;
-    top: 160px;
-    left: 80%;
-    width: 500px;
     height: auto;
-    margin-left: -250px;
-    background-color: white;
-    z-index: 6;
-    padding: 20px;
-    border: solid 5px #333333;
-    border-radius: 5px;
+    padding: 10px;
+    border: solid 1px #333333;
+}
+
+[v-cloak] {
+  display: none;
 }

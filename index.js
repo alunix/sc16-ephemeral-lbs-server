@@ -119,12 +119,12 @@ server.get('/api/zones-search', function(req, res) {
 
     var zonesTbl = nano.use(zonesdb);
     var nowDate = new Date();
-    
+
     if (!req.query.q) {
         res.status(404).send("Query parameter 'q' missing.");
         return;
     }
-    
+
     let search_string = req.query.q.toLowerCase();
 
     zonesTbl.view('zone_design', 'by_zone_name_and_date', {
@@ -134,7 +134,7 @@ server.get('/api/zones-search', function(req, res) {
     }, function(err, body) {
         if (!err) {
             if (body.rows.length != 0) {
-                let zoneResult = { "Zones": [] };
+                let zoneResult = [];
 
                 for (let zCount = 0; zCount < body.rows.length; zCount++){
                     let result = body.rows[zCount].doc;
@@ -142,14 +142,13 @@ server.get('/api/zones-search', function(req, res) {
                     result["Zone-id"] = zoneID;
                     delete result["_id"];
                     delete result["_rev"];
-                    zoneResult.Zones.push(result);
+                    zoneResult.push(result);
                 }
-                
                 res.json(zoneResult);
-            
+
             }
             else{
-                res.status(404).send('Zone non-existent or expired');
+                res.json([]);
             }
 
         } else {
@@ -158,9 +157,31 @@ server.get('/api/zones-search', function(req, res) {
     });
 });
 
+server.get('/api/zones/:zoneid/dailyactivity', function(req, res) {
+  var msgTable = nano.use(msgdb);
 
-
-
+  msgTable.view("message_design", "zone_activity_by_time",
+      {startkey:[req.params.zoneid,0,0],
+      endkey:[req.params.zoneid,6,23],
+      group:true},
+      function(err, body) {
+        if (!err) {
+          var output=[];
+          for (var i = 0; i<=6; i++){
+            output[i]=[]
+            for (var j=0; j<=23; j++){
+              output[i][j] = 0
+            }
+          }
+          for(var row in body.rows){
+            output[body.rows[row]['key'][1]][body.rows[row]['key'][2]] = body.rows[row]['value'];
+          }
+          res.json(output);
+        } else {
+          res.status(404).send('Database error: ' + err);
+        }
+    });
+});
 
 server.get('/api/messages', function(req, res) {
     var msgTable = nano.use(msgdb);
@@ -173,7 +194,7 @@ server.get('/api/messages', function(req, res) {
         res.status(404).send("Zone parameter missing.");
         return;
     }else{
-        zone = req.query.zone; 
+        zone = req.query.zone;
     }
 
     zonesTable.view("zone_design", "by_id_and_date",
@@ -228,51 +249,25 @@ server.post('/api/addmessages', function(req, res) {
 
     var msgTable = nano.use(msgdb);
 
-    // check for all messages if their ID exists already and delete them
-    for (let mCount = 0; mCount < req.body.Messages.length; mCount++) {
-        msgTable.get( req.body.Messages[mCount]["Message-id"],
-            { include_docs: true },
-            function(err, mbody) {
-                if (!err) {
-                    if(mbody.rows.length !== 0) {
-                        delete req.body.Messages[mCount];
-                        return;
-                    }
-                } else {
-                    res.status(404).send('Database error! Couldn\'t fetch ID check messages: ' + err);
-                }
-            }
-        );
+    let messages = req.body.Messages;
+
+    // modify messages to save space
+    for(let mCount = 0; mCount < messages.length; mCount += 1) {
+        let messageID = messages[mCount]["Message-id"];
+        messages[mCount]["_id"] = messageID;
+        delete messages[mCount]["Message-id"];
     }
 
-    var error = null;
-
-    // replacing Message-id with _id and storing the data
-    for (let mCount = 0; mCount < req.body.Messages.length; mCount++) {
-        // skip deleted messages
-        if (req.body.Messages[mCount] == null) {
-            break;
+    // bulk insert/update into database
+    msgTable.bulk({ "docs" : messages }, undefined, function(err, body) {
+        if (err) {
+            res.status(404).send('Database error:' + err.message);
+            return;
+        } else {
+            res.status(201).send("Message(s) uploaded!");
         }
-        
-        let message = req.body.Messages[mCount];
 
-        let messageID = message["Message-id"];
-        message["_id"] = messageID;
-        delete message["Message-id"];
-
-        msgTable.insert(message, undefined, function(err, body) {
-            if (err) {
-                res.status(404).send('Database error:' + err.message);
-                error = err.message;
-                return;
-            }
-        });
-        if (error) break;
-    }
-
-    if (!error) {
-        res.status(201).send("Message uploaded!");
-    }
+    });
 
 });
 

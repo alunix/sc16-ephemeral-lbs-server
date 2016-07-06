@@ -25,131 +25,142 @@
 		<script type="text/javascript" src="http://leaflet.github.io/Leaflet.draw/lib/leaflet/leaflet.js"></script>
 		<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.draw/0.2.3/leaflet.draw-src.js"></script>
 		<script type="text/javascript" src="https://raw.githubusercontent.com/CliffCloud/Leaflet.EasyButton/master/src/easy-button.js"></script>
-		
-   
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.1.6/Chart.bundle.min.js"></script>
 
 	</head>
-
-	<body>
-		<!-- Navigation -->
-		<nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
-			<div class="container">
-				<!-- Brand and toggle get grouped for better mobile display -->
-				<div class="navbar-header">
-					<button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
-						<span class="sr-only">Toggle navigation</span>
-						<span class="icon-bar"></span>
-						<span class="icon-bar"></span>
-						<span class="icon-bar"></span>
-					</button>
-					<a class="navbar-brand" href="index.html">Home</a>
-				</div>
-				<!-- Collect the nav links, forms, and other content for toggling -->
-				<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-					<ul class="nav navbar-nav">
-						<li>
-							<a href="help.html">Help</a>
-						</li>
-						<li>
-							<a href="about.html">About</a>
-						</li>
-					</ul>
-				</div>
-				<!-- /.navbar-collapse -->
-			</div>
-			<!-- /.container -->
-		</nav>
-		<div id="overlay-back"></div>
-		<div id="popup">
-			<h1>An Ephemeral Experience</h1>
-			<h3>Explore the map!</h3>
-			<p>Find help in the bar above!</p>
-			<button id="close">Get Started!</button>
-			<input type=button onClick="location.href = 'help.html'" value='Help'>
-
-		</div>
+  <body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+        <div class="container">
+            <!-- Brand and toggle get grouped for better mobile display -->
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#topbar">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="index.html">Home</a>
+            </div>
+            <!-- Collect the nav links, forms, and other content for toggling -->
+            <div class="collapse navbar-collapse" id="topbar">
+                <ul class="nav navbar-nav">
+                    <li>
+                        <a href="help.html">Help</a>
+                    </li>
+                    <li>
+                        <a href="about.html">About</a>
+                    </li>
+                </ul>
+            </div>
+            <!-- /.navbar-collapse -->
+        </div>
+        <!-- /.container -->
+    </nav>
 
 		<!-- Page Content -->
 		<div class="container">
 			<!-- /.row -->
+        <div class="row">
+            <div id="map" class="col-md-6">
+            </div>
 
-			<div class="row">
-				<div id="map" class="col-md-6">
-					<div class="leaflet-control-mapbox-geocoder leaflet-bar leaflet-control active" style=" position: absolute; bottom: 1%;">
-						<a class="leaflet-control-mapbox-geocoder-toggle mapbox-icon mapbox-icon-geocoder" href="#">&nbsp;</a>
-						<div class="leaflet-control-mapbox-geocoder-results"></div>
-						<div class="leaflet-control-mapbox-geocoder-wrap">
-							<form class="leaflet-control-mapbox-geocoder-form">
-								<input class="" type="text" placeholder="Search">
-							</form>
-						</div>
-					</div>
-					
-				</div> 
+            <div id="contentbox" class="col-md-3">
+                <div id="welcome">
+                    <welcome v-if="state"></welcome>
+                </div>
+                <template id="welcome-template">
+                    <h1>An Ephemeral Experience</h1>
+                    <h3>Explore the map!</h3>
+                    <p>Find help in the bar above!</p>
+                    <button id="close" v-on:click="initView()" >Get Started!</button>
+                    <!--<input type=button onClick="location.href='help.html'" value='Help'>-->
+                </template>
+                <div id="togglebtn" v-cloak>
+                    <button type="button" v-if="state" class="toggle btn-primary btn-lg" :class="{ 'active': active }" @click="call">{{ active ? infoText : zoneText }}</button>
+                    </br>
+                    </br>
+                </div>
+                <div id="search" v-cloak>
+                    <input type="text" v-if="state" class="form-control" placeholder="Search" v-model="search" debounce="500"></input>
+                    <div id="search_results">
+                        <div v-for="zone in result">
+                            {{zone.Name}}</br>
+                            {{zone['Expired-at']}}</br>
+                            {{zone.Topics}}</br>
+                            {{zone['Zone-id']}}</br>
+                        </div>
+                    </div>
+                </div>
+                <div id="chartarea" v-cloak>
+                    <canvas v-show="state" id="zoneChart"></canvas>
+                </div>
+                <div id="zonearea" v-cloak>
+                    <zoneinfo v-if="state" :name="zone.Name" :expire="zone['Expired-at']" :topic="zone.Topics"></zoneinfo>
+                </div>
+                <template v-if="state" id="zone-info-template">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">{{name}}</div>
+                        <div class="panel-body">{{expire}}</br>{{topic}}</div>
+                    </div>
+                </template>
+                <div id="messagearea">
+                    <messageinfo v-if="state" v-for="message in messages" :title="message.Title" :message="message.Message"></messageinfo>
+                </div>
 
-				<div id="createzonePopup">
-					<form id="createzone">
-						<label id="h2" form="createzone">Create Zone</label> </br>
-						<label for="zonename">Zonename</label> 
-						<input type="text" id="zonename" maxlength="30"> </br>
-						<label for="duration">Duration (in days)</label>  
-						<input  type="text" id="duration" class="tcal" > </br>
-						<button type="reset">reset</button>
-						<button type="submit">finish</button>
-						<button id="closeCreateZone"> cancel</button>
-					</form>
-				</div>
+                <template id="message-info-template">
+                    <ul class="list-group">
+                        <li class="list-group-item"><span class="badge">Title</span> {{ title }} </li>
+                        <li class="list-group-item"><span class="badge">Message</span> {{ message }} </li>
+                    </ul>
+                </template>
+                <div id="addzone">
+                    <addzone v-show="state"> </addzone>
+                </div>
+                <template id="add-zone-template">
+                    <div>
+                      <form id="createZoneform">
+                        <h3>Create Zone</h3>
+                        <div style="width: 30%; float:left;">
+                        <label for="zonename">Zonename</label></br>
+                        <label for="duration">Duration</label> </br>
+                        <label for="time">Time</label>   </br>
+                        <label for="topics">Topics</label> </br>
+                        <label for="area">Area</label> </br>
+                        </div>
+                        <div style="width: 70%; float:right;">
+                        <input type="text" id="zonename" maxlength="30"> </br>
+                        <input type="date" id="duration" class="tcal" min="2016-07-04"></br>
+                          <input type="time" id="time" placeholder="23:59:59">
+                          </form> </br>
+                        <input type="text" id="topics" maxlength="50"> </br>
+                        <input type="text" id="area" disabled> </br>
+                        </div>
+                        <p>&nbsp;</p>
+                        <button form="createZoneform" type="reset">reset</button>
+                        <button id="finish" onclick="validation()">finish</button>
+                        <button id="closeCreateZone"> cancel</button>
+                      </form>
+                    </div>
+                </template>
+            </div>
+            <!--<div id="popup"> </div>
+            <div id="overlay-back"></div>-->
+        </div>
 
-				<div id="contentbox" class="col-md-3">
-					<div id="zonearea">
-						{{zone.Name}}</br>
-						{{zone['Expired-at']}}</br>
-						{{zone.Topics}}
-					</div>
-					<div id="messagearea">
-						<h3>Messages:</h3>
-						<div class="message" v-for="m in messages">
-							<div class="message-title">
-								{{ m.Title }}
-							</div>
-							<div class="message-content">
-								{{ m.Message }}
-							</div>
-						</div>
-					</div>
-					<div id="createZone">
-						<form id="createZoneform">
-						<h3>Create Zone</h3>
-						<div style="width: 30%; float:left;">
-						<label for="zonename">Zonename</label></br>
-						<label for="duration">Duration</label> </br>
-						<label for="time">Time</label>   </br>
-						<label for="topics">Topics</label> </br>
-						<label for="area">Area</label> </br>
-						</div>
-						<div style="width: 70%; float:right;">
-						<input type="text" id="zonename" maxlength="30"> </br>
-						<input type="date" id="duration" class="tcal" min="2016-07-04"></br>
-    					<input type="time" id="time" placeholder="23:59:59">
-  						</form> </br>
-						<input type="text" id="topics" maxlength="50"> </br>
-						<input type="text" id="area" disabled> </br> 
-						</div>
-						<p>&nbsp;</p>
-						<button form="createZoneform" type="reset">reset</button>
-						<button id="finish" onclick="validation()">finish</button>
-						<button id="closeCreateZone"> cancel</button>
-						</form>
-					</div>
-				</div>
-			</div>
-		</div>
-		<!-- /.container -->
-	</body>
-	<script type="text/javascript" src="js/vue_broadcaster.js"></script>
-	<script type="text/javascript" src="js/messages.js"></script>
-	<script type="text/javascript" src="js/map.js"></script>
-	<script type="text/javascript" src="js/dialog.js"></script>
-	<script type="text/javascript" src="js/zone.js"></script>
-	<script type="text/javascript" src="calendar/tcal.js"></script>
+    </div>
+    <!-- /.container -->
+</body>
+<script type="text/javascript" src="js/vue_broadcaster.js"></script>
+<script type="text/javascript" src="js/welcomeVue.js"></script>
+<script type="text/javascript" src="js/messageVue.js"></script>
+<script type="text/javascript" src="js/map.js"></script>
+<script type="text/javascript" src="js/zoneVue.js"></script>
+<script type="text/javascript" src="js/addZoneVue.js"></script>
+<script type="text/javascript" src="js/buttonVue.js"></script>
+<script type="text/javascript" src="js/chart.js"></script>
+<script type="text/javascript" src="js/search.js"></script>
+<script type="text/javascript" src="calendar/tcal.js"></script>
+<!-- <script type="text/javascript" src="js/dialog.js"></script>-->
 </html>
+>>>>>>> origin/master
