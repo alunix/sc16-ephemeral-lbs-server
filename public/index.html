@@ -115,7 +115,7 @@
                     </ul>
                 </template>
                 <div id="addzone">
-                    <addzone v-show="state"> </addzone>
+                    <addzone v-if="state"> </addzone>
                 </div>
                 <template id="add-zone-template">
                     <div>
@@ -129,16 +129,16 @@
                         <label for="area">Area</label> </br>
                         </div>
                         <div style="width: 70%; float:right;">
-                        <input type="text" id="zonename" maxlength="30"> </br>
-                        <input type="date" id="duration" class="tcal" min="2016-07-04"></br>
-                          <input type="time" id="time" placeholder="23:59:59">
+                        <input type="text" v-model="Name" id="zonename" maxlength="30"> </br>
+                        <input type="date" v-model="Expired-at" id="duration" class="tcal" min="2016-07-04"></br>
+                        <input type="time" id="time" placeholder="23:59:59">
                           </form> </br>
-                        <input type="text" id="topics" maxlength="50"> </br>
-                        <input type="text" id="area" disabled> </br>
+                        <input type="text" v-model="topicmodel" id="topics" maxlength="50"> </br>
+                        <input type="text" v-model="coordinatesmodel" id="area" disabled> </br>
                         </div>
                         <p>&nbsp;</p>
                         <button form="createZoneform" type="reset">reset</button>
-                        <button id="finish" onclick="validation()">finish</button>
+                        <button v-on:click="submitzone">submit</button>
                         <button id="closeCreateZone"> cancel</button>
                       </form>
                     </div>
@@ -163,4 +163,3 @@
 <script type="text/javascript" src="calendar/tcal.js"></script>
 <!-- <script type="text/javascript" src="js/dialog.js"></script>-->
 </html>
->>>>>>> origin/master
