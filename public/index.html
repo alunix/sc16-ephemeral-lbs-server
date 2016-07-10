@@ -62,9 +62,11 @@
 		<div class="container">
 			<!-- /.row -->
         <div class="row">
+					<div id="togglebtn" v-cloak>
+							<button type="button" v-if="state" class="toggle btn-primary btn-lg" :class="{ 'active': active }" @click="call">{{ active ? infoText : zoneText }}</button>
+					</div>
             <div id="map" class="col-md-6">
             </div>
-
             <div id="contentbox" class="col-md-3">
                 <div id="welcome">
                     <welcome v-if="state"></welcome>
@@ -79,9 +81,6 @@
                             {{zone['Zone-id']}}</br>
                         </div>
                     </div>
-                </div>
-                <div id="togglebtn" v-cloak>
-                    <button type="button" v-if="state" class="toggle btn-primary btn-lg" :class="{ 'active': active }" @click="call">{{ active ? infoText : zoneText }}</button>
                 </div>
                 <div id="zonearea" v-cloak>
                     <zoneinfo v-if="state" :name="zone.Name" :expire="zone['Expired-at']" :topic="zone.Topics"></zoneinfo>

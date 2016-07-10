@@ -125,6 +125,16 @@ body {
     padding: 10px;
     border: solid 1px #333333;
 }
+#togglebtn{
+  position: absolute;
+  height: auto;
+  width: auto;
+  bottom: 0;
+  left: 0;
+  padding-bottom: 20px;
+  padding-left: 10px;
+  z-index: 100;
+}
 
 [v-cloak] {
   display: none;
