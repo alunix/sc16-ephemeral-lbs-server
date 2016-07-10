@@ -69,13 +69,6 @@
                 <div id="welcome">
                     <welcome v-if="state"></welcome>
                 </div>
-                <template id="welcome-template">
-                    <h1>An Ephemeral Experience</h1>
-                    <h3>Explore the map!</h3>
-                    <p>Find help in the bar above!</p>
-                    <button id="close" v-on:click="initView()" >Get Started!</button>
-                    <!--<input type=button onClick="location.href='help.html'" value='Help'>-->
-                </template>
                 <div id="togglebtn" v-cloak>
                     <button type="button" v-if="state" class="toggle btn-primary btn-lg" :class="{ 'active': active }" @click="call">{{ active ? infoText : zoneText }}</button>
                     </br>
@@ -98,54 +91,13 @@
                 <div id="zonearea" v-cloak>
                     <zoneinfo v-if="state" :name="zone.Name" :expire="zone['Expired-at']" :topic="zone.Topics"></zoneinfo>
                 </div>
-                <template v-if="state" id="zone-info-template">
-                    <div class="panel panel-default">
-                        <div class="panel-heading">{{name}}</div>
-                        <div class="panel-body">{{expire}}</br>{{topic}}</div>
-                    </div>
-                </template>
                 <div id="messagearea">
                     <messageinfo v-if="state" v-for="message in messages" :title="message.Title" :topic="message.Topic" :message="message.Message"></messageinfo>
 								</div>
-
-                <template id="message-info-template">
-                    <ul class="list-group">
-                        <li class="list-group-item"><span class="badge">{{topic}}</span> {{ title }} </li>
-                        <li class="list-group-item"> {{ message }} </li>
-                    </ul>
-                </template>
                 <div id="addzone">
                     <addzone v-show="state"> </addzone>
                 </div>
-                <template id="add-zone-template">
-                    <div>
-                      <form id="createZoneform">
-                        <h3>Create Zone</h3>
-                        <div style="width: 30%; float:left;">
-                        <label for="zonename">Zonename</label></br>
-                        <label for="duration">Duration</label> </br>
-                        <label for="time">Time</label>   </br>
-                        <label for="topics">Topics</label> </br>
-                        <label for="area">Area</label> </br>
-                        </div>
-                        <div style="width: 70%; float:right;">
-                        <input type="text" id="zonename" maxlength="30"> </br>
-                        <input type="date" id="duration" class="tcal" min="2016-07-04"></br>
-                          <input type="time" id="time" placeholder="23:59:59">
-                          </form> </br>
-                        <input type="text" id="topics" maxlength="50"> </br>
-                        <input type="text" id="area" disabled> </br>
-                        </div>
-                        <p>&nbsp;</p>
-                        <button form="createZoneform" type="reset">reset</button>
-                        <button id="finish" onclick="validation()">finish</button>
-                        <button id="closeCreateZone"> cancel</button>
-                      </form>
-                    </div>
-                </template>
             </div>
-            <!--<div id="popup"> </div>
-            <div id="overlay-back"></div>-->
         </div>
 
     </div>
@@ -163,4 +115,49 @@
 <script type="text/javascript" src="calendar/tcal.js"></script>
 <!-- <script type="text/javascript" src="js/dialog.js"></script>-->
 </html>
->>>>>>> origin/master
+
+<template id="add-zone-template">
+		<div>
+			<form id="createZoneform">
+				<h3>Create Zone</h3>
+				<div style="width: 30%; float:left;">
+				<label for="zonename">Zonename</label></br>
+				<label for="duration">Duration</label> </br>
+				<label for="time">Time</label>   </br>
+				<label for="topics">Topics</label> </br>
+				<label for="area">Area</label> </br>
+				</div>
+				<div style="width: 70%; float:right;">
+				<input type="text" id="zonename" maxlength="30"> </br>
+				<input type="date" id="duration" class="tcal" min="2016-07-04"></br>
+					<input type="time" id="time" placeholder="23:59:59">
+					</form> </br>
+				<input type="text" id="topics" maxlength="50"> </br>
+				<input type="text" id="area" disabled> </br>
+				</div>
+				<p>&nbsp;</p>
+				<button form="createZoneform" type="reset">reset</button>
+				<button id="finish" onclick="validation()">finish</button>
+				<button id="closeCreateZone"> cancel</button>
+			</form>
+		</div>
+</template>
+<template id="message-info-template">
+		<ul class="list-group">
+				<li class="list-group-item"><span class="badge">{{topic}}</span> {{ title }} </li>
+				<li class="list-group-item"> {{ message }} </li>
+		</ul>
+</template>
+<template v-if="state" id="zone-info-template">
+		<div class="panel panel-default">
+				<div class="panel-heading">{{name}}</div>
+				<div class="panel-body">{{expire}}</br>{{topic}}</div>
+		</div>
+</template>
+<template id="welcome-template">
+		<h1>An Ephemeral Experience</h1>
+		<h3>Explore the map!</h3>
+		<p>Find help in the bar above!</p>
+		<button id="close" v-on:click="initView()" >Get Started!</button>
+		<!--<input type=button onClick="location.href='help.html'" value='Help'>-->
+</template>
