@@ -14,13 +14,14 @@ var vm = new Vue({
     data: {
         zone: null,
         messages:  [],
-        daily_activity: null,
+        daily_activity: [],
         state: false
     },
     events: {
         'switchZone': function (id) {
             this.getZone(id);
             this.getMessages(id);
+            this.getDailyActivity(id);
         },
         'switchVue': function () {
             this.state = !this.state;
@@ -36,10 +37,15 @@ var vm = new Vue({
 
             });
         },
-        getMessages: function (zoneid) {
-            this.$http.get('/api/messages?zone=' + zoneid, function (data) {
+        getMessages: function (id) {
+            this.$http.get('/api/messages?zone=' + id, function (data) {
                 this.$set('messages', data['Messages']);
             });
+        },
+        getDailyActivity: function(id){
+          this.$http.get('/api/zones/'+id+'/dailyactivity', function (data) {
+              this.$set('daily_activity', data);
+          });
         }
     }
 });

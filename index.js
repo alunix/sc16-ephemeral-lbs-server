@@ -167,14 +167,11 @@ server.get('/api/zones/:zoneid/dailyactivity', function(req, res) {
       function(err, body) {
         if (!err) {
           var output=[];
-          for (var i = 0; i<=6; i++){
-            output[i]=[]
-            for (var j=0; j<=23; j++){
-              output[i][j] = 0
-            }
+          for (var i=0; i<=23; i++){
+            output[i] = 0
           }
           for(var row in body.rows){
-            output[body.rows[row]['key'][1]][body.rows[row]['key'][2]] = body.rows[row]['value'];
+            output[body.rows[row]['key'][1]] = body.rows[row]['value'];
           }
           res.json(output);
         } else {
