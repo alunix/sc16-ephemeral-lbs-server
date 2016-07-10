@@ -1,6 +1,6 @@
 Vue.component('messageinfo', {
     template: '#message-info-template',
-    props: ['title', 'message']
+    props: ['title', 'message', 'topic']
 });
 
 var vm = new Vue({
