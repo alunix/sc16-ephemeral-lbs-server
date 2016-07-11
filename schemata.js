@@ -38,7 +38,7 @@ exports.zone = {
             "uniqueItems": true
         }
     },
-    "required": ["Geometry", "Name", "Zone-id", "Expired-at", "Topics"]
+    "required": ["Geometry", "Name", "Expired-at", "Topics"]
 };
 
 exports.messages = {
