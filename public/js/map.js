@@ -25,6 +25,7 @@ var mapVue = new Vue({
           "features": []
         };
         for (var i = 0; i < data['Zones'].length; i++) {
+          this.$set('zoneid', data['Zones'][i]['Zone-id']);
           geoZone.features.push({
             "type": "Feature",
             "geometry": {
@@ -43,7 +44,6 @@ var mapVue = new Vue({
           }
           this.layer = L.geoJson(geoZone)
             .bindPopup(data['Zones'][i]['Name'])
-            .on('click', dispatchZoneID(data['Zones'][i]['Zone-id']))
             .on('click', function (e) {
               processClick(e.latlng.lat, e.latlng.lng)
             })
@@ -66,6 +66,7 @@ function processClick(lat, lng) {
       "<b><a onclick='dispatchZoneID(\"" + id + "\")();'>"+ name + "</a><br>"
     }
   }
+  else dispatchZoneID(mapVue.zoneid);
 
   if (info) {
     mapVue.map.openPopup(info, [lat, lng]);
@@ -75,6 +76,7 @@ function processClick(lat, lng) {
 
 function dispatchZoneID(id) {
   return function () {
+    console.log("dispatchZoneID");
     mapVue.$dispatch('zoneSelected', id)
   }
 };
