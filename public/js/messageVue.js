@@ -3,7 +3,7 @@ Vue.component('messageinfo', {
     props: ['title', 'message']
 });
 
-var vm = new Vue({
+var vmMessage = new Vue({
     el: '#messagearea',
     parent: vue_broadcaster,
     data: {

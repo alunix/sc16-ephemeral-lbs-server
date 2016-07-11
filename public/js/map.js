@@ -191,7 +191,7 @@ function startEditing(map){
   	coordinates =[];
   	LatLongs = layer.getLatLngs();
   	for (i=0;i<LatLongs.length;i++){
-  		coordinates.push([LatLongs[i].lng, LatLongs[i].lat]);
+  		coordinates.push([LatLongs[i].lat, LatLongs[i].lng]);
       }
   	document.getElementById("area").value= coordinates;
   }

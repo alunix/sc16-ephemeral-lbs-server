@@ -134,12 +134,14 @@
                         <input type="time" id="time" placeholder="23:59:59">
                           </form> </br>
                         <input type="text" v-model="topicmodel" id="topics" maxlength="50"> </br>
-                        <input type="text" v-model="coordinatesmodel" id="area" disabled> </br>
+                        <input type="text" v-model="coordinatesmodel" id="area"> </br>
                         </div>
                         <p>&nbsp;</p>
                         <button form="createZoneform" type="reset">reset</button>
                         <button v-on:click="submitzone">submit</button>
                         <button id="closeCreateZone"> cancel</button>
+						<button v-on:click="addcoordinates">add coordinates</button>
+						<button v-on:click="testdata">add testdata</button>
                       </form>
                     </div>
                 </template>

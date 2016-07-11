@@ -4,7 +4,7 @@ Vue.component('zoneinfo', {
 });
 
 // create a new Vue instance and mount it to our div element above with the id of info
-var vm = new Vue({
+var vmZone = new Vue({
     el: '#zonearea',
     parent: vue_broadcaster,
     data: {

@@ -8,7 +8,7 @@ Vue.component('welcome', {
 });
 
 // create a new Vue instance and mount it to our div element above with the id of welcome
-var vm = new Vue({
+var vmWelcome = new Vue({
     el: '#welcome',
     parent: vue_broadcaster,
     data: {
