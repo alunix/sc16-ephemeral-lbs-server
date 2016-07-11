@@ -72,7 +72,7 @@ exports.messages = {
                         "type": "string"
                     },
                     "Location": {
-                        "type": "object",
+                        "type": ["object", "null"],
                         "properties": {
 
                             "Type": {
@@ -88,7 +88,7 @@ exports.messages = {
                         "required": ["Type", "Coordinate"]
                     }
                 },
-                "required": ["Message-id", "Zone-id", "Expired-at","Created-at", "Topic", "Title", "Message"]
+                "required": ["Message-id", "Zone-id", "Expired-at","Created-at", "Topic", "Title", "Message", "Location"]
             },
             "uniqueItems": true
         }

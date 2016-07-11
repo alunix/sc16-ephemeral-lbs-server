@@ -11,6 +11,5 @@ var vue_broadcaster = new Vue({
     'init': function(){
       console.log("broadcasted: init");
       this.$broadcast('firstInit');
-    }
   }
-});
+}});
