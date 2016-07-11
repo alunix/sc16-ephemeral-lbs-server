@@ -24,9 +24,6 @@ exports.zone = {
         "Name": {
             "type": "string"
         },
-        "Zone-id": {
-            "type": "string"
-        },
         "Expired-at": {
             "type": "string"
         },
@@ -38,7 +35,7 @@ exports.zone = {
             "uniqueItems": true
         }
     },
-    "required": ["Geometry", "Name", "Zone-id", "Expired-at", "Topics"]
+    "required": ["Geometry", "Name", "Expired-at", "Topics"]
 };
 
 exports.messages = {
