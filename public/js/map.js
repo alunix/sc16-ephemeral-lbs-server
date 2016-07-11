@@ -66,7 +66,7 @@ function processClick(lat, lng) {
       "<b><a onclick='dispatchZoneID(\"" + id + "\")();'>"+ name + "</a><br>"
     }
   }
-  else dispatchZoneID(mapVue.zoneid);
+  else dispatchZoneID(mapVue.zoneid)();
 
   if (info) {
     mapVue.map.openPopup(info, [lat, lng]);
