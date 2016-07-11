@@ -24,9 +24,6 @@ exports.zone = {
         "Name": {
             "type": "string"
         },
-        "Zone-id": {
-            "type": "string"
-        },
         "Expired-at": {
             "type": "string"
         },
