@@ -93,34 +93,11 @@ server.get('/api/zones-search', function(req, res) {
     }
 
     let search_string = req.query.q.toLowerCase();
-
     zoneModel.searchZones(res, lastDate, outputResponder, search_string);
 });
 
 server.get('/api/zones/:zoneid/dailyactivity', function(req, res) {
-  var msgTable = nano.use(msgdb);
-
-  msgTable.view("message_design", "zone_activity_by_time",
-      {startkey:[req.params.zoneid,0,0],
-      endkey:[req.params.zoneid,6,23],
-      group:true},
-      function(err, body) {
-        if (!err) {
-          var output=[];
-          for (var i = 0; i<=6; i++){
-            output[i]=[]
-            for (var j=0; j<=23; j++){
-              output[i][j] = 0
-            }
-          }
-          for(var row in body.rows){
-            output[body.rows[row]['key'][1]][body.rows[row]['key'][2]] = body.rows[row]['value'];
-          }
-          res.json(output);
-        } else {
-          res.status(404).send('Database error: ' + err);
-        }
-    });
+    zoneModel.getDailyActivity(res, outputResponder, req.params.zoneid);
 });
 
 server.get('/api/messages', function(req, res) {
