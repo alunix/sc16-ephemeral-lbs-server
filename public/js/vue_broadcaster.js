@@ -1,15 +1,11 @@
 var vue_broadcaster = new Vue({
   events:{
-    'zoneSelected': function(zoneid){
+    switchZone: function(zoneid){
       console.log("broadcasted: zoneSelected");
       this.$broadcast('switchZone', zoneid);
     },
-    'togglebtn': function(){
-      console.log("broadcasted: togglebtn clicked");
-      this.$broadcast('switchVue');
-    },
-    'init': function(){
-      console.log("broadcasted: init");
-      this.$broadcast('firstInit');
-  }
+    switchState: function(state){
+      console.log("broadcasted: switchState "+ state);
+      this.$broadcast('switchState', state);
+    }
 }});

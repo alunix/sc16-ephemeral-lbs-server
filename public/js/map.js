@@ -4,7 +4,8 @@ var mapVue = new Vue({
   data: {
     map: null,
     layer: null,
-    zoneid: null
+    zoneid: null,
+    button_shown: true
   },
   created: function () {
     var map = L.map('map').setView([51.959, 7.623], 14);
@@ -14,9 +15,22 @@ var mapVue = new Vue({
     this.$set('map', map);
     this.get_zones();
   },
+  events:{
+    'switchState': function (state) {
+      if (state == "addzone"){
+        this.button_shown = false;
+      }
+      else{
+        this.button_shown = true;
+      }
+    }
+  },
   methods: {
     switch_zone: function (zoneid) {
-      this.$dispatch('zoneSelected', zoneid)
+      this.$dispatch('switchZone', zoneid)
+    },
+    start_editing: function(){
+      this.$dispatch('switchState', 'addzone')
     },
     get_zones: function () {
       this.$http.get('/api/zones/', function (data) {

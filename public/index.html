@@ -65,23 +65,20 @@
 			<!-- /.row -->
 	      <div class="row">
           <div id="map" class="col-md-6">
-						<button id="toggleeditbtn" type="button" class="toggle btn-primary btn-lg">Add new zone</button>
+						<button id="toggleeditbtn" v-if="button_shown" type="button" class="toggle btn-primary btn-lg" v-on:click="start_editing">Add new zone</button>
           </div>
 	          <div id="contentbox" class="col-md-3">
+							<div id="search" v-cloak>
+									<input type="text" class="form-control" placeholder="Search" v-model="search" debounce="500"></input>
+									<div v-if="state" id="search_results">
+											<div v-for="zone in result">
+												<searchresult :name="zone.Name" :id="zone['Zone-id']" :topics"zone.Topics" >
+											</div>
+									</div>
+							</div>
 							<div id="welcome">
 								<welcome v-if="state"></welcome>
 							</div>
-							<div id="search" v-cloak>
-                  <input type="text" v-if="state" class="form-control" placeholder="Search" v-model="search" debounce="500"></input>
-                  <div id="search_results">
-                      <div v-for="zone in result">
-                          {{zone.Name}}</br>
-                          {{zone['Expired-at']}}</br>
-                          {{zone.Topics}}</br>
-                          {{zone['Zone-id']}}</br>
-                      </div>
-                  </div>
-              </div>
               <div id="zonearea" v-cloak>
                   <zoneinfo v-if="state" :name="zone.Name" :expire="zone['Expired-at']" :topic="zone.Topics"></zoneinfo>
 									<canvas v-if="state" id="zoneChart"></canvas>
@@ -126,6 +123,13 @@
 				<li class="list-group-item"> {{ message }} </li>
 			</ul>
 		</template>
+		<template id="search-result-template">
+			<div v-on:click="selectZone">
+				{{name}}<br>
+				{{id}}<br>
+				{{topics}}
+			</div>
+		</template>
 		<template v-if="state" id="zone-info-template">
 			<div class="panel panel-default">
 				<div class="panel-heading">{{name}}</div>
@@ -136,7 +140,6 @@
 			<h1>An Ephemeral Experience</h1>
 			<h3>Explore the map!</h3>
 			<p>Find help in the bar above!</p>
-			<button id="close" v-on:click="initView()" >Get Started!</button>
 		</template>
 </body>
 <script type="text/javascript" src="js/vue_broadcaster.js"></script>

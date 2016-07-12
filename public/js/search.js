@@ -1,4 +1,15 @@
-  new Vue({
+Vue.component('searchresult', {
+    template: '#search-result-template',
+    props: ['name', 'id', 'topics'],
+    methods:{
+      selectZone: function(){
+        console.log('blub' +this.id)
+        this.$dispatch('switchZone', this.id)
+      }
+    }
+});
+
+var searchVue = new Vue({
       parent: vue_broadcaster,
       el: '#search',
       data: {
@@ -7,13 +18,18 @@
           state: false
       },
       watch:{
-        'search': function(val, oldVal){
+        search: function(val, oldVal){
           this.searchZone(val);
         }
       },
       events:{
-          'firstInit': function(){
+        switchState: function (state) {
+          if (state == "search"){
             this.state = true;
+          }
+          else{
+            this.state = false;
+          }
         }
       },
       methods: {
@@ -22,6 +38,14 @@
               this.$http.get('/api/zones-search?q='+input, function(data) {
                   this.$set('result', data);
               });
-          }}
+              if(!this.state){
+                this.$dispatch('switchState', 'search')
+              }
+            }
+            else{
+              this.$dispatch('switchState', 'welcome')
+
+            }
+        }
       }
   });

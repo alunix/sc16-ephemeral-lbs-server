@@ -18,17 +18,20 @@ var vm = new Vue({
         state: false
     },
     events: {
-        'switchZone': function (id) {
+        switchZone: function (id) {
+            this.$dispatch('switchState', 'zone');
             this.getZone(id);
             this.getMessages(id);
             this.getDailyActivity(id);
         },
-        'switchVue': function () {
-            this.state = !this.state;
-        },
-        'firstInit': function(){
-            this.state = true;
-        }
+        switchState: function (state) {
+    			if (state == "zone"){
+    				this.state = true;
+    			}
+    			else{
+    				this.state = false;
+    			}
+    		}
     },
     methods: {
         getZone: function (id) {

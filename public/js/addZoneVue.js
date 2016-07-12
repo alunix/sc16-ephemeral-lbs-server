@@ -50,8 +50,13 @@ var vmAddZone = new Vue({
 		Topics: []
 	},
 	events: {
-		'switchVue': function () {
-			this.state = !this.state;
+		'switchState': function (state) {
+			if (state == "addzone"){
+				this.state = true;
+			}
+			else{
+				this.state = false;
+			}
 		}
 	}
 });
