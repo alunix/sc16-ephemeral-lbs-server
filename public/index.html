@@ -7,11 +7,9 @@
 		<link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" rel="stylesheet">
 		<link href="http://cdn.leafletjs.com/leaflet/v0.7.7/leaflet.css" rel="stylesheet">
 		<link href="/css/style.css" rel="stylesheet">
-		<link href="/css/dist/leaflet.draw.css" rel="stylesheet">
 		<link href='https://api.mapbox.com/mapbox.js/v2.4.0/mapbox.css' rel='stylesheet' />
 		<link rel="stylesheet" href="http://leaflet.github.io/Leaflet.draw/lib/leaflet/leaflet.css"/>
         <link rel="stylesheet" href="http://leaflet.github.io/Leaflet.draw/leaflet.draw.css"/>
-		<link rel="stylesheet" href="https://raw.githubusercontent.com/CliffCloud/Leaflet.EasyButton/master/src/easy-button.css"/>
 		<link href="/calendar/tcal.css" rel="stylesheet">
 
 		<!-- library imports -->
@@ -24,39 +22,43 @@
 		<script type="text/javascript" src="http://leaflet.github.io/Leaflet.draw/leaflet.draw.js"></script>
 		<script type="text/javascript" src="http://leaflet.github.io/Leaflet.draw/lib/leaflet/leaflet.js"></script>
 		<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.draw/0.2.3/leaflet.draw-src.js"></script>
-		<script type="text/javascript" src="https://raw.githubusercontent.com/CliffCloud/Leaflet.EasyButton/master/src/easy-button.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.1.6/Chart.bundle.min.js"></script>
+		<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.1.6/Chart.bundle.min.js"></script>
+		<script type="text/javascript" src="/calendar/tcal.js"></script>
+		<!-- Did not find any CDN -->
+		<script type="text/javascript" src="../source/leaflet-pip.min.js"></script>
+		<script type="text/javascript" src="../source/geojson.min.js"></script>
+
 
 	</head>
-  <body>
-    <!-- Navigation -->
-    <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
-        <div class="container">
-            <!-- Brand and toggle get grouped for better mobile display -->
-            <div class="navbar-header">
-                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#topbar">
-                    <span class="sr-only">Toggle navigation</span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                </button>
-                <a class="navbar-brand" href="index.html">Home</a>
-            </div>
-            <!-- Collect the nav links, forms, and other content for toggling -->
-            <div class="collapse navbar-collapse" id="topbar">
-                <ul class="nav navbar-nav">
-                    <li>
-                        <a href="help.html">Help</a>
-                    </li>
-                    <li>
-                        <a href="about.html">About</a>
-                    </li>
-                </ul>
-            </div>
-            <!-- /.navbar-collapse -->
-        </div>
-        <!-- /.container -->
-    </nav>
+	<body>
+		<!-- Navigation -->
+		<nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+			<div class="container">
+				<!-- Brand and toggle get grouped for better mobile display -->
+				<div class="navbar-header">
+					<button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#topbar">
+						<span class="sr-only">Toggle navigation</span>
+						<span class="icon-bar"></span>
+						<span class="icon-bar"></span>
+						<span class="icon-bar"></span>
+					</button>
+					<a class="navbar-brand" href="index.html">Home</a>
+				</div>
+				<!-- Collect the nav links, forms, and other content for toggling -->
+				<div class="collapse navbar-collapse" id="topbar">
+					<ul class="nav navbar-nav">
+						<li>
+							<a href="help.html">Help</a>
+						</li>
+						<li>
+							<a href="about.html">About</a>
+						</li>
+					</ul>
+				</div>
+				<!-- /.navbar-collapse -->
+			</div>
+			<!-- /.container -->
+		</nav>
 
 		<!-- Page Content -->
 		<div class="container">
@@ -103,24 +105,26 @@
 					<form id="createZoneform">
 						<h3>Create Zone</h3>
 						<div style="width: 30%; float:left;">
-						<label for="zonename">Zonename</label></br>
-						<label for="duration">Duration</label> </br>
-						<label for="time">Time</label>   </br>
-						<label for="topics">Topics</label> </br>
-						<label for="area">Area</label> </br>
+							<label for="zonename">Zonename</label></br>
+							<label for="duration">Duration</label> </br>
+							<label for="time">Time</label>   </br>
+							<label for="topics">Topics</label> </br>
+							<label for="area">Area</label> </br>
 						</div>
 						<div style="width: 70%; float:right;">
-						<input type="text" id="zonename" maxlength="30"> </br>
-						<input type="date" id="duration" class="tcal" min="2016-07-04"></br>
+							<input type="text" v-model="Name" id="zonename" maxlength="30"> </br>
+							<input type="date" v-model="Expired-at" id="duration" class="tcal" min="2016-07-04"></br>
 							<input type="time" id="time" placeholder="23:59:59">
 							</form> </br>
-						<input type="text" id="topics" maxlength="50"> </br>
-						<input type="text" id="area" disabled> </br>
+							<input type="text" v-model="topicmodel" id="topics" maxlength="50"> </br>
+							<input type="text" v-model="coordinatesmodel" id="area"> </br>
 						</div>
 						<p>&nbsp;</p>
 						<button form="createZoneform" type="reset">reset</button>
-						<button id="finish" onclick="validation()">finish</button>
+						<button v-on:click="submitzone">submit</button>
 						<button id="closeCreateZone"> cancel</button>
+						<button v-on:click="addcoordinates">add coordinates</button>
+						<button v-on:click="testdata">add testdata</button>
 					</form>
 				</div>
 		</template>
