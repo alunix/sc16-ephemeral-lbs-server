@@ -96,7 +96,7 @@ exports.searchZones = function(res, enddate, responder, search_string) {
 
                 for (let zCount = 0; zCount < body.rows.length; zCount++){
                     let result = body.rows[zCount].doc;
-                    // set Message-id, remove _id and _rev
+                    // set Zone-id, remove _id and _rev
                     let zoneID = result["_id"];
                     result["Zone-id"] = zoneID;
                     delete result["_id"];
@@ -135,9 +135,9 @@ exports.getDailyActivity = function(res, responder, id) {
             for(var row in body.rows){
                 output[body.rows[row]['key'][1]][body.rows[row]['key'][2]] = body.rows[row]['value'];
             }
-            responder(null, output);
+            responder(null, output, res);
         } else {
-            responder(404, 'Database error: ' + err);
+            responder(404, 'Database error: ' + err, res);
         }
     });
 };

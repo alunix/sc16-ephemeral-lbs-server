@@ -88,7 +88,7 @@ server.post('/api/addzone', function(req, res) {
 server.get('/api/zones-search', function(req, res) {
 
     if (!req.query.q) {
-        res.status(404).send("Query parameter 'q' missing.");
+        outputResponder(404, "Query parameter 'q' missing.", res);
         return;
     }
 
@@ -101,58 +101,13 @@ server.get('/api/zones/:zoneid/dailyactivity', function(req, res) {
 });
 
 server.get('/api/messages', function(req, res) {
-    var msgTable = nano.use(msgdb);
-    var zonesTable = nano.use(zonesdb);
-
-    var nowDate = new Date();
-    var zone;
 
     if (!req.query.zone) {
-        res.status(404).send("Zone parameter missing.");
+        outputResponder(404, "Zone parameter missing.", res);
         return;
-    }else{
-        zone = req.query.zone;
     }
 
-    zonesTable.view("zone_design", "by_id_and_date",
-        {startkey:[zone, nowDate.toJSON()],
-        endkey:[zone, lastDate.toJSON()],
-        include_docs: true},
-        function(err, zbody) {
-        if (!err) {
-            // check if the zone exists
-            if (zbody.rows.length == 0) {
-                res.status(404).send('Zone ID nonexistent or expired.');
-                return;
-            }else{
-                msgTable.view("message_design", "by_zoneid_and_date",
-                    {include_docs: true,
-                    startkey:[zone, nowDate.toJSON()],
-                    endkey:[zone, lastDate.toJSON()]},
-                    function(err, mbody) {
-                        if (!err) {
-                            let result = { "Messages": [] };
-
-                            for (let mCount = 0; mCount < mbody.rows.length; mCount++) {
-                                let message = mbody.rows[mCount].doc;
-                                delete message["_rev"];
-                                let messageID = message["_id"];
-                                message["Message-id"] = messageID;
-                                delete message["_id"];
-                                result["Messages"].push(message);
-                            }
-
-                            res.json(result);
-                        } else {
-                            res.status(404).send('Database error! Couldn\'t fetch messages: ' + err);
-                        }
-                    }
-                );
-            }
-        } else {
-            res.status(404).send('Database error! Couldn\'t fetch messages: '+ err);
-        }
-    });
+    msgModel.getMessages(res, lastDate, outputResponder, req.query.zone);
 });
 
 server.post('/api/addmessages', function(req, res) {
