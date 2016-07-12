@@ -79,3 +79,38 @@ exports.addZone = function(res, responder, zone) {
         }
     });
 };
+
+/* search for zones */
+exports.searchZones = function(res, enddate, responder, search_string) {
+
+    var nowDate = new Date();
+    var zonesTbl = exports.nano.use(exports.zonesdb);
+       zonesTbl.view('zone_design', 'by_zone_name_and_date', {
+        startkey:[search_string, nowDate.toJSON()],
+        endkey:[search_string, enddate.toJSON()],
+        include_docs: true
+    }, function(err, body) {
+        if (!err) {
+            if (body.rows.length != 0) {
+                let zoneResult = [];
+
+                for (let zCount = 0; zCount < body.rows.length; zCount++){
+                    let result = body.rows[zCount].doc;
+                    // set Message-id, remove _id and _rev
+                    let zoneID = result["_id"];
+                    result["Zone-id"] = zoneID;
+                    delete result["_id"];
+                    delete result["_rev"];
+                    zoneResult.push(result);
+                }
+                responder(null, zoneResult, res);
+            }
+            else{
+                responder(null, [], res);
+            }
+
+        } else {
+            responder(404, 'Database error: ' + err, res);
+        }
+    });
+};

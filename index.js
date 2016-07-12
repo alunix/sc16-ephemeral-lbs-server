@@ -87,9 +87,6 @@ server.post('/api/addzone', function(req, res) {
 
 server.get('/api/zones-search', function(req, res) {
 
-    var zonesTbl = nano.use(zonesdb);
-    var nowDate = new Date();
-
     if (!req.query.q) {
         res.status(404).send("Query parameter 'q' missing.");
         return;
@@ -97,34 +94,7 @@ server.get('/api/zones-search', function(req, res) {
 
     let search_string = req.query.q.toLowerCase();
 
-    zonesTbl.view('zone_design', 'by_zone_name_and_date', {
-        startkey:[search_string, nowDate.toJSON()],
-        endkey:[search_string, lastDate.toJSON()],
-        include_docs: true
-    }, function(err, body) {
-        if (!err) {
-            if (body.rows.length != 0) {
-                let zoneResult = [];
-
-                for (let zCount = 0; zCount < body.rows.length; zCount++){
-                    let result = body.rows[zCount].doc;
-                    let zoneID = result["_id"];
-                    result["Zone-id"] = zoneID;
-                    delete result["_id"];
-                    delete result["_rev"];
-                    zoneResult.push(result);
-                }
-                res.json(zoneResult);
-
-            }
-            else{
-                res.json([]);
-            }
-
-        } else {
-            res.status(404).send('Database error: ' + err);
-        }
-    });
+    zoneModel.searchZones(res, lastDate, outputResponder, search_string);
 });
 
 server.get('/api/zones/:zoneid/dailyactivity', function(req, res) {
