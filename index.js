@@ -115,32 +115,11 @@ server.post('/api/addmessages', function(req, res) {
     let validator = new Validator();
     let vresult = validator.validate(req.body, schemata.messages);
     if(!vresult.valid) {
-        res.status(404).send('Validation error:' + vresult.errors);
+        inputResponder(404, 'Validation error:' + vresult.errors, res);
         return;
     }
 
-    var msgTable = nano.use(msgdb);
-
-    let messages = req.body.Messages;
-
-    // modify messages to save space
-    for(let mCount = 0; mCount < messages.length; mCount += 1) {
-        let messageID = messages[mCount]["Message-id"];
-        messages[mCount]["_id"] = messageID;
-        delete messages[mCount]["Message-id"];
-    }
-
-    // bulk insert/update into database
-    msgTable.bulk({ "docs" : messages }, undefined, function(err, body) {
-        if (err) {
-            res.status(404).send('Database error:' + err.message);
-            return;
-        } else {
-            res.status(201).send("Message(s) uploaded!");
-        }
-
-    });
-
+    msgModel.addMessages(res, inputResponder, req.body.Messages);
 });
 
 /* We start the server from the specified port. */
