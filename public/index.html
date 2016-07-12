@@ -1,148 +1,166 @@
 <!DOCTYPE html>
 <html>
 
-<head>
-    <meta charset="utf-8"></meta>
-    <!-- style imports -->
-    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" rel="stylesheet">
-    <link href="http://cdn.leafletjs.com/leaflet/v0.7.7/leaflet.css" rel="stylesheet">
-    <link href="/css/style.css" rel="stylesheet">
+	<head>
+		<meta charset="utf-8"></meta>
+		<!-- style imports -->
+		<link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" rel="stylesheet">
+		<link href="http://cdn.leafletjs.com/leaflet/v0.7.7/leaflet.css" rel="stylesheet">
+		<link href="/css/style.css" rel="stylesheet">
+		<link href='https://api.mapbox.com/mapbox.js/v2.4.0/mapbox.css' rel='stylesheet' />
+		<link rel="stylesheet" href="http://leaflet.github.io/Leaflet.draw/lib/leaflet/leaflet.css"/>
+        <link rel="stylesheet" href="http://leaflet.github.io/Leaflet.draw/leaflet.draw.css"/>
+		<link href="/calendar/tcal.css" rel="stylesheet">
 
-    <!-- library imports -->
-    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.2/jquery.min.js"></script>
-    <script type="text/javascript" src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/vue/1.0.22/vue.min.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/vue-resource/0.7.0/vue-resource.min.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/leaflet.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.1.6/Chart.bundle.min.js"></script>
-    <!-- Did not find any CDN -->
-    <script type="text/javascript" src="../source/leaflet-pip.min.js"></script>
-    <script type="text/javascript" src="../source/geojson.min.js"></script>
-    
-
-</head>
-
-<body>
-    <!-- Navigation -->
-    <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
-        <div class="container">
-            <!-- Brand and toggle get grouped for better mobile display -->
-            <div class="navbar-header">
-                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#topbar">
-                    <span class="sr-only">Toggle navigation</span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                </button>
-                <a class="navbar-brand" href="index.html">Home</a>
-            </div>
-            <!-- Collect the nav links, forms, and other content for toggling -->
-            <div class="collapse navbar-collapse" id="topbar">
-                <ul class="nav navbar-nav">
-                    <li>
-                        <a href="help.html">Help</a>
-                    </li>
-                    <li>
-                        <a href="about.html">About</a>
-                    </li>
-                </ul>
-            </div>
-            <!-- /.navbar-collapse -->
-        </div>
-        <!-- /.container -->
-    </nav>
-
-    <!-- Page Content -->
-    <div class="container">
-        <!-- /.row -->
-
-        <div class="row">
+		<!-- library imports -->
+		<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.2/jquery.min.js"></script>
+		<script type="text/javascript" src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+		<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/vue/1.0.22/vue.min.js"></script>
+		<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/vue-resource/0.7.0/vue-resource.min.js"></script>
+		<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/leaflet.js"></script>
+		<script type="text/javascript" src='https://api.mapbox.com/mapbox.js/v2.4.0/mapbox.js'></script>
+		<script type="text/javascript" src="http://leaflet.github.io/Leaflet.draw/leaflet.draw.js"></script>
+		<script type="text/javascript" src="http://leaflet.github.io/Leaflet.draw/lib/leaflet/leaflet.js"></script>
+		<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.draw/0.2.3/leaflet.draw-src.js"></script>
+		<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.1.6/Chart.bundle.min.js"></script>
+		<script type="text/javascript" src="/calendar/tcal.js"></script>
+		<!-- Did not find any CDN -->
+		<script type="text/javascript" src="../source/leaflet-pip.min.js"></script>
+		<script type="text/javascript" src="../source/geojson.min.js"></script>
 
 
-            <div id="map" class="col-md-6">
-            </div>
+	</head>
+	<body>
+		<!-- Navigation -->
+		<nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+			<div class="container">
+				<!-- Brand and toggle get grouped for better mobile display -->
+				<div class="navbar-header">
+					<button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#topbar">
+						<span class="sr-only">Toggle navigation</span>
+						<span class="icon-bar"></span>
+						<span class="icon-bar"></span>
+						<span class="icon-bar"></span>
+					</button>
+					<a class="navbar-brand" href="index.html">Home</a>
+				</div>
+				<!-- Collect the nav links, forms, and other content for toggling -->
+				<div class="collapse navbar-collapse" id="topbar">
+					<ul class="nav navbar-nav">
+						<li>
+							<a href="help.html">Help</a>
+						</li>
+						<li>
+							<a href="about.html">About</a>
+						</li>
+					</ul>
+				</div>
+				<!-- /.navbar-collapse -->
+			</div>
+			<!-- /.container -->
+		</nav>
 
-            <div id="contentbox" class="col-md-3">
-                <div id="welcome">
-                    <welcome v-if="state"></welcome>
-                </div>
-                <template id="welcome-template">
-                    <h1>An Ephemeral Experience</h1>
-                    <h3>Explore the map!</h3>
-                    <p>Find help in the bar above!</p>
-                    <button id="close" v-on:click="initView()" >Get Started!</button>
-                    <!--<input type=button onClick="location.href='help.html'" value='Help'>-->
-                </template>
-                <div id="togglebtn" v-cloak>
-                    <button type="button" v-if="state" class="toggle btn-primary btn-lg" :class="{ 'active': active }" @click="call">{{ active ? infoText : zoneText }}</button>
-                    </br>
-                    </br>
-                </div>
-                <div id="search" v-cloak>
-                    <input type="text" v-if="state" class="form-control" placeholder="Search" v-model="search" debounce="500"></input>
-                    <div id="search_results">
-                        <div v-for="zone in result">
-                            {{zone.Name}}</br>
-                            {{zone['Expired-at']}}</br>
-                            {{zone.Topics}}</br>
-                            {{zone['Zone-id']}}</br>
-                        </div>
-                    </div>
-                </div>
-                <div id="chartarea" v-cloak>
-                    <canvas v-show="state" id="zoneChart"></canvas>
-                </div>
-                <div id="zonearea" v-cloak>
-                    <zoneinfo v-if="state" :name="zone.Name" :expire="zone['Expired-at']" :topic="zone.Topics"></zoneinfo>
-                </div>
-                <template v-if="state" id="zone-info-template">
-                    <div class="panel panel-default">
-                        <div class="panel-heading">{{name}}</div>
-                        <div class="panel-body">{{expire}}</br>{{topic}}</div>
-                    </div>
-                </template>
-                <div id="messagearea">
-                    <messageinfo v-if="state" v-for="message in messages" :title="message.Title" :message="message.Message"></messageinfo>
-                </div>
+		<!-- Page Content -->
+		<div class="container">
+			<!-- /.row -->
+			<div class="row">
+				<div id="map" class="col-md-6">
+				</div>
 
-                <template id="message-info-template">
-                    <ul class="list-group">
-                        <li class="list-group-item"><span class="badge">Title</span> {{ title }} </li>
-                        <li class="list-group-item"><span class="badge">Message</span> {{ message }} </li>
-                    </ul>
-                </template>
-                <div id="addzone">
-                    <addzone v-show="state"> </addzone>
-                </div>
-                <template id="add-zone-template">
-                    <div>
-                        <form id="createzone">
-                            <label id="h2" form="createzone">Create Zone</label> </br>
-                            <label for="zonename">Zonename</label>
-                            <input type="text" id="zonename" maxlength="30"> </br>
+				<div id="contentbox" class="col-md-3">
+					<div id="welcome">
+						<welcome v-if="state"></welcome>
+					</div>
+					<template id="welcome-template">
+						<h1>An Ephemeral Experience</h1>
+						<h3>Explore the map!</h3>
+						<p>Find help in the bar above!</p>
+						<button id="close" v-on:click="initView()" >Get Started!</button>
+						<!--<input type=button onClick="location.href='help.html'" value='Help'>-->
+					</template>
+					<div id="togglebtn" v-cloak>
+						<button type="button" v-if="state" class="toggle btn-primary btn-lg" :class="{ 'active': active }" @click="call">{{ active ? infoText : zoneText }}</button>
+						</br>
+						</br>
+					</div>
+					<div id="search" v-cloak>
+						<input type="text" v-if="state" class="form-control" placeholder="Search" v-model="search" debounce="500"></input>
+						<div id="search_results">
+							<div v-for="zone in result">
+								{{zone.Name}}</br>
+								{{zone['Expired-at']}}</br>
+								{{zone.Topics}}</br>
+								{{zone['Zone-id']}}</br>
+							</div>
+						</div>
+					</div>
+					<div id="chartarea" v-cloak>
+						<canvas v-show="state" id="zoneChart"></canvas>
+					</div>
+					<div id="zonearea" v-cloak>
+						<zoneinfo v-if="state" :name="zone.Name" :expire="zone['Expired-at']" :topic="zone.Topics"></zoneinfo>
+					</div>
+					<template v-if="state" id="zone-info-template">
+						<div class="panel panel-default">
+							<div class="panel-heading">{{name}}</div>
+							<div class="panel-body">{{expire}}</br>{{topic}}</div>
+						</div>
+					</template>
+					<div id="messagearea">
+						<messageinfo v-if="state" v-for="message in messages" :title="message.Title" :message="message.Message"></messageinfo>
+					</div>
 
-                            <label for="duration">Duration (in days)</label>
-                            <input type="number" id="duration" maxlength="3"> </br>
+					<template id="message-info-template">
+						<ul class="list-group">
+							<li class="list-group-item"><span class="badge">Title</span> {{ title }} </li>
+							<li class="list-group-item"><span class="badge">Message</span> {{ message }} </li>
+						</ul>
+					</template>
+					<div id="addzone">
+						<addzone v-if="state"> </addzone>
+					</div>
+					<template id="add-zone-template">
+						<div>
+							<form id="createZoneform">
+								<h3>Create Zone</h3>
+								<div style="width: 30%; float:left;">
+									<label for="zonename">Zonename</label></br>
+									<label for="duration">Duration</label> </br>
+									<label for="time">Time</label>   </br>
+									<label for="topics">Topics</label> </br>
+									<label for="area">Area</label> </br>
+								</div>
+								<div style="width: 70%; float:right;">
+									<input type="text" v-model="Name" id="zonename" maxlength="30"> </br>
+									<input type="date" v-model="Expired-at" id="duration" class="tcal" min="2016-07-04"></br>
+									<input type="time" id="time" placeholder="23:59:59">
+									</form> </br>
+									<input type="text" v-model="topicmodel" id="topics" maxlength="50"> </br>
+									<input type="text" v-model="coordinatesmodel" id="area"> </br>
+								</div>
+								<p>&nbsp;</p>
+								<button form="createZoneform" type="reset">reset</button>
+								<button v-on:click="submitzone">submit</button>
+								<button id="closeCreateZone"> cancel</button>
+								<button v-on:click="addcoordinates">add coordinates</button>
+								<button v-on:click="testdata">add testdata</button>
+							</form>
+						</div>
+					</template>
+				</div>
+			</div>
 
-                            <button type="reset">reset</button>
-                            <button type="submit" id="close">submit</button>
-                            <input type=button onClick="location.href='index.html'" value='cancel'>
-                        </form>
-                    </div>
-                </template>
-            </div>
-        </div>
-
-    </div>
-    <!-- /.container -->
-</body>
-<script type="text/javascript" src="js/vue_broadcaster.js"></script>
-<script type="text/javascript" src="js/welcomeVue.js"></script>
-<script type="text/javascript" src="js/messageVue.js"></script>
-<script type="text/javascript" src="js/map.js"></script>
-<script type="text/javascript" src="js/zoneVue.js"></script>
-<script type="text/javascript" src="js/addZoneVue.js"></script>
-<script type="text/javascript" src="js/buttonVue.js"></script>
-<script type="text/javascript" src="js/chart.js"></script>
-<script type="text/javascript" src="js/search.js"></script>
+		</div>
+		<!-- /.container -->
+	</body>
+	<script type="text/javascript" src="js/vue_broadcaster.js"></script>
+	<script type="text/javascript" src="js/welcomeVue.js"></script>
+	<script type="text/javascript" src="js/messageVue.js"></script>
+	<script type="text/javascript" src="js/map.js"></script>
+	<script type="text/javascript" src="js/zoneVue.js"></script>
+	<script type="text/javascript" src="js/addZoneVue.js"></script>
+	<script type="text/javascript" src="js/buttonVue.js"></script>
+	<script type="text/javascript" src="js/chart.js"></script>
+	<script type="text/javascript" src="js/search.js"></script>
+	<script type="text/javascript" src="calendar/tcal.js"></script>
 </html>

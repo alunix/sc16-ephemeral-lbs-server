@@ -1,4 +1,4 @@
-var vm = new Vue({
+var vmButton = new Vue({
     el: '#togglebtn',
     parent: vue_broadcaster,
     data: {
