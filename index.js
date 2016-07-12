@@ -2,21 +2,21 @@
 
 /* Change accordingly. */
 var webport = 8080;
+
+/* The database settings... */
 var dbport = 5984;
 var dbserver = "http://localhost";
-/* The last date we care about. */
-var lastDate = new Date(7500,10,30);
-
-/* These two databases have to exist in your CouchDB instance. */
 var zonesdb = "zones";
 var msgdb = "messages";
 
+/* The last date we care about. */
+var lastDate = new Date(7500,10,30);
 
 var express = require('express');
-var nano = require('nano')({'url': dbserver + ':' + dbport,
-    'requestDefaults' : { 'proxy' : null }});
 var bodyParser = require("body-parser");
 var Validator = require('jsonschema').Validator;
+var zoneModel = require('./zonemodel');
+var msgModel = require('./msgmodel');
 var schemata = require('./schemata');
 
 /*
@@ -38,201 +38,76 @@ server.use(bodyParser.urlencoded({
 }));
 server.use(bodyParser.json());
 
+/* Set up database and models... */
+var connection = require('nano')( {
+    'url': dbserver + ':' + dbport,
+    'requestDefaults' : { 'proxy' : null }
+});
+zoneModel.configure(connection, msgdb, zonesdb);
+msgModel.configure(connection, msgdb, zonesdb);
 
 /* Handle basic requests... */
+
+/* These two function get injected into the model function calls to respond to the HTTP requests. */
+
+var outputResponder = function(errCode, data, res) {
+    if(!errCode) {
+        res.json(data);
+    }
+    else {
+        res.status(errCode).send(data);
+    }
+};
+
+var inputResponder = function(errCode, msg, res) {
+    res.status(errCode ? errCode : 201).send(msg);
+};
+
 server.get('/api/zones', function(req, res) {
-    var zonesTbl = nano.use(zonesdb);
-    var nowDate = new Date();
 
-    var zones = {
-        "Zones": []
-    };
-
-    zonesTbl.view('zone_design', 'by_date', {
-        include_docs: true,
-        startkey: [ nowDate.toJSON() ]},
-        function(err, body, header) {
-        if (!err) {
-            for (var zCount = 0; zCount < body.rows.length; zCount++) {
-                let zoneID = body.rows[zCount].doc["_id"];
-                body.rows[zCount].doc["Zone-id"] = zoneID;
-                delete body.rows[zCount].doc["_id"];
-                delete body.rows[zCount].doc["_rev"];
-                zones.Zones.push(body.rows[zCount].doc);
-            }
-            res.json(zones);
-        } else {
-            res.status(404).send('Database error! Couldn\'t fetch zones.');
-        }
-    });
+    zoneModel.getZones(res, lastDate, outputResponder);
 });
 
 server.get('/api/zones/:zoneid', function(req, res) {
 
-    var zonesTbl = nano.use(zonesdb);
-    var nowDate = new Date();
-
-    zonesTbl.view('zone_design', 'by_id_and_date', {
-        startkey:[req.params.zoneid, nowDate.toJSON()],
-        endkey:[req.params.zoneid, lastDate.toJSON()],
-        include_docs: true
-    }, function(err, body) {
-        if (!err) {
-            if (body.rows.length != 0){
-                let result = body.rows[0].doc;
-                let zoneID = result["_id"];
-                result["Zone-id"] = zoneID;
-                delete result["_id"];
-                delete result["_rev"];
-                res.json(result);
-            }else{
-                res.status(404).send('Zone non-existent or expired');
-            }
-
-        } else {
-            res.status(404).send('Database error: ' + err);
-        }
-    });
+    zoneModel.getZoneById(res, lastDate, outputResponder, req.params.zoneid);
 });
 
 server.post('/api/addzone', function(req, res) {
-    let zonesTbl = nano.use(zonesdb);
 
     let validator = new Validator();
     let vresult = validator.validate(req.body, schemata.zone);
     if(!vresult.valid) {
-        res.status(404).send('Validation error:' + vresult.errors);
+        inputResponder(404, 'Validation error:' + vresult.errors, res);
         return;
     }
-    zonesTbl.insert(req.body, {}, function(err, body) {
-        if(err) {
-            res.status(404).send('DB error:' + err);
-        }
-        else {
-            res.status(201).send('Zone created');
-        }
-    });
 
+    zoneModel.addZone(res, inputResponder, req.body);
 });
 
 server.get('/api/zones-search', function(req, res) {
 
-    var zonesTbl = nano.use(zonesdb);
-    var nowDate = new Date();
-
     if (!req.query.q) {
-        res.status(404).send("Query parameter 'q' missing.");
+        outputResponder(404, "Query parameter 'q' missing.", res);
         return;
     }
 
     let search_string = req.query.q.toLowerCase();
-
-    zonesTbl.view('zone_design', 'by_zone_name_and_date', {
-        startkey:[search_string, nowDate.toJSON()],
-        endkey:[search_string, lastDate.toJSON()],
-        include_docs: true
-    }, function(err, body) {
-        if (!err) {
-            if (body.rows.length != 0) {
-                let zoneResult = [];
-
-                for (let zCount = 0; zCount < body.rows.length; zCount++){
-                    let result = body.rows[zCount].doc;
-                    let zoneID = result["_id"];
-                    result["Zone-id"] = zoneID;
-                    delete result["_id"];
-                    delete result["_rev"];
-                    zoneResult.push(result);
-                }
-                res.json(zoneResult);
-
-            }
-            else{
-                res.json([]);
-            }
-
-        } else {
-            res.status(404).send('Database error: ' + err);
-        }
-    });
+    zoneModel.searchZones(res, lastDate, outputResponder, search_string);
 });
 
 server.get('/api/zones/:zoneid/dailyactivity', function(req, res) {
-  var msgTable = nano.use(msgdb);
-
-  msgTable.view("message_design", "zone_activity_by_time",
-      {startkey:[req.params.zoneid,0,0],
-      endkey:[req.params.zoneid,6,23],
-      group:true},
-      function(err, body) {
-        if (!err) {
-          var output=[];
-          for (var i=0; i<=23; i++){
-            output[i] = 0
-          }
-          for(var row in body.rows){
-            output[body.rows[row]['key'][1]] = body.rows[row]['value'];
-          }
-          res.json(output);
-        } else {
-          res.status(404).send('Database error: ' + err);
-        }
-    });
+    zoneModel.getDailyActivity(res, outputResponder, req.params.zoneid);
 });
 
 server.get('/api/messages', function(req, res) {
-    var msgTable = nano.use(msgdb);
-    var zonesTable = nano.use(zonesdb);
-
-    var nowDate = new Date();
-    var zone;
 
     if (!req.query.zone) {
-        res.status(404).send("Zone parameter missing.");
+        outputResponder(404, "Zone parameter missing.", res);
         return;
-    }else{
-        zone = req.query.zone;
     }
 
-    zonesTable.view("zone_design", "by_id_and_date",
-        {startkey:[zone, nowDate.toJSON()],
-        endkey:[zone, lastDate.toJSON()],
-        include_docs: true},
-        function(err, zbody) {
-        if (!err) {
-            // check if the zone exists
-            if (zbody.rows.length == 0) {
-                res.status(404).send('Zone ID nonexistent or expired.');
-                return;
-            }else{
-                msgTable.view("message_design", "by_zoneid_and_date",
-                    {include_docs: true,
-                    startkey:[zone, nowDate.toJSON()],
-                    endkey:[zone, lastDate.toJSON()]},
-                    function(err, mbody) {
-                        if (!err) {
-                            let result = { "Messages": [] };
-
-                            for (let mCount = 0; mCount < mbody.rows.length; mCount++) {
-                                let message = mbody.rows[mCount].doc;
-                                delete message["_rev"];
-                                let messageID = message["_id"];
-                                message["Message-id"] = messageID;
-                                delete message["_id"];
-                                result["Messages"].push(message);
-                            }
-
-                            res.json(result);
-                        } else {
-                            res.status(404).send('Database error! Couldn\'t fetch messages: ' + err);
-                        }
-                    }
-                );
-            }
-        } else {
-            res.status(404).send('Database error! Couldn\'t fetch messages: '+ err);
-        }
-    });
+    msgModel.getMessages(res, lastDate, outputResponder, req.query.zone);
 });
 
 server.post('/api/addmessages', function(req, res) {
@@ -240,32 +115,11 @@ server.post('/api/addmessages', function(req, res) {
     let validator = new Validator();
     let vresult = validator.validate(req.body, schemata.messages);
     if(!vresult.valid) {
-        res.status(404).send('Validation error:' + vresult.errors);
+        inputResponder(404, 'Validation error:' + vresult.errors, res);
         return;
     }
 
-    var msgTable = nano.use(msgdb);
-
-    let messages = req.body.Messages;
-
-    // modify messages to save space
-    for(let mCount = 0; mCount < messages.length; mCount += 1) {
-        let messageID = messages[mCount]["Message-id"];
-        messages[mCount]["_id"] = messageID;
-        delete messages[mCount]["Message-id"];
-    }
-
-    // bulk insert/update into database
-    msgTable.bulk({ "docs" : messages }, undefined, function(err, body) {
-        if (err) {
-            res.status(404).send('Database error:' + err.message);
-            return;
-        } else {
-            res.status(201).send("Message(s) uploaded!");
-        }
-
-    });
-
+    msgModel.addMessages(res, inputResponder, req.body.Messages);
 });
 
 /* We start the server from the specified port. */
