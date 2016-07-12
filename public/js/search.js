@@ -3,7 +3,6 @@ Vue.component('searchresult', {
     props: ['name', 'id', 'topics'],
     methods:{
       selectZone: function(){
-        console.log('blub' +this.id)
         this.$dispatch('switchZone', this.id)
       }
     }
