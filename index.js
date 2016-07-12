@@ -3,13 +3,20 @@
 /* Change accordingly. */
 var webport = 8080;
 
+/* The database settings... */
+var dbport = 5984;
+var dbserver = "http://localhost";
+var zonesdb = "zones";
+var msgdb = "messages";
+
 /* The last date we care about. */
 var lastDate = new Date(7500,10,30);
 
 var express = require('express');
 var bodyParser = require("body-parser");
 var Validator = require('jsonschema').Validator;
-var models = require('./models');
+var zoneModel = require('./zonemodel');
+var msgModel = require('./msgmodel');
 var schemata = require('./schemata');
 
 /*
@@ -31,53 +38,51 @@ server.use(bodyParser.urlencoded({
 }));
 server.use(bodyParser.json());
 
+/* Set up database and models... */
+var connection = require('nano')( {
+    'url': dbserver + ':' + dbport,
+    'requestDefaults' : { 'proxy' : null }
+});
+zoneModel.configure(connection, msgdb, zonesdb);
+msgModel.configure(connection, msgdb, zonesdb);
 
 /* Handle basic requests... */
+
+/* These two function get injected into the model function calls to respond to the HTTP requests. */
+
+var outputResponder = function(errCode, data, res) {
+    if(!errCode) {
+        res.json(data);
+    }
+    else {
+        res.status(errCode).send(data);
+    }
+};
+
+var inputResponder = function(errCode, msg, res) {
+    res.status(errCode ? errCode : 201).send(msg);
+};
+
 server.get('/api/zones', function(req, res) {
 
-    let responder = function(success, data){
-        if(success) {
-            res.json(data);
-        }
-        else {
-            res.status(404).send(data);
-        }
-    };
-    models.getZones(lastDate, responder);
-
+    zoneModel.getZones(res, lastDate, outputResponder);
 });
 
 server.get('/api/zones/:zoneid', function(req, res) {
-    let responder = function(success, data) {
-        if(success) {
-            res.json(data);
-        }
-        else {
-            res.status(404).send(data);
-        }
-    };
-    models.getZoneById(lastDate, responder, req.params.zoneid);
 
+    zoneModel.getZoneById(res, lastDate, outputResponder, req.params.zoneid);
 });
 
 server.post('/api/addzone', function(req, res) {
-    let zonesTbl = nano.use(zonesdb);
 
     let validator = new Validator();
     let vresult = validator.validate(req.body, schemata.zone);
     if(!vresult.valid) {
-        res.status(404).send('Validation error:' + vresult.errors);
+        inputResponder(404, 'Validation error:' + vresult.errors, res);
         return;
     }
-    zonesTbl.insert(req.body, {}, function(err, body) {
-        if(err) {
-            res.status(404).send('DB error:' + err);
-        }
-        else {
-            res.status(201).send('Zone created');
-        }
-    });
 
+    zoneModel.addZone(res, inputResponder, req.body);
 });
 
 server.get('/api/zones-search', function(req, res) {

@@ -1,18 +1,15 @@
-/* This file contains most aspects of the database connection, including configuration. */
-exports.dbport = 5984;
-exports.dbserver = "http://localhost";
-/* These two databases have to exist in your CouchDB instance. */
-exports.zonesdb = "zones";
-exports.msgdb = "messages";
+exports.nano = null;
+exports.zonesdb = null;
+exports.msgdb = null;
 
-/* set up database */ 
-exports.nano = require('nano')( {
-    'url': exports.dbserver + ':' + exports.dbport,
-    'requestDefaults' : { 'proxy' : null }
-});
+exports.configure = function(db, msgDb, zoneDb) {
+    exports.nano = db;
+    exports.zonesdb = zoneDb;
+    exports.msgdb = msgDb;
+};
 
 /* get all zones from database */
-exports.getZones = function(enddate, responder) {
+exports.getZones = function(res, enddate, responder) {
     var zonesTbl = exports.nano.use(exports.zonesdb);
 
     var nowDate = new Date();
@@ -32,15 +29,15 @@ exports.getZones = function(enddate, responder) {
                 delete body.rows[zCount].doc["_rev"];
                 zones.Zones.push(body.rows[zCount].doc);
             }
-            responder(true, zones);
+            responder(null, zones, res);
         } else {
-            responder(false, "Database error: Couldn't fetch zones.");
+            responder(404, "Database error: Couldn't fetch zones.", res);
         }
     });
 }
 
 /* get a zone by id */
-exports.getZoneById = function(enddate, responder, zoneid) {
+exports.getZoneById = function(res, enddate, responder, zoneid) {
     var zonesTbl = exports.nano.use(exports.zonesdb);
     var nowDate = new Date();
 
@@ -57,14 +54,28 @@ exports.getZoneById = function(enddate, responder, zoneid) {
                 result["Zone-id"] = zoneID;
                 delete result["_id"];
                 delete result["_rev"];
-                responder(true, result);
+                responder(null, result, res);
             }else{
-                responder(false, 'Zone non-existent or expired');
+                responder(404, 'Zone non-existent or expired', res);
             }
 
         } else {
-            responder(false, 'Database error: ' + err);
+            responder(404, 'Database error: ' + err, res);
         }
     });
 
+};
+
+/* add a zone */
+exports.addZone = function(res, responder, zone) {
+    let zonesTbl = exports.nano.use(exports.zonesdb);
+
+    zonesTbl.insert(zone, {}, function(err, body) {
+        if(err) {
+            responder(404, 'DB error:' + err, res);
+        }
+        else {
+            responder(null, 'Zone created', res);
+        }
+    });
 };
