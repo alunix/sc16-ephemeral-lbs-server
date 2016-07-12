@@ -59,12 +59,14 @@ function processClick(lat, lng) {
   var point = [lng, lat];
   var match = leafletPip.pointInLayer(point, mapVue.layer, false);
   if (match.length > 1) {
+    info = "<div> <h5 style='color:blue'><b> Choose one zone:</b> </h5> <ul>";
     for (var i = 0; i < match.length; i++) {
       id = match[i].feature.properties.zoneid;
       name = match[i].feature.properties.name;
       info +=
-      "<b><a onclick='dispatchZoneID(\"" + id + "\")();'>"+ name + "</a><br>"
+      "<li style='margin-left: -20px'><b><a style='cursor: pointer; color: orange' onclick='dispatchZoneID(\"" + id + "\")();'>"+ name + "</a></b></li>"
     }
+    info += "</ul></div>"
   }
   else dispatchZoneID(mapVue.zoneid)();
 
