@@ -2,21 +2,14 @@
 
 /* Change accordingly. */
 var webport = 8080;
-var dbport = 5984;
-var dbserver = "http://localhost";
+
 /* The last date we care about. */
 var lastDate = new Date(7500,10,30);
 
-/* These two databases have to exist in your CouchDB instance. */
-var zonesdb = "zones";
-var msgdb = "messages";
-
-
 var express = require('express');
-var nano = require('nano')({'url': dbserver + ':' + dbport,
-    'requestDefaults' : { 'proxy' : null }});
 var bodyParser = require("body-parser");
 var Validator = require('jsonschema').Validator;
+var models = require('./models');
 var schemata = require('./schemata');
 
 /*
@@ -41,58 +34,30 @@ server.use(bodyParser.json());
 
 /* Handle basic requests... */
 server.get('/api/zones', function(req, res) {
-    var zonesTbl = nano.use(zonesdb);
-    var nowDate = new Date();
 
-    var zones = {
-        "Zones": []
-    };
-
-    zonesTbl.view('zone_design', 'by_date', {
-        include_docs: true,
-        startkey: [ nowDate.toJSON() ]},
-        function(err, body, header) {
-        if (!err) {
-            for (var zCount = 0; zCount < body.rows.length; zCount++) {
-                let zoneID = body.rows[zCount].doc["_id"];
-                body.rows[zCount].doc["Zone-id"] = zoneID;
-                delete body.rows[zCount].doc["_id"];
-                delete body.rows[zCount].doc["_rev"];
-                zones.Zones.push(body.rows[zCount].doc);
-            }
-            res.json(zones);
-        } else {
-            res.status(404).send('Database error! Couldn\'t fetch zones.');
+    let responder = function(success, data){
+        if(success) {
+            res.json(data);
         }
-    });
+        else {
+            res.status(404).send(data);
+        }
+    };
+    models.getZones(lastDate, responder);
+
 });
 
 server.get('/api/zones/:zoneid', function(req, res) {
-
-    var zonesTbl = nano.use(zonesdb);
-    var nowDate = new Date();
-
-    zonesTbl.view('zone_design', 'by_id_and_date', {
-        startkey:[req.params.zoneid, nowDate.toJSON()],
-        endkey:[req.params.zoneid, lastDate.toJSON()],
-        include_docs: true
-    }, function(err, body) {
-        if (!err) {
-            if (body.rows.length != 0){
-                let result = body.rows[0].doc;
-                let zoneID = result["_id"];
-                result["Zone-id"] = zoneID;
-                delete result["_id"];
-                delete result["_rev"];
-                res.json(result);
-            }else{
-                res.status(404).send('Zone non-existent or expired');
-            }
-
-        } else {
-            res.status(404).send('Database error: ' + err);
+    let responder = function(success, data) {
+        if(success) {
+            res.json(data);
         }
-    });
+        else {
+            res.status(404).send(data);
+        }
+    };
+    models.getZoneById(lastDate, responder, req.params.zoneid);
+
 });
 
 server.post('/api/addzone', function(req, res) {
