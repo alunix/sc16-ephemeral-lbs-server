@@ -120,8 +120,8 @@ exports.searchZones = function(res, enddate, responder, search_string) {
 exports.getDailyActivity = function(res, responder, id) {
     var msgTable = exports.nano.use(exports.msgdb);
     msgTable.view("message_design", "zone_activity_by_time",
-        {startkey:[req.params.zoneid,0,0],
-        endkey:[req.params.zoneid,6,23],
+        {startkey:[id ,0,0],
+        endkey:[id, 6,23],
         group:true},
         function(err, body) {
           if (!err) {
