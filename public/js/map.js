@@ -268,7 +268,6 @@ function processClick(lat, lng) {
 
 function dispatchZoneID(id) {
   return function () {
-    console.log("dispatchZoneID");
-    mapVue.$dispatch('zoneSelected', id)
+    mapVue.$dispatch('switchZone', id)
   }
 };

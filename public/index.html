@@ -65,7 +65,7 @@
 			<!-- /.row -->
 	      <div class="row">
           <div id="map" class="col-md-6">
-						<button id="toggleeditbtn" v-if="button_shown" type="button" class="toggle btn-primary btn-lg" v-on:click="start_editing">Add new zone</button>
+						<button id="toggleeditbtn" v-if="button_shown" type="button" class="btn-lg btn-primary" v-on:click="start_editing">Add new zone</button>
           </div>
 	          <div id="contentbox" class="col-md-3">
 							<div id="search" v-cloak>
@@ -92,29 +92,24 @@
     </div>
     <!-- /.container -->
 		<template id="add-zone-template">
+			<h3>Create Zone</h3>
 			<form id="createZoneform">
-				<h3>Create Zone</h3>
-				<div style="width: 30%; float:left;">
-					<label for="zonename">Zonename</label></br>
-					<label for="duration">Duration</label> </br>
-					<label for="time">Time</label>   </br>
-					<label for="topics">Topics</label> </br>
-					<label for="area">Area</label> </br>
-				</div>
-				<div style="width: 70%; float:right;">
-					<input type="text" v-model="Name" id="zonename" maxlength="30"> </br>
-					<input type="date" v-model="Expired-at" id="duration" class="tcal" min="2016-07-04"></br>
-					<input type="time" id="time" placeholder="23:59:59">
-					</form> </br>
-					<input type="text" v-model="topicmodel" id="topics" maxlength="50"> </br>
-					<input type="text" v-model="coordinatesmodel" id="area"> </br>
-				</div>
-				<p>&nbsp;</p>
-				<button form="createZoneform" type="reset">reset</button>
-				<button v-on:click="submitzone">submit</button>
-				<button id="closeCreateZone"> cancel</button>
-				<button v-on:click="addcoordinates">add coordinates</button>
-				<button v-on:click="testdata">add testdata</button>
+				<label for="zonename">Zonename</label>
+				<input class="form-control" type="text" v-model="Name" id="zonename" maxlength="30">
+				<label for="duration">Duration</label>
+				<input class="form-control" type="date" v-model="Expired-at" id="duration" class="tcal" min="2016-07-04">
+				<label for="time">Time</label>
+				<input class="form-control" type="time" id="time" placeholder="23:59:59">
+				<label for="topics">Topics</label>
+				<input class="form-control" type="text" v-model="topicmodel" id="topics" maxlength="50">
+				<button class="btn btn-default">+ Topic</button> <br>
+				<label for="area">Zone</label>
+				<input class="form-control" type="text" v-model="coordinatesmodel" id="area">
+				<button class="btn btn-default" v-on:click="addcoordinates">Get Zone from the Map</button> <br>
+				<button class="btn btn-default" form="createZoneform" type="reset">reset</button>
+				<button class="btn btn-success" v-on:click="submitzone">submit</button>
+				<button class="btn btn-danger" id="closeCreateZone"> cancel</button>
+				<button class="btn btn-default" v-on:click="testdata">add testdata</button>
 			</form>
 		</template>
 		<template id="message-info-template">
