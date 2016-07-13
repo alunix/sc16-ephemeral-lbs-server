@@ -1,3 +1,4 @@
+"use strict";
 exports.nano = null;
 exports.zonesdb = null;
 exports.msgdb = null;
