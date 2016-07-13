@@ -14,6 +14,7 @@ var mapVue = new Vue({
     }).addTo(map);
     this.$set('map', map);
     this.get_zones();
+	startEditing(map);
   },
   events:{
     'switchState': function (state) {

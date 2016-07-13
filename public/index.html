@@ -102,10 +102,10 @@
 				<input class="form-control" type="time" id="time" placeholder="23:59:59">
 				<label for="topics">Topics</label>
 				<input class="form-control" type="text" v-model="topicmodel" id="topics" maxlength="50">
-				<button class="btn btn-default">+ Topic</button> <br>
+				<button class="btn btn-default" v-on:click="addtopic">+ Topic</button> <br>
 				<label for="area">Zone</label>
 				<input class="form-control" type="text" v-model="coordinatesmodel" id="area">
-				<button class="btn btn-default" v-on:click="addcoordinates">Get Zone from the Map</button> <br>
+				<button class="btn btn-default">Get Zone from the Map</button> <br>
 				<button class="btn btn-default" form="createZoneform" type="reset">Reset</button>
 				<button class="btn btn-success" v-on:click="submitzone">Submit</button>
 				<button class="btn btn-danger" id="closeCreateZone"> Cancel</button>
