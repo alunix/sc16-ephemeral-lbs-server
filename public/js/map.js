@@ -1,12 +1,13 @@
+// Vue for map content
 var mapVue = new Vue({
   parent: vue_broadcaster,
   el: '#map',
   data: {
     map: null,
     layer: null,
-    zoneid: null,
     button_shown: true
   },
+  // map initialization
   created: function () {
     var map = L.map('map').setView([51.959, 7.623], 14);
     L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
@@ -35,12 +36,12 @@ var mapVue = new Vue({
     },
     get_zones: function () {
       this.$http.get('/api/zones/', function (data) {
+        // geoZone is a GeoJSON which is needed for finding overlapping zones
         var geoZone = {
           "type": "FeatureCollection",
           "features": []
         };
         for (var i = 0; i < data['Zones'].length; i++) {
-          this.$set('zoneid', data['Zones'][i]['Zone-id']);
           geoZone.features.push({
             "type": "Feature",
             "geometry": {
@@ -54,11 +55,13 @@ var mapVue = new Vue({
           })
           geoZone.features[i].properties.name = data['Zones'][i]['Name'];
           geoZone.features[i].properties.zoneid = data['Zones'][i]['Zone-id'];
+          // each zone gets a onclick function, where the zone selection is handled
           for (var j = 0; j < data['Zones'][i]['Geometry']['Coordinates'].length; j++) {
             geoZone.features[i].geometry.coordinates[0].push([data['Zones'][i]['Geometry']['Coordinates'][j][1], data['Zones'][i]['Geometry']['Coordinates'][j][0]])
           }
+          // the geoZone gets converted into a GeoJSON feature layer
           this.layer = L.geoJson(geoZone)
-            .bindPopup(data['Zones'][i]['Name'])
+          // onclick function for every zone
             .on('click', function (e) {
               processClick(e.latlng.lat, e.latlng.lng)
             })
@@ -69,7 +72,7 @@ var mapVue = new Vue({
   }
 });
 
-
+// function for handling the drawing of polygons on the map
 function startEditing(map){
   var drawnItems = new L.FeatureGroup();
   map.addLayer(drawnItems);
@@ -188,7 +191,7 @@ function startEditing(map){
           }];
       }
   });
-
+  // control element
   var drawControl = new L.Control.Draw({
       position: 'topright',
       draw: {
@@ -245,10 +248,12 @@ function startEditing(map){
   });
 }
 
+// function for processing clicks on zones on the map and handling overlapping zones
 function processClick(lat, lng) {
   var info = '';
   var point = [lng, lat];
   var match = leafletPip.pointInLayer(point, mapVue.layer, false);
+  // if there are overlapping zones, they get shown in a popup and become clickable
   if (match.length > 1) {
     info = "<h5 style='color:blue'><b> Choose one zone:</b> </h5> <ul>";
     for (var i = 0; i < match.length; i++) {
@@ -259,14 +264,15 @@ function processClick(lat, lng) {
     }
     info += "</ul>"
   }
-  else dispatchZoneID(mapVue.zoneid)();
+  else {
+        dispatchZoneID(match[0].feature.properties.zoneid)();
+  }
 
   if (info) {
     mapVue.map.openPopup(info, [lat, lng]);
   }
 };
-
-
+// function for triggering zone selection change
 function dispatchZoneID(id) {
   return function () {
     mapVue.$dispatch('switchZone', id)
