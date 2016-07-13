@@ -13,6 +13,7 @@ var mapVue = new Vue({
     }).addTo(map);
     this.$set('map', map);
     this.get_zones();
+	startEditing(map);
   },
   methods: {
     switch_zone: function (zoneid) {
