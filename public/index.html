@@ -63,103 +63,84 @@
 		<!-- Page Content -->
 		<div class="container">
 			<!-- /.row -->
-			<div class="row">
-				<div id="map" class="col-md-6">
-				</div>
-
-				<div id="contentbox" class="col-md-3">
-					<div id="welcome">
-						<welcome v-if="state"></welcome>
-					</div>
-					<template id="welcome-template">
-						<h1>An Ephemeral Experience</h1>
-						<h3>Explore the map!</h3>
-						<p>Find help in the bar above!</p>
-						<button id="close" v-on:click="initView()" >Get Started!</button>
-						<!--<input type=button onClick="location.href='help.html'" value='Help'>-->
-					</template>
-					<div id="togglebtn" v-cloak>
-						<button type="button" v-if="state" class="toggle btn-primary btn-lg" :class="{ 'active': active }" @click="call">{{ active ? infoText : zoneText }}</button>
-						</br>
-						</br>
-					</div>
-					<div id="search" v-cloak>
-						<input type="text" v-if="state" class="form-control" placeholder="Search" v-model="search" debounce="500"></input>
-						<div id="search_results">
-							<div v-for="zone in result">
-								{{zone.Name}}</br>
-								{{zone['Expired-at']}}</br>
-								{{zone.Topics}}</br>
-								{{zone['Zone-id']}}</br>
+	      <div class="row">
+          <div id="map" class="col-md-6">
+						<button id="toggleeditbtn" v-if="button_shown" type="button" class="btn-lg btn-primary" v-on:click="start_editing">Add new zone</button>
+          </div>
+	          <div id="contentbox" class="col-md-3">
+							<div id="search" v-cloak>
+									<input type="text" class="form-control" placeholder="Search" v-model="search" debounce="500"></input>
+									<div v-if="state" id="search_results">
+											<div v-for="zone in result">
+												<searchresult :name="zone.Name" :id="zone['Zone-id']" :topics"zone.Topics" >
+											</div>
+									</div>
 							</div>
-						</div>
-					</div>
-					<div id="chartarea" v-cloak>
-						<canvas v-show="state" id="zoneChart"></canvas>
-					</div>
-					<div id="zonearea" v-cloak>
-						<zoneinfo v-if="state" :name="zone.Name" :expire="zone['Expired-at']" :topic="zone.Topics"></zoneinfo>
-					</div>
-					<template v-if="state" id="zone-info-template">
-						<div class="panel panel-default">
-							<div class="panel-heading">{{name}}</div>
-							<div class="panel-body">{{expire}}</br>{{topic}}</div>
-						</div>
-					</template>
-					<div id="messagearea">
-						<messageinfo v-if="state" v-for="message in messages" :title="message.Title" :message="message.Message"></messageinfo>
-					</div>
-
-					<template id="message-info-template">
-						<ul class="list-group">
-							<li class="list-group-item"><span class="badge">Title</span> {{ title }} </li>
-							<li class="list-group-item"><span class="badge">Message</span> {{ message }} </li>
-						</ul>
-					</template>
-					<div id="addzone">
-						<addzone v-if="state"> </addzone>
-					</div>
-					<template id="add-zone-template">
-						<div>
-							<form id="createZoneform">
-								<h3>Create Zone</h3>
-								<div style="width: 30%; float:left;">
-									<label for="zonename">Zonename</label></br>
-									<label for="duration">Duration</label> </br>
-									<label for="time">Time</label>   </br>
-									<label for="topics">Topics</label> </br>
-									<label for="area">Area</label> </br>
-								</div>
-								<div style="width: 70%; float:right;">
-									<input type="text" v-model="Name" id="zonename" maxlength="30"> </br>
-									<input type="date" v-model="Expired-at" id="duration" class="tcal" min="2016-07-04"></br>
-									<input type="time" id="time" placeholder="23:59:59">
-									</form> </br>
-									<input type="text" v-model="topicmodel" id="topics" maxlength="50"> </br>
-									<input type="text" v-model="coordinatesmodel" id="area" disabled> </br>
-								</div>
-								<p>&nbsp;</p>
-								<button form="createZoneform" type="reset">reset</button>
-								<button v-on:click="submitzone">submit</button>
-								<button id="closeCreateZone"> cancel</button>
-								<button v-on:click="addtopic">add topic</button>
-							</form>
-						</div>
-					</template>
-				</div>
+							<div id="welcome">
+								<welcome v-if="state"></welcome>
+							</div>
+              <div id="zonearea" v-cloak>
+                  <zoneinfo v-if="state" :name="zone.Name" :expire="zone['Expired-at']" :topic="zone.Topics"></zoneinfo>
+									<canvas v-if="state" id="zoneChart"></canvas>
+	                <messageinfo v-if="state" v-for="message in messages" :title="message.Title" :topic="message.Topic" :message="message.Message"></messageinfo>
+							</div>
+              <div id="addzone">
+                  <addzone v-if="state"> </addzone>
+              </div>
+	          </div>
+	      </div>
+    </div>
+    <!-- /.container -->
+		<template id="add-zone-template">
+			<h3>Create Zone</h3>
+			<form id="createZoneform">
+				<label for="zonename">Zonename</label>
+				<input class="form-control" type="text" v-model="Name" id="zonename" maxlength="30">
+				<label for="duration">Duration</label>
+				<input class="form-control" type="date" v-model="Expired-at" id="duration" class="tcal" min="2016-07-04">
+				<label for="time">Time</label>
+				<input class="form-control" type="time" id="time" placeholder="23:59:59">
+				<label for="topics">Topics</label>
+				<input class="form-control" type="text" v-model="topicmodel" id="topics" maxlength="50">
+				<button class="btn btn-default" v-on:click="addtopic">+ Topic</button> <br>
+				<label for="area">Zone</label>
+				<input class="form-control" type="text" v-model="coordinatesmodel" id="area">
+				<button class="btn btn-default">Get Zone from the Map</button> <br>
+				<button class="btn btn-default" form="createZoneform" type="reset">Reset</button>
+				<button class="btn btn-success" v-on:click="submitzone">Submit</button>
+				<button class="btn btn-danger" id="closeCreateZone"> Cancel</button>
+			</form>
+		</template>
+		<template id="message-info-template">
+			<ul class="list-group">
+				<li class="list-group-item"><span class="badge">{{topic}}</span> {{ title }} </li>
+				<li class="list-group-item"> {{ message }} </li>
+			</ul>
+		</template>
+		<template id="search-result-template">
+			<div v-on:click="selectZone">
+				{{name}}<br>
+				{{id}}<br>
+				{{topics}}
 			</div>
-
-		</div>
-		<!-- /.container -->
-	</body>
-	<script type="text/javascript" src="js/vue_broadcaster.js"></script>
-	<script type="text/javascript" src="js/welcomeVue.js"></script>
-	<script type="text/javascript" src="js/messageVue.js"></script>
-	<script type="text/javascript" src="js/map.js"></script>
-	<script type="text/javascript" src="js/zoneVue.js"></script>
-	<script type="text/javascript" src="js/addZoneVue.js"></script>
-	<script type="text/javascript" src="js/buttonVue.js"></script>
-	<script type="text/javascript" src="js/chart.js"></script>
-	<script type="text/javascript" src="js/search.js"></script>
-	<script type="text/javascript" src="calendar/tcal.js"></script>
+		</template>
+		<template v-if="state" id="zone-info-template">
+			<div class="panel panel-default">
+				<div class="panel-heading">{{name}}</div>
+				<div class="panel-body">{{expire}}</br>{{topic}}</div>
+			</div>
+		</template>
+		<template id="welcome-template">
+			<h1>An Ephemeral Experience</h1>
+			<h3>Explore the map!</h3>
+			<p>Find help in the bar above!</p>
+		</template>
+</body>
+<script type="text/javascript" src="js/vue_broadcaster.js"></script>
+<script type="text/javascript" src="js/welcomeVue.js"></script>
+<script type="text/javascript" src="js/map.js"></script>
+<script type="text/javascript" src="js/addZoneVue.js"></script>
+<script type="text/javascript" src="js/search.js"></script>
+<script type="text/javascript" src="calendar/tcal.js"></script>
+<script type="text/javascript" src="js/zones.js"></script>
 </html>

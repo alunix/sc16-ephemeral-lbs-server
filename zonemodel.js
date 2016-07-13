@@ -118,26 +118,22 @@ exports.searchZones = function(res, enddate, responder, search_string) {
 /* get statistics about daily activity in a zone */
 exports.getDailyActivity = function(res, responder, id) {
     var msgTable = exports.nano.use(exports.msgdb);
-
     msgTable.view("message_design", "zone_activity_by_time",
-    {startkey:[id,0,0],
-    endkey:[id,6,23],
-    group:true},
-    function(err, body) {
-        if (!err) {
+        {startkey:[req.params.zoneid,0,0],
+        endkey:[req.params.zoneid,6,23],
+        group:true},
+        function(err, body) {
+          if (!err) {
             var output=[];
-            for (var i = 0; i<=6; i++){
-                output[i]=[];
-                for (var j=0; j<=23; j++){
-                    output[i][j] = 0;
-                }
+            for (var i=0; i<=23; i++){
+              output[i] = 0
             }
             for(var row in body.rows){
-                output[body.rows[row]['key'][1]][body.rows[row]['key'][2]] = body.rows[row]['value'];
+              output[body.rows[row]['key'][1]] = body.rows[row]['value'];
             }
             responder(null, output, res);
-        } else {
+          } else {
             responder(404, 'Database error: ' + err, res);
-        }
-    });
+          }
+      });
 };

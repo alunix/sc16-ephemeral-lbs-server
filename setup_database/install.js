@@ -9,7 +9,7 @@ var zonedesign = {
             "map": "function(doc){ emit([doc['_id'], doc['Expired-at']], doc)}"
         },
         "by_zone_name_and_date": {
-            "map": `function(doc) { 
+            "map": `function(doc) {
 
                 var keys = [];
 
@@ -41,6 +41,10 @@ var messagedesign = {
            "map": "function(doc){ emit([doc['Name'],doc['Expired-at']], doc)}"
         },
         "zone_activity_by_time":{
+          "map": "function(doc){var date = new Date(doc['Created-at']); var hour = date.getHours(); emit([doc['Zone-id'], hour],1)}",
+          "reduce":"_sum"
+        },
+        "zone_activity_by_time_and_day":{
           "map": "function(doc){var date = new Date(doc['Created-at']); var day = date.getDay(); var hour = date.getHours(); emit([doc['Zone-id'],day, hour],1)}",
           "reduce":"_sum"
         },
