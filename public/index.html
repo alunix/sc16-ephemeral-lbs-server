@@ -10,7 +10,7 @@
 		<link href='https://api.mapbox.com/mapbox.js/v2.4.0/mapbox.css' rel='stylesheet' />
 		<link rel="stylesheet" href="http://leaflet.github.io/Leaflet.draw/lib/leaflet/leaflet.css"/>
         <link rel="stylesheet" href="http://leaflet.github.io/Leaflet.draw/leaflet.draw.css"/>
-		<link href="/calendar/tcal.css" rel="stylesheet">
+		<link href="/css/datetimepicker.css" rel="stylesheet">
 
 		<!-- library imports -->
 		<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.2/jquery.min.js"></script>
@@ -23,10 +23,11 @@
 		<script type="text/javascript" src="http://leaflet.github.io/Leaflet.draw/lib/leaflet/leaflet.js"></script>
 		<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.draw/0.2.3/leaflet.draw-src.js"></script>
 		<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.1.6/Chart.bundle.min.js"></script>
-		<script type="text/javascript" src="/calendar/tcal.js"></script>
-		<!-- Did not find any CDN -->
+		<script type="text/javascript" src="../source/jquery.datetimepicker.full.min.js"></script>
 		<script type="text/javascript" src="../source/leaflet-pip.min.js"></script>
 		<script type="text/javascript" src="../source/geojson.min.js"></script>
+		<!--Just keep it in here, maybe I need it for some calendar stuff, otherwise I remove it-->
+		<!--<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.14.1/moment.min.js"></script>-->
 
 
 	</head>
@@ -86,6 +87,7 @@
 							</div>
               <div id="addzone">
                   <addzone v-if="state"> </addzone>
+				  <datetime-input v-if="state"> </datetime-input/>
               </div>
 	          </div>
 	      </div>
@@ -95,9 +97,9 @@
 			<h3>Create Zone</h3>
 			<form id="createZoneform">
 				<label for="zonename">Zonename</label>
-				<input class="form-control" type="text" v-model="Name" id="zonename" maxlength="30">
+				<input class="form-control" type="text" v-model="name" id="zonename" maxlength="30">
 				<label for="duration">Duration</label>
-				<input class="form-control" type="date" v-model="Expired-at" id="duration" class="tcal" min="2016-07-04">
+				<input class="form-control" type="text" placeholder="MM-DD-YYYY" id="duration" v-model="expire" v-el:input></br>
 				<label for="time">Time</label>
 				<input class="form-control" type="time" id="time" placeholder="23:59:59">
 				<label for="topics">Topics</label>
@@ -141,6 +143,5 @@
 <script type="text/javascript" src="js/map.js"></script>
 <script type="text/javascript" src="js/addZoneVue.js"></script>
 <script type="text/javascript" src="js/search.js"></script>
-<script type="text/javascript" src="calendar/tcal.js"></script>
 <script type="text/javascript" src="js/zones.js"></script>
 </html>

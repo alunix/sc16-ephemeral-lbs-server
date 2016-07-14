@@ -1,6 +1,11 @@
 console.log("addZoneVue loaded");
 Vue.component('addzone', {
 	template: '#add-zone-template',
+	ready: function () {
+		// adjustments for the calendar go here
+		$(this.$els.input).datetimepicker(
+		);
+	},
 	methods: {
 		addtopic: function () {
 			vmAddZone.$data.Topics.push(this.topicmodel);
@@ -55,9 +60,9 @@ var vmAddZone = new Vue({
 			Type: "Polygon",
 			Coordinates: []
 		},
-		Name: '',
-		'Zone-id': '',
-		'Expired-at': "2016-09-30T00:00:00.881Z",
+		'name': '',
+		'zoneid': '',
+		'expire': "2016-09-30T00:00:00.881Z",
 		//timeinput: '',
 		Topics: []
 	},
