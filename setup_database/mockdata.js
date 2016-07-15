@@ -1,3 +1,4 @@
+"use strict";
 var zones = require('./mockdata_zones.js').mock_zones;
 var lorem = require('lorem-ipsum');
 
@@ -12,13 +13,14 @@ const MS_IN_DAY = 86400000;
 
 function insertMocks(zns, numberMsgPerZone) {
     for (var zone in zns) {
+      let index = zone;
         zonedb.insert(zns[zone], function(err, body) {
             if (err) {
                 console.log('DB error:' + err)
             }
             else {
-              zns[zone]['_id'] = body['id']
-              var msgs = generateMessages(numberMsgPerZone, zns[zone]);
+              zns[index]['_id'] = body['id']
+              var msgs = generateMessages(numberMsgPerZone, zns[index]);
               for (var msg in msgs) {
                   msgdb.insert(msgs[msg], function(err, body) {
                       if (err) {
@@ -29,8 +31,6 @@ function insertMocks(zns, numberMsgPerZone) {
             }
         })
     }
-
-
 }
 
 
@@ -47,10 +47,10 @@ function generateMessages(number, zone) {
         var message = {};
         var topics = zone['Topics']
         message['Zone-id'] = zone['_id'];
-        message['Topic'] = topics[Math.floor(Math.random() * topics.length)];
+        message['Topic'] = topics[Math.floor(Math.random() * (topics.length))];
         message['Title'] = generateTitle();
         message['Message'] = generateMsg();
-
+        message['Location'] = null;
         var date = new Date();
         date.setTime(date.getTime() - (getRandom(7) * MS_IN_DAY)+(Math.random() * MS_IN_DAY))
         message['Created-at'] = date.toJSON();
