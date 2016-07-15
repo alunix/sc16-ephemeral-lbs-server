@@ -1,7 +1,3 @@
-Vue.component('zoneinfo', {
-    template: '#zone-info-template',
-    props: ['name', 'expire', 'topic']
-});
 Vue.component('messageinfo', {
     template: '#message-info-template',
     props: ['title', 'message', 'topic']
@@ -15,7 +11,8 @@ var vm = new Vue({
         zone: null,
         messages:  [],
         daily_activity: [],
-        state: false
+        state: false,
+        active_topic: null
     },
     events: {
         switchZone: function (id) {
@@ -23,6 +20,7 @@ var vm = new Vue({
             this.getZone(id);
             this.getMessages(id);
             this.getDailyActivity(id);
+            this.$set('active_topic', null);
         },
         switchState: function (state) {
     			if (state == "zone"){
@@ -37,7 +35,6 @@ var vm = new Vue({
         getZone: function (id) {
             this.$http.get('/api/zones/' + id, function (data) {
                 this.$set('zone', data);
-
             });
         },
         getMessages: function (id) {
@@ -49,6 +46,14 @@ var vm = new Vue({
           this.$http.get('/api/zones/'+id+'/dailyactivity', function (data) {
               this.$set('daily_activity', data);
           });
+        },
+        toggleTopic(topic){
+          if (this.active_topic != topic){
+            this.$set('active_topic', topic);
+          }
+          else{
+            this.$set('active_topic', null);
+          }
         }
     }
 });
