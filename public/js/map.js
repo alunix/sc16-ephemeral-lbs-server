@@ -255,17 +255,18 @@ function processClick(lat, lng) {
   var match = leafletPip.pointInLayer(point, mapVue.layer, false);
   // if there are overlapping zones, they get shown in a popup and become clickable
   if (match.length > 1) {
-    info = "<h5 style='color:blue'><b> Choose one zone:</b> </h5> <ul>";
+    info = "<h4 style='color:grey'><b> Choose one zone:</b> </h4> <ul>";
     for (var i = 0; i < match.length; i++) {
       id = match[i].feature.properties.zoneid;
       name = match[i].feature.properties.name;
       info +=
-      "<li style='margin-left: -20px'><b><a style='cursor: pointer; color: orange' onclick='dispatchZoneID(\"" + id + "\")();'>"+ name + "</a></b></li>"
+      "<li style='margin-left: -30px'><b><a style='cursor: pointer; color: orange' onclick='dispatchZoneID(\"" + id + "\")();'>"+ name + "</a></b></li>";
     }
     info += "</ul>"
   }
   else {
         dispatchZoneID(match[0].feature.properties.zoneid)();
+        mapVue.map.closePopup();
   }
 
   if (info) {
