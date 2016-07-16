@@ -15,14 +15,14 @@ var mapVue = new Vue({
     }).addTo(map);
     this.$set('map', map);
     this.get_zones();
-	startEditing(map);
+    startEditing(map);
   },
-  events:{
+  events: {
     'switchState': function (state) {
-      if (state == "addzone"){
+      if (state == "addzone") {
         this.button_shown = false;
       }
-      else{
+      else {
         this.button_shown = true;
       }
     }
@@ -31,7 +31,7 @@ var mapVue = new Vue({
     switch_zone: function (zoneid) {
       this.$dispatch('switchZone', zoneid)
     },
-    start_editing: function(){
+    start_editing: function () {
       this.$dispatch('switchState', 'addzone')
     },
     get_zones: function () {
@@ -59,192 +59,192 @@ var mapVue = new Vue({
           for (var j = 0; j < data['Zones'][i]['Geometry']['Coordinates'].length; j++) {
             geoZone.features[i].geometry.coordinates[0].push([data['Zones'][i]['Geometry']['Coordinates'][j][1], data['Zones'][i]['Geometry']['Coordinates'][j][0]])
           }
-          // the geoZone gets converted into a GeoJSON feature layer
-          this.layer = L.geoJson(geoZone)
-          // onclick function for every zone
-            .on('click', function (e) {
-              processClick(e.latlng.lat, e.latlng.lng)
-            })
-            .addTo(this.map)
         };
+        // the geoZone gets converted into a GeoJSON feature layer
+        this.layer = L.geoJson(geoZone)
+          // onclick function for every zone
+          .on('click', function (e) {
+            processClick(e.latlng.lat, e.latlng.lng)
+          })
+          .addTo(this.map)
       })
     }
   }
 });
 
 // function for handling the drawing of polygons on the map
-function startEditing(map){
+function startEditing(map) {
   var drawnItems = new L.FeatureGroup();
   map.addLayer(drawnItems);
 
   L.Draw.Polygon = L.Draw.Polyline.extend({
-  	statics: {
-  		TYPE: 'polygon'
-  	},
+    statics: {
+      TYPE: 'polygon'
+    },
 
-  	Poly: L.Polygon,
+    Poly: L.Polygon,
 
-  	options: {
-  		showArea: false,
-  		shapeOptions: {
-  			stroke: true,
-  			color: '#f06eaa',
-  			weight: 4,
-  			opacity: 0.5,
-  			fill: true,
-  			fillColor: null, //same as color by default
-  			fillOpacity: 0.2,
-  			clickable: true
-  		}
-  	},
+    options: {
+      showArea: false,
+      shapeOptions: {
+        stroke: true,
+        color: '#f06eaa',
+        weight: 4,
+        opacity: 0.5,
+        fill: true,
+        fillColor: null, //same as color by default
+        fillOpacity: 0.2,
+        clickable: true
+      }
+    },
 
-  	initialize: function (map, options) {
-  		L.Draw.Polyline.prototype.initialize.call(this, map, options);
+    initialize: function (map, options) {
+      L.Draw.Polyline.prototype.initialize.call(this, map, options);
 
-  		// Save the type so super can fire, need to do this as cannot do this.TYPE :(
-  		this.type = L.Draw.Polygon.TYPE;
-  	},
+      // Save the type so super can fire, need to do this as cannot do this.TYPE :(
+      this.type = L.Draw.Polygon.TYPE;
+    },
 
-  	_updateFinishHandler: function () {
-  		var markerCount = this._markers.length;
+    _updateFinishHandler: function () {
+      var markerCount = this._markers.length;
 
-  		// The first marker should have a click handler to close the polygon
-  		if (markerCount === 1) {
-  			this._markers[0].on('click', this._finishShape, this);
-  		}
+      // The first marker should have a click handler to close the polygon
+      if (markerCount === 1) {
+        this._markers[0].on('click', this._finishShape, this);
+      }
 
-  		// Add and update the double click handler
-  		if (markerCount > 2) {
-  			this._markers[markerCount - 1].on('dblclick', this._finishShape, this);
-  			// Only need to remove handler if has been added before
-  			if (markerCount > 3) {
-  				this._markers[markerCount - 2].off('dblclick', this._finishShape, this);
-  			}
-  		}
-  	},
+      // Add and update the double click handler
+      if (markerCount > 2) {
+        this._markers[markerCount - 1].on('dblclick', this._finishShape, this);
+        // Only need to remove handler if has been added before
+        if (markerCount > 3) {
+          this._markers[markerCount - 2].off('dblclick', this._finishShape, this);
+        }
+      }
+    },
 
-  	_getTooltipText: function () {
-  		var text, subtext;
+    _getTooltipText: function () {
+      var text, subtext;
 
-  		if (this._markers.length === 0) {
-  			text = L.drawLocal.draw.handlers.polygon.tooltip.start;
-  		} else if (this._markers.length < 3) {
-  			text = L.drawLocal.draw.handlers.polygon.tooltip.cont;
-  		} else {
-  			text = L.drawLocal.draw.handlers.polygon.tooltip.end;
-  			subtext = this._getMeasurementString();
-  		}
+      if (this._markers.length === 0) {
+        text = L.drawLocal.draw.handlers.polygon.tooltip.start;
+      } else if (this._markers.length < 3) {
+        text = L.drawLocal.draw.handlers.polygon.tooltip.cont;
+      } else {
+        text = L.drawLocal.draw.handlers.polygon.tooltip.end;
+        subtext = this._getMeasurementString();
+      }
 
-  		return {
-  			text: text,
-  			subtext: subtext
-  		};
-  	},
+      return {
+        text: text,
+        subtext: subtext
+      };
+    },
 
-  	_getMeasurementString: function () {
-  		var area = this._area;
+    _getMeasurementString: function () {
+      var area = this._area;
 
-  		if (!area) {
-  			return null;
-  		}
+      if (!area) {
+        return null;
+      }
 
-  		return L.GeometryUtil.readableArea(area, this.options.metric);
-  	},
+      return L.GeometryUtil.readableArea(area, this.options.metric);
+    },
 
-  	_shapeIsValid: function () {
-  		return this._markers.length >= 3;
-  	},
+    _shapeIsValid: function () {
+      return this._markers.length >= 3;
+    },
 
-  	_vertexChanged: function (latlng, added) {
-  		var latLngs;
+    _vertexChanged: function (latlng, added) {
+      var latLngs;
 
-  		// Check to see if we should show the area
-  		if (!this.options.allowIntersection && this.options.showArea) {
-  			latLngs = this._poly.getLatLngs();
+      // Check to see if we should show the area
+      if (!this.options.allowIntersection && this.options.showArea) {
+        latLngs = this._poly.getLatLngs();
 
-  			this._area = L.GeometryUtil.geodesicArea(latLngs);
-  		}
+        this._area = L.GeometryUtil.geodesicArea(latLngs);
+      }
 
-  		L.Draw.Polyline.prototype._vertexChanged.call(this, latlng, added);
-  	},
+      L.Draw.Polyline.prototype._vertexChanged.call(this, latlng, added);
+    },
 
-  	_cleanUpShape: function () {
-  		var markerCount = this._markers.length;
+    _cleanUpShape: function () {
+      var markerCount = this._markers.length;
 
-  		if (markerCount > 0) {
-  			this._markers[0].off('click', this._finishShape, this);
+      if (markerCount > 0) {
+        this._markers[0].off('click', this._finishShape, this);
 
-  			if (markerCount > 2) {
-  				this._markers[markerCount - 1].off('dblclick', this._finishShape, this);
-  			}
-  		}
-  	}
+        if (markerCount > 2) {
+          this._markers[markerCount - 1].off('dblclick', this._finishShape, this);
+        }
+      }
+    }
   });
 
   L.DrawToolbar.include({
-      getModeHandlers: function (map) {
-          return [ {
-              enabled: true,
-              handler: new L.Draw.Polygon(map, this.options.polygon),
-              title: 'Draw a Polygon',
-  			id: 'drawP'
-          }];
-      }
+    getModeHandlers: function (map) {
+      return [{
+        enabled: true,
+        handler: new L.Draw.Polygon(map, this.options.polygon),
+        title: 'Draw a Polygon',
+        id: 'drawP'
+      }];
+    }
   });
   // control element
   var drawControl = new L.Control.Draw({
-      position: 'topright',
-      draw: {
+    position: 'topright',
+    draw: {
 
-          polygon: {
-              allowIntersection: false,
-              showArea: true,
-              drawError: {
-                  color: '#b00b00',
-                  timeout: 1000
-              },
-              shapeOptions: {
-                  stroke: true,
-                  color: '#f06eaa',
-                  weight: 4,
-                  opacity: 0.5,
-                  fill: true,
-                  fillColor: null, //same as color by default
-                  fillOpacity: 0.2,
-                  clickable: false
-              }
-          }
-      },
-      edit: {
-          featureGroup: drawnItems
+      polygon: {
+        allowIntersection: false,
+        showArea: true,
+        drawError: {
+          color: '#b00b00',
+          timeout: 1000
+        },
+        shapeOptions: {
+          stroke: true,
+          color: '#f06eaa',
+          weight: 4,
+          opacity: 0.5,
+          fill: true,
+          fillColor: null, //same as color by default
+          fillOpacity: 0.2,
+          clickable: false
+        }
       }
+    },
+    edit: {
+      featureGroup: drawnItems
+    }
   });
 
   map.addControl(drawControl);
 
   map.on('draw:created', function (e) {
-      var type = e.layerType,
-          layer = e.layer;
+    var type = e.layerType,
+      layer = e.layer;
 
-      if (type === 'polygon') {
-  	coordinates =[];
-  	LatLongs = layer.getLatLngs();
-  	for (i=0;i<LatLongs.length;i++){
-  		coordinates.push([LatLongs[i].lat, LatLongs[i].lng]);
+    if (type === 'polygon') {
+      coordinates = [];
+      LatLongs = layer.getLatLngs();
+      for (i = 0; i < LatLongs.length; i++) {
+        coordinates.push([LatLongs[i].lat, LatLongs[i].lng]);
       }
-  	document.getElementById("area").value= coordinates;
-  }
-      // Do whatever else you need to. (save to db, add to map etc)
-      drawnItems.addLayer(layer);
+      document.getElementById("area").value = coordinates;
+    }
+    // Do whatever else you need to. (save to db, add to map etc)
+    drawnItems.addLayer(layer);
   });
 
   map.on('draw:edited', function () {
-      // Update db to save latest changes.
+    // Update db to save latest changes.
   });
 
   map.on('draw:deleted', function () {
-  	delete(layer)
-      // Update db to save latest changes.
+    delete (layer)
+    // Update db to save latest changes.
   });
 }
 
@@ -260,13 +260,13 @@ function processClick(lat, lng) {
       id = match[i].feature.properties.zoneid;
       name = match[i].feature.properties.name;
       info +=
-      "<li style='margin-left: -30px'><b><a style='cursor: pointer; color: orange' onclick='dispatchZoneID(\"" + id + "\")();'>"+ name + "</a></b></li>";
+        "<li style='margin-left: -30px'><b><a style='cursor: pointer; color: orange' onclick='dispatchZoneID(\"" + id + "\")();'>" + name + "</a></b></li>";
     }
     info += "</ul>"
   }
   else {
-        dispatchZoneID(match[0].feature.properties.zoneid)();
-        mapVue.map.closePopup();
+    dispatchZoneID(match[0].feature.properties.zoneid)();
+    mapVue.map.closePopup();
   }
 
   if (info) {
