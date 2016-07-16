@@ -74,7 +74,7 @@
 					<input type="text" class="form-control" placeholder="Search" v-model="search" debounce="500"></input>
 					<div v-if="state" id="search_results">
 						<div v-for="zone in result">
-							<searchresult :name="zone.Name" :id="zone['Zone-id']" :topics "zone.Topics">
+							<searchresult :name="zone.Name" :id="zone['Zone-id']" :topics="zone.Topics">
 						</div>
 					</div>
 				</div>
