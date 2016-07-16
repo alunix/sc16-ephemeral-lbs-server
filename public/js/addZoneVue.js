@@ -1,4 +1,4 @@
-console.log("addZoneVue loaded");
+//Vue component for add-zone-functionality
 Vue.component('addzone', {
 	template: '#add-zone-template',
 	ready: function () {
@@ -7,18 +7,20 @@ Vue.component('addzone', {
 		);
 	},
 	methods: {
+		//add topic button functionality
 		addTopic: function () {
 			vmAddZone.$data.topics.push(this.topicmodel);
-			console.log("Topic added");
 			$("#topicPreview").text(vmAddZone.$data.topics.join(", "));
 			$("#topics").val('');
 		},
+		//delete topic button functionality
 		deleteTopic: function () {
 			vmAddZone.$data.topics.pop();
 			$("#topicPreview").text(vmAddZone.$data.topics.join(", "));
 		},
+		//submit button functionality
 		submitzone: function () {
-			console.log("Submit");
+			//adding all submitted data to the request
 			for (i = 0; i < coordinates.length; i++) {
 				vmAddZone.$data.Geometry.Coordinates.push(coordinates[i])
 			};
@@ -26,36 +28,31 @@ Vue.component('addzone', {
 			vmAddZone.$data.name = this.name;
 			vmAddZone.$data.datetime = this.datemodel;
 			var d = new Date(vmAddZone.$data.datetime);
-
 			var zone = {
 				'Geometry': {
 					'Type': "Polygon",
 					'Coordinates': []
 				},
-				'Name' : "",
-				'Expired-at' : "",
-				'Topics' : []
-			}; 
-			
+				'Name': "",
+				'Expired-at': "",
+				'Topics': []
+			};
 			zone.Geometry.Coordinates = vmAddZone.$data.Geometry.Coordinates;
 			zone.Name = vmAddZone.$data.name;
 			zone['Expired-at'] = d.toJSON();
 			zone.Topics = vmAddZone.$data.topics;
 			jsonstring = JSON.stringify(zone);
-			//console.log(jsonstring);
-
 			// this.$http.post('api/addzone'), jsonstring, function(data) {}
-
-			// old
-
-			// $.post("/api/addzone", jsonstring);
+			//ajax POST request
 			$.ajax({
 				type: "POST",
 				url: "/api/addzone",
 				data: jsonstring,
 				contentType: "application/json; charset=utf-8",
 				dataType: "json",
-				success: function (data) { alert(data); },
+				success: function (data) {
+					console.log("zone added!")
+				},
 				failure: function (errMsg) {
 					alert(errMsg);
 				}
@@ -68,7 +65,7 @@ Vue.component('addzone', {
 	}
 });
 
-// create a new Vue instance and mount it to our div element above with the id of info
+// create a new Vue instance and mount it to the DOM element with the id 'addzone'
 var vmAddZone = new Vue({
 	el: '#addzone',
 	parent: vue_broadcaster,
@@ -84,11 +81,10 @@ var vmAddZone = new Vue({
 		'name': '',
 		'topics': [],
 		'zoneid': '',
-
 	},
 	events: {
 		'switchState': function (state) {
-			if (state == "addzone"){
+			if (state == "addzone") {
 				this.state = true;
 			}
 			else {
