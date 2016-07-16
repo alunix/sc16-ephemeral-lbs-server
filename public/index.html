@@ -97,7 +97,7 @@
 			<h3>Create Zone</h3>
 			<form id="createZoneform">
 				<label for="zonename">Zonename</label>
-				<input class="form-control" type="text" v-model="name" id="zonename" maxlength="30">
+				<input class="form-control" type="text" v-model="name" id="zonename" maxlength="30" required>
 
 				<label for="duration">Duration</label>
 				<input class="form-control" type="text" placeholder="Date &amp; time" id="duration" v-model="datemodel" v-el:input required></br>
@@ -107,15 +107,15 @@
 				<a class="btn btn-success" href="#" v-on:click="addTopic()" role="button">add topic</a>
 				<a class="btn btn-danger" href="#" v-on:click="deleteTopic()" role="button">delete topic</a>
 				<br>
-				<p id="topicPreview"></p>
+				<b><p id="topicPreview" ></p></b>
 				<br>
 
 				<label for="area">Zone</label>
 				<input class="form-control" type="text" v-model="coordinatesmodel" id="area" readonly required>
 	<!--			<button class="btn btn-default">Get Zone from the Map</button> <br>-->
-				<a class="btn btn-default" href="#" form="createZoneform" type="reset" v-on:click="reset">Reset</a>
+				<a class="btn btn-default" href="#" form="createZoneform" type="reset" role="button" v-on:click="reset">Reset</a>
 				<a class="btn btn-success" href="#" v-on:click="submitzone" role="button">Submit</a>
-				<button class="btn btn-danger" id="closeCreateZone"> Cancel</button>
+				<a class="btn btn-danger" href="#" id="closeCreateZone" v-on:click="cancel" role="button"> Cancel</a>
 			</form>
 		</template>
 		<template id="message-info-template">

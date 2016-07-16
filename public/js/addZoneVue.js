@@ -7,23 +7,25 @@ Vue.component('addzone', {
 		);
 	},
 	methods: {
+		cancel: function() {
+			this.$dispatch('switchState', 'search')
+		},
 		reset: function() {
-			console.log("reset called");
 			while (vmAddZone.$data.topics.length > 0){
 				vmAddZone.$data.topics.pop();
 			}
-			$("#topicPreview").text(vmAddZone.$data.topics.join(", "));
+			$("#topicPreview").text(vmAddZone.$data.topics.join("  "));
 		},
 		//add topic button functionality
 		addTopic: function () {
 			vmAddZone.$data.topics.push(this.topicmodel);
-			$("#topicPreview").text(vmAddZone.$data.topics.join(", "));
+			$("#topicPreview").text(vmAddZone.$data.topics.join("  "));
 			$("#topics").val('');
 		},
 		//delete topic button functionality
 		deleteTopic: function () {
 			vmAddZone.$data.topics.pop();
-			$("#topicPreview").text(vmAddZone.$data.topics.join(", "));
+			$("#topicPreview").text(vmAddZone.$data.topics.join("  "));
 		},
 		//submit button functionality
 		submitzone: function () {
