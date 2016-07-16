@@ -1,77 +1,102 @@
-console.log("addZoneVue loaded");
+//Vue component for add-zone-functionality
 Vue.component('addzone', {
 	template: '#add-zone-template',
 	ready: function () {
 		// adjustments for the calendar go here
-		$(this.$els.input).datetimepicker(
+		$("#duration").datetimepicker(
 		);
 	},
 	methods: {
-		addtopic: function () {
-			vmAddZone.$data.Topics.push(this.topicmodel);
-			console.log("Topic added");
-			document.getElementById("topics").value='';
+		cancel: function() {
+			this.$dispatch('switchState', 'search')
 		},
-//		testdata: function () {
-//			parsedjson = JSON.parse(jsonstring);
-//			toFloat = parseFloat(this.coordinatesmodel);
-//			parsedjson.Geometry.Coordinates.push(toFloat);
-//			console.log(toFloat),
-//		//	console.log(parsedjson.Geometry.Coordinates);
-//			console.log(JSON.stringify(parsedjson));
-//		},
-		submitzone: function () {
-			for (i = 0; i < coordinates.length; i++) {
-				vmAddZone.$data.Geometry.Coordinates.push(coordinates[i]);
+		reset: function() {
+			while (vmAddZone.$data.topics.length > 0){
+				vmAddZone.$data.topics.pop();
 			}
-			;
-			vmAddZone.$data.Name = this.Name;
+			$("#topicPreview").text(vmAddZone.$data.topics.join("  "));
+		},
+		//add topic button functionality
+		addTopic: function () {
+			vmAddZone.$data.topics.push(this.topicmodel);
+			$("#topicPreview").text(vmAddZone.$data.topics.join("  "));
+			$("#topics").val('');
+		},
+		//delete topic button functionality
+		deleteTopic: function () {
+			vmAddZone.$data.topics.pop();
+			$("#topicPreview").text(vmAddZone.$data.topics.join("  "));
+		},
+		//submit button functionality
+		submitzone: function () {
+			//adding all submitted data to the request
+			for (i = 0; i < coordinates.length; i++) {
+				vmAddZone.$data.Geometry.Coordinates.push(coordinates[i])
+			};
 			vmAddZone.$data.Geometry.Coordinates.push(coordinates[0]);
-			delete vmAddZone.$data.state;
-			jsonstring = JSON.stringify(vmAddZone.$data);
-			console.log(jsonstring);
-	$.post("/api/addzone",jsonstring);
-	$.ajax({
-    type: "POST",
-    url: "/api/addzone",
-    data: jsonstring,
-    contentType: "application/json; charset=utf-8",
-    dataType: "json",
-    success: function(data){alert(data);},
-    failure: function(errMsg) {
-        alert(errMsg);
-    }
-});
-setTimeout(function(){
-window.location.href= "/index.html";
-}, 500);
+			vmAddZone.$data.name = this.name;
+			vmAddZone.$data.datetime = this.datemodel;
+			var d = new Date(vmAddZone.$data.datetime);
+			var zone = {
+				'Geometry': {
+					'Type': "Polygon",
+					'Coordinates': []
+				},
+				'Name': "",
+				'Expired-at': "",
+				'Topics': []
+			};
+			zone.Geometry.Coordinates = vmAddZone.$data.Geometry.Coordinates;
+			zone.Name = vmAddZone.$data.name;
+			zone['Expired-at'] = d.toJSON();
+			zone.Topics = vmAddZone.$data.topics;
+			jsonstring = JSON.stringify(zone);
+			// this.$http.post('api/addzone'), jsonstring, function(data) {}
+			//ajax POST request
+			$.ajax({
+				type: "POST",
+				url: "/api/addzone",
+				data: jsonstring,
+				contentType: "application/json; charset=utf-8",
+				dataType: "json",
+				success: function (data) {
+					console.log("zone added!")
+				},
+				failure: function (errMsg) {
+					alert(errMsg);
+				}
+			});
+			setTimeout(function () {
+				window.location.href = "/index.html";
+			}, 500);
 
 		}
 	}
 });
 
-// create a new Vue instance and mount it to our div element above with the id of info
+// create a new Vue instance and mount it to the DOM element with the id 'addzone'
 var vmAddZone = new Vue({
 	el: '#addzone',
 	parent: vue_broadcaster,
 	data: {
+		model: {
+			twoWay: true
+		},
 		state: false,
 		Geometry: {
 			Type: "Polygon",
 			Coordinates: []
 		},
 		'name': '',
+		'topics': [],
 		'zoneid': '',
-		'expire': "2016-09-30T00:00:00.881Z",
-		//timeinput: '',
-		Topics: []
 	},
 	events: {
 		'switchState': function (state) {
-			if (state == "addzone"){
+			if (state == "addzone") {
 				this.state = true;
 			}
-			else{
+			else {
 				this.state = false;
 			}
 		}
