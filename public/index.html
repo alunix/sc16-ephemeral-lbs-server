@@ -87,7 +87,7 @@
 							</div>
               <div id="addzone">
                   <addzone v-if="state"> </addzone>
-				  <datetime-input v-if="state"> </datetime-input/>
+				  <datetime-input v-if="state" > </datetime-input/>
               </div>
 	          </div>
 	      </div>
@@ -98,18 +98,23 @@
 			<form id="createZoneform">
 				<label for="zonename">Zonename</label>
 				<input class="form-control" type="text" v-model="name" id="zonename" maxlength="30">
+
 				<label for="duration">Duration</label>
-				<input class="form-control" type="text" placeholder="MM-DD-YYYY" id="duration" v-model="expire" v-el:input></br>
-				<label for="time">Time</label>
-				<input class="form-control" type="time" id="time" placeholder="23:59:59">
+				<input class="form-control" type="text" placeholder="Date &amp; time" id="duration" v-model="datemodel" v-el:input></br>
+
 				<label for="topics">Topics</label>
 				<input class="form-control" type="text" v-model="topicmodel" id="topics" maxlength="50">
-				<button class="btn btn-default" v-on:click="addtopic">+ Topic</button> <br>
+				<a class="btn btn-success" href="#" v-on:click="addTopic()" role="button">add topic</a>
+				<a class="btn btn-danger" href="#" v-on:click="deleteTopic()" role="button">delete topic</a>
+				<br>
+				<p id="topicPreview"></p>
+				<br>
+
 				<label for="area">Zone</label>
-				<input class="form-control" type="text" v-model="coordinatesmodel" id="area">
-				<button class="btn btn-default">Get Zone from the Map</button> <br>
+				<input class="form-control" type="text" v-model="coordinatesmodel" id="area" readonly>
+	<!--			<button class="btn btn-default">Get Zone from the Map</button> <br>-->
 				<button class="btn btn-default" form="createZoneform" type="reset">Reset</button>
-				<button class="btn btn-success" v-on:click="submitzone">Submit</button>
+				<a class="btn btn-success" href="#" v-on:click="submitzone" role="button">Submit</a>
 				<button class="btn btn-danger" id="closeCreateZone"> Cancel</button>
 			</form>
 		</template>

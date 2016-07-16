@@ -3,48 +3,65 @@ Vue.component('addzone', {
 	template: '#add-zone-template',
 	ready: function () {
 		// adjustments for the calendar go here
-		$(this.$els.input).datetimepicker(
+		$("#duration").datetimepicker(
 		);
 	},
 	methods: {
-		addtopic: function () {
-			vmAddZone.$data.Topics.push(this.topicmodel);
+		addTopic: function () {
+			vmAddZone.$data.topics.push(this.topicmodel);
 			console.log("Topic added");
-			document.getElementById("topics").value='';
+			$("#topicPreview").text(vmAddZone.$data.topics.join(", "));
+			$("#topics").val('');
 		},
-//		testdata: function () {
-//			parsedjson = JSON.parse(jsonstring);
-//			toFloat = parseFloat(this.coordinatesmodel);
-//			parsedjson.Geometry.Coordinates.push(toFloat);
-//			console.log(toFloat),
-//		//	console.log(parsedjson.Geometry.Coordinates);
-//			console.log(JSON.stringify(parsedjson));
-//		},
+		deleteTopic: function () {
+			vmAddZone.$data.topics.pop();
+			$("#topicPreview").text(vmAddZone.$data.topics.join(", "));
+		},
 		submitzone: function () {
 			for (i = 0; i < coordinates.length; i++) {
-				vmAddZone.$data.Geometry.Coordinates.push(coordinates[i]);
-			}
-			;
-			vmAddZone.$data.Name = this.Name;
+				vmAddZone.$data.Geometry.Coordinates.push(coordinates[i])
+			};
 			vmAddZone.$data.Geometry.Coordinates.push(coordinates[0]);
-			delete vmAddZone.$data.state;
-			jsonstring = JSON.stringify(vmAddZone.$data);
-			console.log(jsonstring);
-	$.post("/api/addzone",jsonstring);
-	$.ajax({
-    type: "POST",
-    url: "/api/addzone",
-    data: jsonstring,
-    contentType: "application/json; charset=utf-8",
-    dataType: "json",
-    success: function(data){alert(data);},
-    failure: function(errMsg) {
-        alert(errMsg);
-    }
-});
-setTimeout(function(){
-window.location.href= "/index.html";
-}, 500);
+			vmAddZone.$data.name = this.name;
+			vmAddZone.$data.datetime = this.datemodel;
+			var d = new Date(vmAddZone.$data.datetime);
+
+			var zone = {
+				Geometry: {
+					Type: "Polygon",
+					Coordinates: []
+				},
+				'Name' : "",
+				'Expire-at' : "",
+				'Topics' : []
+			}; 
+			
+			zone.Geometry.Coordinates = vmAddZone.$data.Geometry.Coordinates;
+			zone.Name = vmAddZone.$data.name;
+			zone['Expire-at'] = d.toJSON();
+			zone.Topics = vmAddZone.$data.topics;
+			jsonstring = JSON.stringify(zone);
+			//console.log(jsonstring);
+
+			this.$http.post('api/addzone'), jsonstring, function(data) {}
+
+			// old
+
+			// $.post("/api/addzone", jsonstring);
+			// $.ajax({
+			// 	type: "POST",
+			// 	url: "/api/addzone",
+			// 	data: jsonstring,
+			// 	contentType: "application/json; charset=utf-8",
+			// 	dataType: "json",
+			// 	success: function (data) { alert(data); },
+			// 	failure: function (errMsg) {
+			// 		alert(errMsg);
+			// 	}
+			// });
+			// setTimeout(function () {
+			// 	window.location.href = "/index.html";
+			// }, 500);
 
 		}
 	}
@@ -55,23 +72,26 @@ var vmAddZone = new Vue({
 	el: '#addzone',
 	parent: vue_broadcaster,
 	data: {
+		model: {
+			twoWay: true
+		},
 		state: false,
 		Geometry: {
 			Type: "Polygon",
 			Coordinates: []
 		},
 		'name': '',
+		// 'expire': "2016-09-30T00:00:00.881Z",
+		'topics': [],
 		'zoneid': '',
-		'expire': "2016-09-30T00:00:00.881Z",
-		//timeinput: '',
-		Topics: []
+
 	},
 	events: {
 		'switchState': function (state) {
 			if (state == "addzone"){
 				this.state = true;
 			}
-			else{
+			else {
 				this.state = false;
 			}
 		}
