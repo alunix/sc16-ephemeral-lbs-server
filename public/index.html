@@ -82,9 +82,20 @@
 					<welcome v-if="state"></welcome>
 				</div>
 				<div id="zonearea" v-cloak>
-					<zoneinfo v-if="state" :name="zone.Name" :expire="zone['Expired-at']" :topic="zone.Topics"></zoneinfo>
+					<div v-if="state" class="panel panel-default">
+						<div class="panel-heading">{{zone.Name}}</div>
+						<div class="panel-body">
+							Expires: {{zone['Expired-at']}}</br>
+							Topics:
+							<div class="badge topic" v-bind:class="{'topic-inactive':active_topic!=topic&&active_topic!=null}" v-for="topic in zone.Topics"
+								v-on:click="toggleTopic(topic)">{{topic}}</div>
+						</div>
+					</div>
 					<canvas v-show="state" id="zoneChart"></canvas>
-					<messageinfo v-if="state" v-for="message in messages" :title="message.Title" :topic="message.Topic" :message="message.Message"></messageinfo>
+					<div id="messagearea">
+						<messageinfo v-if="state" v-for="message in messages | filterBy active_topic in 'Topic'" :title="message.Title" :topic="message.Topic"
+							:message="message.Message"></messageinfo>
+					</div>
 				</div>
 				<div id="addzone">
 					<addzone v-if="state"> </addzone>
@@ -128,14 +139,9 @@
 	</template>
 	<template id="search-result-template">
 		<div v-on:click="selectZone">
-			{{name}}<br> {{id}}
+			{{name}}
+			<br> {{id}}
 			<br> {{topics}}
-		</div>
-	</template>
-	<template v-if="state" id="zone-info-template">
-		<div class="panel panel-default">
-			<div class="panel-heading">{{name}}</div>
-			<div class="panel-body">{{expire}}</br>{{topic}}</div>
 		</div>
 	</template>
 	<template id="welcome-template">
