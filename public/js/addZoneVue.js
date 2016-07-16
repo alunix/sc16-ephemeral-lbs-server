@@ -39,7 +39,7 @@ Vue.component('addzone', {
 			
 			zone.Geometry.Coordinates = vmAddZone.$data.Geometry.Coordinates;
 			zone.Name = vmAddZone.$data.name;
-			zone['Expire-at'] = d.toJSON();
+			zone['Expired-at'] = d.toJSON();
 			zone.Topics = vmAddZone.$data.topics;
 			jsonstring = JSON.stringify(zone);
 			//console.log(jsonstring);
@@ -82,7 +82,6 @@ var vmAddZone = new Vue({
 			Coordinates: []
 		},
 		'name': '',
-		// 'expire': "2016-09-30T00:00:00.881Z",
 		'topics': [],
 		'zoneid': '',
 
