@@ -26,8 +26,6 @@
 	<script type="text/javascript" src="../source/jquery.datetimepicker.full.min.js"></script>
 	<script type="text/javascript" src="../source/leaflet-pip.min.js"></script>
 	<script type="text/javascript" src="../source/geojson.min.js"></script>
-	<!--Just keep it in here, maybe I need it for some calendar stuff, otherwise I remove it-->
-	<!--<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.14.1/moment.min.js"></script>-->
 
 
 </head>
@@ -112,20 +110,20 @@
 		<h3>Create Zone</h3>
 		<form id="createZoneform">
 			<label for="zonename">Name:</label>
-			<input class="form-control" type="text" v-model="name" id="zonename" maxlength="30" required>
+			<input class="form-control" type="text" placeholder="What's the zone's name?" v-model="name" id="zonename" maxlength="30" required>
 
 			<label for="duration">Expiry Date:</label>
-			<input class="form-control" type="date" placeholder="Date &amp; Time" id="duration" v-model="datemodel" v-el:input required>
+			<input class="form-control" type="text" placeholder="Till when does it last?" id="duration" v-model="datemodel" v-el:input required>
 
 			<label for="topics">Topics:</label>
 			<p id="topicPreview"></p>
-			<input class="form-control" type="text" v-model="topicmodel" id="topics" maxlength="50">
+			<input class="form-control" type="text" placeholder="What are the topics?" v-model="topicmodel" id="topics" maxlength="50">
 			<a class="btn btn-default button" href="#" v-on:click="addTopic()" role="button">add topic</a>
 			<a class="btn btn-default button" href="#" v-on:click="deleteTopic()" role="button">delete topic</a>
 			<br>
 			<label for="area">Zone:</label>
-			<input class="form-control" type="text" v-model="coordinatesmodel" id="area" readonly required>
-			<!-- <a class="btn btn-default button" href="#" form="createZoneform" type="reset" role="button" v-on:click="reset">Reset</a>-->
+			<input class="form-control" type="text" placeholder="Draw a polygon!" v-model="coordinatesmodel" id="area" readonly required>
+			<button class="btn btn-default button" form="createZoneform" type="reset" role="button" v-on:click="reset">Reset</button>
 			<a class="btn btn-success button" href="#" v-on:click="submitzone" role="button">Submit</a>
 		</form>
 	</template>
