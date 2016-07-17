@@ -8,7 +8,7 @@ Vue.component('addzone', {
 	},
 	methods: {
 		cancel: function() {
-			this.$dispatch('switchState', 'search')
+			this.$dispatch('switchState', 'welcome')
 		},
 		reset: function() {
 			while (vmAddZone.$data.topics.length > 0){
