@@ -84,7 +84,7 @@
 					<div v-show="state" class="panel panel-default">
 						<div class="panel-heading">{{zone.Name}}</div>
 						<div class="panel-body">
-							<strong>Expires: </strong>{{zone['Expired-at']}}</br>
+							<strong>Expires: </strong>{{zone['Expired-at']| date}}</br>
 							<strong>Activity by time:</strong>
 							<canvas id="zoneChart"></canvas>
 							<strong>Topics:</strong>
