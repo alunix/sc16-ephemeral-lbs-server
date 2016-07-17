@@ -26,8 +26,6 @@
 	<script type="text/javascript" src="../source/jquery.datetimepicker.full.min.js"></script>
 	<script type="text/javascript" src="../source/leaflet-pip.min.js"></script>
 	<script type="text/javascript" src="../source/geojson.min.js"></script>
-	<!--Just keep it in here, maybe I need it for some calendar stuff, otherwise I remove it-->
-	<!--<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.14.1/moment.min.js"></script>-->
 
 
 </head>
@@ -71,33 +69,35 @@
 			</div>
 			<div id="contentbox" class="col-md-3">
 				<div id="search" v-cloak>
-					<input type="text" class="form-control" placeholder="Enter zone name or topic" v-model="search" debounce="500"></input>
-					<div v-if="state" id="search_results">
+					<input type="text" id="search_input" class="form-control" placeholder="Search" v-model="search" debounce="500"></input>
+					<div v-if="state" id="search_results" class="content">
 						<div v-for="zone in result">
 							<searchresult :name="zone.Name" :id="zone['Zone-id']" :topics="zone.Topics">
 						</div>
 					</div>
 				</div>
-				<div id="welcome">
+				<div id="welcome" class="content">
 					<welcome v-if="state"></welcome>
 				</div>
-				<div id="zonearea" v-cloak>
-					<div v-if="state" class="panel panel-default">
+				<div id="zonearea" class="content" v-cloak>
+					<div v-show="state" class="panel panel-default">
 						<div class="panel-heading">{{zone.Name}}</div>
 						<div class="panel-body">
-							Expires: {{zone['Expired-at']}}</br>
-							Topics:
+							<strong>Expires: </strong>{{zone['Expired-at']}}</br>
+							<strong>Activity by time:</strong>
+							<canvas id="zoneChart"></canvas>
+							<strong>Topics:</strong>
 							<div class="badge topic" v-bind:class="{'topic-inactive':active_topic!=topic&&active_topic!=null}" v-for="topic in zone.Topics"
 								v-on:click="toggleTopic(topic)">{{topic}}</div>
 						</div>
 					</div>
-					<canvas v-show="state" id="zoneChart"></canvas>
-					<div id="messagearea">
-						<messageinfo v-if="state" v-for="message in messages | filterBy active_topic in 'Topic'" :title="message.Title" :topic="message.Topic"
+					<div id="messagearea" v-if="state" >
+						<h3>Messages:</h3>
+						<messageinfo v-for="message in messages | filterBy active_topic in 'Topic'" :title="message.Title" :topic="message.Topic"
 							:message="message.Message"></messageinfo>
 					</div>
 				</div>
-				<div id="addzone">
+				<div id="addzone" class="content">
 					<addzone v-if="state"> </addzone>
 					<datetime-input v-if="state">
 						</datetime-input/>
@@ -109,37 +109,36 @@
 	<template id="add-zone-template">
 		<h3>Create Zone</h3>
 		<form id="createZoneform">
-			<label for="zonename">Name</label>
-			<input class="form-control" type="text" placeholder="What's the zone's name?" v-model="name" id="zonename" maxlength="30" required></br>
+			<label for="zonename">Name:</label>
+			<input class="form-control" type="text" placeholder="What's the zone's name?" v-model="name" id="zonename" maxlength="30" required>
 
-			<label for="duration">Duration</label>
-			<input class="form-control" type="text" placeholder="Till when does it last?" id="duration" v-model="datemodel" v-el:input required></br>
+			<label for="duration">Expiry Date:</label>
+			<input class="form-control" type="text" placeholder="Till when does it last?" id="duration" v-model="datemodel" v-el:input required>
 
-			<label for="topics">Topics</label>
-			<input class="form-control" type="text" placeholder="What are the topics?" v-model="topicmodel" id="topics" maxlength="50"></br>
-			<a class="btn btn-success" href="#" v-on:click="addTopic()" role="button">add topic</a>
-			<a class="btn btn-danger" href="#" v-on:click="deleteTopic()" role="button">delete topic</a>
+			<label for="topics">Topics:</label>
+			<p id="topicPreview"></p>
+			<input class="form-control" type="text" placeholder="What are the topics?" v-model="topicmodel" id="topics" maxlength="50">
+			<a class="btn btn-default button" href="#" v-on:click="addTopic()" role="button">add topic</a>
+			<a class="btn btn-default button" href="#" v-on:click="deleteTopic()" role="button">delete topic</a>
 			<br>
-			<b><p id="topicPreview" ></p></b>
-			<br>
-
-			<label for="area">Zone</label>
-			<input class="form-control" type="text" placeholder="Draw a polygon!" v-model="coordinatesmodel" id="area" readonly required></br>
-			<button class="btn btn-default" form="createZoneform" type="reset" role="button" v-on:click="reset">Reset</button>
-			<a class="btn btn-success btn-lg" href="#" v-on:click="submitzone" role="button">Submit</a>
+			<label for="area">Zone:</label>
+			<input class="form-control" type="text" placeholder="Draw a polygon!" v-model="coordinatesmodel" id="area" readonly required>
+			<button class="btn btn-default button" form="createZoneform" type="reset" role="button" v-on:click="reset">Reset</button>
+			<a class="btn btn-success button" href="#" v-on:click="submitzone" role="button">Submit</a>
 		</form>
 	</template>
 	<template id="message-info-template">
 		<ul class="list-group">
-			<li class="list-group-item"><span class="badge">{{topic}}</span> {{ title }} </li>
+			<li class="list-group-item"><span class="badge">{{topic}}</span> <strong>{{ title }}</strong> </li>
 			<li class="list-group-item"> {{ message }} </li>
 		</ul>
 	</template>
 	<template id="search-result-template">
 		<div v-on:click="selectZone">
-			{{name}}
-			<br> {{id}}
-			<br> {{topics}}
+			<ul class="list-group">
+				<li class="list-group-item"><strong>{{ name }}</strong> </li>
+				<li class="list-group-item">Topics: {{ topics }} </li>
+			</ul>
 		</div>
 	</template>
 	<template id="welcome-template">
