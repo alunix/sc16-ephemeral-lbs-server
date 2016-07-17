@@ -95,5 +95,11 @@ var vm = new Vue({
             });
 
         }
+    },
+    filters:{
+      date : function(value){
+        var date = new Date(value)
+        return date.toLocaleString().slice(0,26)
+      }
     }
 });
