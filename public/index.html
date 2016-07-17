@@ -115,7 +115,7 @@
 			<input class="form-control" type="text" v-model="name" id="zonename" maxlength="30" required>
 
 			<label for="duration">Expiry Date:</label>
-			<input class="form-control" type="text" placeholder="Date &amp; time" id="duration" v-model="datemodel" v-el:input required>
+			<input class="form-control" type="date" placeholder="Date &amp; Time" id="duration" v-model="datemodel" v-el:input required>
 
 			<label for="topics">Topics:</label>
 			<p id="topicPreview"></p>
@@ -125,10 +125,8 @@
 			<br>
 			<label for="area">Zone:</label>
 			<input class="form-control" type="text" v-model="coordinatesmodel" id="area" readonly required>
-			<!--			<button class="btn btn-default">Get Zone from the Map</button> <br>-->
-			<a class="btn btn-default button" href="#" form="createZoneform" type="reset" role="button" v-on:click="reset">Reset</a>
+			<!-- <a class="btn btn-default button" href="#" form="createZoneform" type="reset" role="button" v-on:click="reset">Reset</a>-->
 			<a class="btn btn-success button" href="#" v-on:click="submitzone" role="button">Submit</a>
-			<a class="btn btn-danger button" href="#" id="closeCreateZone" v-on:click="cancel" role="button"> Cancel</a>
 		</form>
 	</template>
 	<template id="message-info-template">
