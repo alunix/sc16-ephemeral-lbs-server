@@ -71,7 +71,7 @@
 			</div>
 			<div id="contentbox" class="col-md-3">
 				<div id="search" v-cloak>
-					<input type="text" class="form-control" placeholder="Search" v-model="search" debounce="500"></input>
+					<input type="text" class="form-control" placeholder="Enter zone name or topic" v-model="search" debounce="500"></input>
 					<div v-if="state" id="search_results">
 						<div v-for="zone in result">
 							<searchresult :name="zone.Name" :id="zone['Zone-id']" :topics="zone.Topics">
@@ -109,14 +109,14 @@
 	<template id="add-zone-template">
 		<h3>Create Zone</h3>
 		<form id="createZoneform">
-			<label for="zonename">Zonename</label>
-			<input class="form-control" type="text" v-model="name" id="zonename" maxlength="30" required>
+			<label for="zonename">Name</label>
+			<input class="form-control" type="text" placeholder="What's the zone's name?" v-model="name" id="zonename" maxlength="30" required></br>
 
 			<label for="duration">Duration</label>
-			<input class="form-control" type="text" placeholder="Date &amp; time" id="duration" v-model="datemodel" v-el:input required></br>
+			<input class="form-control" type="text" placeholder="Till when does it last?" id="duration" v-model="datemodel" v-el:input required></br>
 
 			<label for="topics">Topics</label>
-			<input class="form-control" type="text" v-model="topicmodel" id="topics" maxlength="50">
+			<input class="form-control" type="text" placeholder="What are the topics?" v-model="topicmodel" id="topics" maxlength="50"></br>
 			<a class="btn btn-success" href="#" v-on:click="addTopic()" role="button">add topic</a>
 			<a class="btn btn-danger" href="#" v-on:click="deleteTopic()" role="button">delete topic</a>
 			<br>
@@ -124,11 +124,9 @@
 			<br>
 
 			<label for="area">Zone</label>
-			<input class="form-control" type="text" v-model="coordinatesmodel" id="area" readonly required>
-			<!--			<button class="btn btn-default">Get Zone from the Map</button> <br>-->
-			<a class="btn btn-default" href="#" form="createZoneform" type="reset" role="button" v-on:click="reset">Reset</a>
-			<a class="btn btn-success" href="#" v-on:click="submitzone" role="button">Submit</a>
-			<a class="btn btn-danger" href="#" id="closeCreateZone" v-on:click="cancel" role="button"> Cancel</a>
+			<input class="form-control" type="text" placeholder="Draw a polygon!" v-model="coordinatesmodel" id="area" readonly required></br>
+			<button class="btn btn-default" form="createZoneform" type="reset" role="button" v-on:click="reset">Reset</button>
+			<a class="btn btn-success btn-lg" href="#" v-on:click="submitzone" role="button">Submit</a>
 		</form>
 	</template>
 	<template id="message-info-template">
