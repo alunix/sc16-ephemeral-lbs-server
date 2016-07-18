@@ -5,9 +5,7 @@ body {
     width: 100%;
 }
 #search{
-  margin-top: 8px;
-  margin-bottom: 8px;
-  background-color: lightyellow;
+
 }
 #map {
     /* Make sure the map container has a defined height and width*/
@@ -19,16 +17,31 @@ body {
     bottom: 0px;
     right: 60%;
 }
+#search_input{
+  height:35px;
+  font-size: 18px;
+  border-radius: 0px;
+  margin-bottom: 8px;
+}
 #contentbox {
     width: 40%;
-    padding: 10px;
     position: absolute;
+    padding-left: 0px;
+    padding-right: 0px;
     right: 0px;
     top: 50px;
     bottom: 0px;
     left: 60%;
     overflow-y: scroll;
     background-color: aliceblue
+}
+.content{
+  padding-left: 10px;
+  padding-right: 10px;
+}
+
+.button{
+  margin:5px;
 }
 
 .panel-default {
@@ -41,7 +54,7 @@ body {
 }
 
 .topic-inactive{
-  background-color: lightgrey; 
+  background-color: lightgrey;
 
 }
 
@@ -52,13 +65,7 @@ body {
     font-size: 150%;
 }
 
-#createzone {
-    position: relative;
-    display: hidden;
-    height: auto;
-    padding: 10px;
-    border: solid 1px #333333;
-}
+
 #toggleeditbtn{
   position: absolute;
   height: auto;
