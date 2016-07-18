@@ -44,20 +44,35 @@
         <!-- /.container -->
     </nav>
      <div class="container">
+
         <h1>Welcome to the help page! </h1>
         <h3>Here you will get some help and hints for using the website!</h3>
+        <p>The website offers you several possibilities to explore activities in your city. Where is the best party? Where is the cheapest place to eat or where are the nicest places in the city?
+            On the left side you can see a map with all existing zones. One the right side you will later see the messages, statistics or set options for your own zone.
+            To start you can either choose an existing zone in the map, search for a zone in the search bar or create a new zone.</p>
+            <img src="images/start.jpg" height="200" >
+        <h2>Searching zones</h2>
+        <p>To find a zone you can use the search functionality. You can search for a zone with its name or by topics. The search then will provide a list with all relevant zones, e.g the keyword "BBQ" searches for zones with this keyword
+            in their name as well as for zones that have this keyword as a topic.</p>
+        <img src="images/search.png" height="200"> </br>
         <h2>Accessing messages</h2>
-        <p> First you have to choose a zone that is shown within the map. After choosing one the messages that were shared within the zone are displayed in the message window on the right.
-            They are ordered from the newest to the oldest message.</p>
-        <img src="images/help1.jpg" width="100" height="50"> </br>
+        <p>To access the messages that were shared within a zone, you have to click on the zone. I there are overlapping zones you have to choose one from the appearing popup. After choosing one the messages are displayed 
+            in the message window on the right side. They are ordered from the newest to the oldest message. You can also search for messages of a specific topic, e.g the keyword "BBQ" searches for messages that were shared under the topic "BBQ".</p>
+            <img src="images/messages.png" height="200"> </br>
         <h2>Creating zones</h2>
-        <p> For creating a zone you have to use the "..." button. After you have activated it you can create a region directly on the map and set its properties afterwards. It is mandatory to set a duration
-            time for the zone.</p>
-        <img src="images/help2.jpg" width="100" height="50"> </br>
-
+        <p> For creating a zone you have to use the <button id="toggleeditbtn" type="button" class="btn btn-primary btn-xs" >Add new zone</button> button. After you have clicked on it the button will disappear
+            and the edit modus will open.</p>
+            <img src="images/addzone.jpg" height="200"> </br>
+           <p> Now you can select the drawing tool and draw your zone directly on the map. When you have finished the zone polygon, it will disappear on the map and its coordinates are added into the form.
+               Now you have to set the zone properties. It is mandatory to set a name, a duration until when the zone should exists and at least one topic for the zone. You can add several topics for one zone.
+               The duration can be defined with the poping up calender in the corresponding field. In the calender you can choose a date and a time until when the zone should exist. </p>
+             <img src="images/datepicker.jpg" height="150" > </br>
+        <p> The coordinates are already inserted automatically if you have finished drawing the zone. With the <button class="btn btn-success btn-xs">Submit</button> button you can now submit the new zone and finish its creation.
+            There is also the possibility to reset the current entries.</p>
         <h2>Exploring statistics</h2>
-        <p> The website offers statistics the show the activity in each zone. For exploring the statistics you have to choose a zone in the map and click the "..." button.</p>
-        <img src="images/help3.jpg" width="100" height="50"> </br>
+        <p> The website offers statistics that show the activity in each zone. For exploring the statistics you have to choose a zone in the map, the statistic will then be generated automatically.</p>
+        <img src="images/statistic.png" height="150"> </br>
+         <h3>Now you know how the website works. Have fun and explore it!</h3>
 
      </div>
 
