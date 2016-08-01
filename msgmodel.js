@@ -9,6 +9,7 @@ exports.configure = function(db, msgDb, zoneDb) {
     exports.msgdb = msgDb;
 };
 
+/* get all messages of a specified zone from the database */
 exports.getMessages = function(res, enddate, responder, zone) {
     var msgTable = exports.nano.use(exports.msgdb);
     var zonesTable = exports.nano.use(exports.zonesdb);
@@ -57,7 +58,7 @@ exports.getMessages = function(res, enddate, responder, zone) {
     });
 };
 
-/* adds multiple messages in move into the database */
+/* adds multiple messages in one move into the database */
 exports.addMessages = function(res, responder, messages) {
     var msgTable = exports.nano.use(exports.msgdb);
 
