@@ -2,38 +2,36 @@ FORMAT: 1A
 
 # Smart Cities
 
-This is where the users and the server will interact with each other to GET/POST zones and messages. 
-
-Code |  Response
-
-201  |   Created
-
-404  |  Error
+This document describes the public web API required for clients to communicate with the server.
+All request types return 201 on success and 404 on failure.
 
 ### GET Zones
 
 
 GET Zones from the server
 
-Example URl:
+Example URL:
 
 api/zones
 
-Status-Code:
-
 + Response 201 (application/json)
 
-   {
-            
+        {
+            "Zones" : [
                 {
-                    "Geometry": "Polygon"
-                    "Coordinates": [102.0,56.0],[132.0,50.0],[126.0,25.0],[100.0,22.0]
-                    "Name": "Muenster",
-                    "Expired-at": "2200-01-01T00:00:00.881Z",
-                    "Topics": ["general","sports","activities", "BBQ"]
-                } 
-            
-    }
+                    "Name": "Some Place",
+                    "Zone-id": "a38cb497b0bd7b8b9cb2308d64001033",
+                    "Expired-at":"2016-08-31T17:07:00.000Z",
+                    "Topics": ["Topic 1", "Topic 2"],
+                    "Geometry": {
+                        "Type": "Polygon",
+                        "Coordinates": [
+                            [51.96759142243696,7.6306915283203125],[51.96653379201881,7.623996734619141],[51.96706261034769,7.61824607849121],[51.96087504532041,7.618417739868163],[51.957542925731765,7.622966766357422],[51.958812333826295,7.631120681762694],[51.96135104218675,7.632923126220702],[51.96547613664187,7.632579803466797],[51.96737989835,7.630777359008789],[51.96759142243696,7.6306915283203125]
+                        ]
+                    }
+                }
+            ]
+        }
   
 
 
@@ -44,25 +42,29 @@ Example URl:
 
 api/messages
 
-Status-Code:
++ Parameters
+
+    + zone: (string) - The zone ID the requested messages belong to.
 
 + Response 201 (application/json)
 
-   {
-            
+        {
+            "Messages": [ 
                 {
-                    "Message-id": "b31ad002-cbcc-46c2-b770-37bb90295727",
-                    "Zone-id": "3a0e68e128b7e8ef3c23347cba1309ff",
-                    "Expired-at": "2016-07-29T18:11:39.680+0200",
-                    "Created-at": "2016-07-22T18:11:39.680+0200",
-                    "Topic": "Sports",
-                    "Title": "Football in Muenster",
-                    "Message": "Hey! I discovered a football ground near IFGI",
-                    "Geometry": "point",
-                    "Coordinate": [51.95292118325684],[7.659314721822739]    //latitude,longitude
-                    
-                } 
-    }    
+                    "Zone-id":"a38cb497b0bd7b8b9cb2308d640001a4",
+                    "Expired-at":"2016-10-05T14:48:00.000Z",
+                    "Created-at":"2016-07-05T14:48:00.000Z",
+                    "Topic":"BBQ",
+                    "Title":"No barbeque today ",
+                    "Message":"Due to bad weather the planned BBQ will take place one week later.",
+                    "Location": {
+                        "Type":"Point",
+                        "Coordinate": [7.614984512329102,51.96378383612403]
+                    },
+                    "Message-id":"someId"
+                }
+            ]
+        }
      
      
      
@@ -78,19 +80,6 @@ Status-Code:
 + Response 201 (application/json)
 
 
-    {        
-                {
-                    "Message-id": "b31ad002-cbce-46c2-b770-37bb90295727",
-                    "Zone-id": "3a0e68e128b7e6ef3c23347cba1309ff",
-                    "Expired-at": "2016-07-12T18:11:39.680+0200",
-                    "Created-at": "2016-07-05T18:11:39.680+0200",
-                    "Topic": "Food",
-                    "Title": "Doner in Muenster",
-                    "Message": "There is an amazing Doner restuarant at Ludgeriplatz",
-                    "Geometry": "point",
-                    "Coordinate": [51.95292118325684],[7.659314721822739]    //latitude,longitude
-                    
-                } 
-    }   
+
      
 
