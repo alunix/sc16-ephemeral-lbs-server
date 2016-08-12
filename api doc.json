@@ -1,0 +1,97 @@
+FORMAT: 1A
+HOST: http://polls.apiblueprint.org/
+
+# Smart Cities
+
+This is where the users and the server will interact with each other to GET/POST zones and messages. 
+
+Code |  Response
+
+201  |   Created
+
+404  |  Error
+
+### [GET Zones]
+
+
+GET Zones from the server
+
+Example URl:
+
+api/zones
+
+Status-Code:
+
++ Response 201 (application/json)
+
+   {
+            
+                {
+                    "Geometry": "Polygon"
+                    "Coordinates": [102.0,56.0],[132.0,50.0],[126.0,25.0],[100.0,22.0]
+                    "Name": "Muenster",
+                    "Expired-at": "2200-01-01T00:00:00.881Z",
+                    "Topics": ["general","sports","activities", "BBQ"]
+                } 
+            
+    }
+  
+
+
+### [GET Messages]
+
+
+Example URl:
+
+api/messages
+
+Status-Code:
+
++ Response 201 (application/json)
+
+   {
+            
+                {
+                    "Message-id": "b31ad002-cbcc-46c2-b770-37bb90295727",
+                    "Zone-id": "3a0e68e128b7e8ef3c23347cba1309ff",
+                    "Expired-at": "2016-07-29T18:11:39.680+0200",
+                    "Created-at": "2016-07-22T18:11:39.680+0200",
+                    "Topic": "Sports",
+                    "Title": "Football in Muenster",
+                    "Message": "Hey! I discovered a football ground near IFGI",
+                    "Geometry": "point",
+                    "Coordinate": [51.95292118325684],[7.659314721822739]    //latitude,longitude
+                    
+                } 
+    }    
+     
+     
+     
+
+### [POST Messages]
+
+Example URl:
+
+api/addmessages
+
+Status-Code:
+
++ Response 201 (application/json)
+
+
+    {        
+                {
+                    "Message-id": "b31ad002-cbce-46c2-b770-37bb90295727",
+                    "Zone-id": "3a0e68e128b7e6ef3c23347cba1309ff",
+                    "Expired-at": "2016-07-12T18:11:39.680+0200",
+                    "Created-at": "2016-07-05T18:11:39.680+0200",
+                    "Topic": "Food",
+                    "Title": "Doner in Muenster",
+                    "Message": "There is an amazing Doner restuarant at Ludgeriplatz",
+                    "Geometry": "point",
+                    "Coordinate": [51.95292118325684],[7.659314721822739]    //latitude,longitude
+                    
+                } 
+    }   
+     
+
