@@ -1,0 +1,108 @@
+FORMAT: 1A
+
+# Smart Cities
+
+This document describes the public web API required for clients to communicate with the server.
+All request types return 201 on success and 404 on failure.
+
+### GET Zones - Get all available zones
+
+Example URL:
+
+api/zones
+
++ Response 201 (application/json)
+
+        {
+            "Zones" : [
+                {
+                    "Name": "Some Place",
+                    "Zone-id": "a38cb497b0bd7b8b9cb2308d64001033",
+                    "Expired-at":"2016-08-31T17:07:00.000Z",
+                    "Topics": ["Topic 1", "Topic 2"],
+                    "Geometry": {
+                        "Type": "Polygon",
+                        "Coordinates": [
+                            [51.96759142243696,7.6306915283203125],[51.96653379201881,7.623996734619141],[51.96706261034769,7.61824607849121],[51.96087504532041,7.618417739868163],[51.957542925731765,7.622966766357422],[51.958812333826295,7.631120681762694],[51.96135104218675,7.632923126220702],[51.96547613664187,7.632579803466797],[51.96737989835,7.630777359008789],[51.96759142243696,7.6306915283203125]
+                        ]
+                    }
+                }
+            ]
+        }
+  
+
+
+### GET Messages - Get all messages to a specific zone ID
+
+
+Example URl:
+
+api/messages?zone=a38cb497b0bd7b8b9cb2308d640001a4
+
++ Parameters
+
+    + zone: (string) - The zone ID the requested messages belong to.
+
++ Response 201 (application/json)
+
+        {
+            "Messages": [ 
+                {
+                    "Zone-id":"a38cb497b0bd7b8b9cb2308d640001a4",
+                    "Expired-at":"2016-10-05T14:48:00.000Z",
+                    "Created-at":"2016-07-05T14:48:00.000Z",
+                    "Topic":"BBQ",
+                    "Title":"No barbeque today ",
+                    "Message":"Due to bad weather the planned BBQ will take place one week later.",
+                    "Location": {
+                        "Type":"Point",
+                        "Coordinate": [7.614984512329102,51.96378383612403]
+                    },
+                    "Message-id":"someId"
+                }
+            ]
+        }
+     
+     
+     
+
+### POST Messages - Upload new messages
+
+Example URl:
+
+api/addmessages
+
+Status-Code:
+
++ Request JSON Message
+
+    + Headers
+
+            Content-Type: application/json
+
+    + Body
+
+            {
+                "Messages": [ 
+                    {
+                        "Zone-id":"a38cb497b0bd7b8b9cb2308d640001a4",
+                        "Expired-at":"2016-10-05T14:48:00.000Z",
+                        "Created-at":"2016-07-05T14:48:00.000Z",
+                        "Topic":"BBQ",
+                        "Title":"No barbeque today ",
+                        "Message":"Due to bad weather the planned BBQ will take place one week later.",
+                        "Location": {
+                            "Type":"Point",
+                            "Coordinate": [7.614984512329102,51.96378383612403]
+                        },
+                        "Message-id":"someNewId"
+                    }
+                ]
+            }
+
++ Response 201
+
+
+
+     
+
