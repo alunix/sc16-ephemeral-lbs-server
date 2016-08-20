@@ -5,6 +5,7 @@ This repository contains the server-side source code for the "Smart Cities" proj
 The server provides two basic functionalities:
 * a public API for the mobile application (and other potential message clients) to gather available zones and store/retrieve corresponding messages
 * a web frontend which enables the creation and exploration of zones
+
 # API
 # Architecture
 The architecture can be roughly split into web frontend, node.js application server and CouchDB database.
