@@ -1,4 +1,4 @@
-// Vue for map content
+/* Vue  component for the map content */
 var mapVue = new Vue({
   parent: vue_broadcaster,
   el: '#map',
@@ -10,7 +10,7 @@ var mapVue = new Vue({
     drawControl: null,
     tools_shown: false
   },
-  // map initialization
+  /* map initialization */
   created: function () {
     var map = L.map('map').setView([51.959, 7.623], 14);
     L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
@@ -45,7 +45,7 @@ var mapVue = new Vue({
     },
     get_zones: function () {
       this.$http.get('/api/zones/', function (data) {
-        // geoZone is a GeoJSON which is needed for finding overlapping zones
+        /* geoZone is a GeoJSON which is needed for finding overlapping zones */
         var geoZone = {
           "type": "FeatureCollection",
           "features": []
@@ -69,15 +69,16 @@ var mapVue = new Vue({
             geoZone.features[i].geometry.coordinates[0].push([data['Zones'][i]['Geometry']['Coordinates'][j][1], data['Zones'][i]['Geometry']['Coordinates'][j][0]])
           }
         };
-        // the geoZone gets converted into a GeoJSON feature layer
+        /* the geoZone gets converted into a GeoJSON feature layer */
         this.layer = L.geoJson(geoZone)
-          // onclick function for every zone
+          /* onclick function for every zone */
           .on('click', function (e) {
             processClick(e.latlng.lat, e.latlng.lng)
           })
           .addTo(this.map)
       })
     },
+	/* initialize drawing tools */
     setupDrawTools: function(){
       this.drawnItems = new L.FeatureGroup();
       this.map.addLayer(this.drawnItems);
@@ -225,6 +226,7 @@ var mapVue = new Vue({
         }
       });
 
+	  /* push all coordinates to an array, after a polygon is drawn */
       this.map.on('draw:created', function (e) {
         var type = e.layerType,
           layer = e.layer;
@@ -237,7 +239,6 @@ var mapVue = new Vue({
           }
           document.getElementById("area").value = coordinates;
         }
-        // Do whatever else you need to. (save to db, add to map etc)
       });
     },
     startEditing: function(){
@@ -253,12 +254,12 @@ var mapVue = new Vue({
 
 
 
-// function for processing clicks on zones on the map and handling overlapping zones
+/* function for processing clicks on zones on the map and handling overlapping zones */
 function processClick(lat, lng) {
   var info = '';
   var point = [lng, lat];
   var match = leafletPip.pointInLayer(point, mapVue.layer, false);
-  // if there are overlapping zones, they get shown in a popup and become clickable
+  /* if there are overlapping zones, they get shown in a popup and become clickable */
   if (match.length > 1) {
     info = "<h4 style='color:grey'><b> Choose one zone:</b> </h4> <ul>";
     for (var i = 0; i < match.length; i++) {
@@ -278,7 +279,7 @@ function processClick(lat, lng) {
     mapVue.map.openPopup(info, [lat, lng]);
   }
 };
-// function for triggering zone selection change
+/* function for triggering zone selection change */
 function dispatchZoneID(id) {
   return function () {
     mapVue.$dispatch('switchZone', id)

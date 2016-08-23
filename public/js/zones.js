@@ -3,7 +3,7 @@ Vue.component('messageinfo', {
     props: ['title', 'message', 'topic']
 });
 
-// create a new Vue instance and mount it to our div element above with the id of info
+/* create a new Vue instance and mount it to our div element above with the id of info */
 var vm = new Vue({
     el: '#zonearea',
     parent: vue_broadcaster,

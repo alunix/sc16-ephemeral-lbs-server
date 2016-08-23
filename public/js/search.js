@@ -1,3 +1,4 @@
+/* Vue  component for the search */
 Vue.component('searchresult', {
     template: '#search-result-template',
     props: ['name', 'id', 'topics'],

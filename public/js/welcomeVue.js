@@ -1,8 +1,9 @@
+/* Vue  component for the welcome dialog */
 Vue.component('welcome', {
     template: '#welcome-template'
 });
 
-// create a new Vue instance and mount it to our div element above with the id of welcome
+/* create a new Vue instance and mount it to our div element above with the id of welcome */
 var vmWelcome = new Vue({
     el: '#welcome',
     parent: vue_broadcaster,
