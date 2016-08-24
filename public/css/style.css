@@ -4,7 +4,8 @@ body {
     height: 100%;
     width: 100%;
 }
-#search{
+.content{
+  padding-bottom: 50px;
 
 }
 #map {
