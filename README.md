@@ -36,5 +36,8 @@ The frontend uses both parts of the public API as well as its own API, which mea
 
 The database server should *never* be contacted by the frontend or another application directly and may be configured to be inaccessible to external requests.
 
-# Future Work and Limitations
-# Group
+# Known issues and limitations
+
+* The web frontend isn't optimized for the screen size of mobile devices.
+* The algorithm behind searching zones is rather simple and as a result limited. A more sophisticated searching functionality most likely requires a search engine like Apache Lucene.
+* While the graphs show activity by time, there are other details such as monthly trends that are not implemented.
