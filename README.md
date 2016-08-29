@@ -66,6 +66,8 @@ sudo sh install.sh
 ```
 You can then start the server application by running `nodejs index.js`. The server then can be reached under port 8080.
 
+The script was tested under Ubuntu 14.04
+
 # Known issues and limitations
 
 * The web frontend is not optimized for the smaller screen sizes of mobile devices.
