@@ -1,16 +1,8 @@
 # Introduction
-This repository contains the server-side source code for the "Smart Cities" project, which has the goal of researching/prototyping ephemeral location-based services.
-# Installation
-
-For our development we used [Vagrant](https://www.vagrantup.com) to create a consistent environment. Vagrant uses the bootstrap.sh script to setup a virtual server and install the dependencies of the application. A slightly modified version of the same script can be used to setup the project on a real server.
-Just clone the project, navigate to the folder and run the script:
-
-```
-git clone https://github.com/chack05/sc16-ephemeral-lbs-server.git
-cd sc16-ephemeral-lbs-server
-sudo sh install.sh
-```
-You can then start the server application by running `nodejs index.js`. The server then can be reached under port 8080.
+This repository contains the server-side source code for the "Smart Cities" study project. The project was part of a course at the Institute for Geoinformatics at the University of Münster. The overall goal was to create an ephemeral communication tool that allows it users to communicate anonymously over an ad-hoc network. All communications are of temporary nature and only exist for a fixed amount of time. That allows the users to share possibly sensitive information without being observed by a third party.
+Communications take place in zones that can be defined by the users. Each zone marks a geographic area. Users can only send and receive messages while in that particular zone. Each zone has a number of topics that allow users a finer selection of the content relevant to them.
+In the course a prototype was implemented. The primary part of this is an [Android app](https://github.com/heinrichloewen/SC-App) used for the communication. This repository holds the the code for an accompanying server component. The user can choose if his messages should be uploaded and stored here until they expire. Users new to the zone can now request a collection of all previous communication in that zone from the server. This reduces the cold start problem of a user entering an empty zone and provides him with an overview of the activities.
+Besides of being the backend for the application the server also provides a frontend where existing zones can be explored and new zones are created.
 
 # Features
 ## The server
@@ -54,6 +46,18 @@ The frontend uses both parts of the public API as well as its own API, which mea
 * providing additional API URLs for the frontend.
 
 The database server should *never* be contacted by the frontend or another application directly and may be configured to be inaccessible to external requests.
+
+# Installation
+
+For our development we used [Vagrant](https://www.vagrantup.com) to create a consistent environment. Vagrant uses the bootstrap.sh script to setup a virtual server and install the dependencies of the application. A slightly modified version of the same script can be used to setup the project on a real server.
+Just clone the project, navigate to the folder and run the script:
+
+```
+git clone https://github.com/chack05/sc16-ephemeral-lbs-server.git
+cd sc16-ephemeral-lbs-server
+sudo sh install.sh
+```
+You can then start the server application by running `nodejs index.js`. The server then can be reached under port 8080.
 
 # Known issues and limitations
 
