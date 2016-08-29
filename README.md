@@ -1,6 +1,17 @@
 # Introduction
 This repository contains the server-side source code for the "Smart Cities" project, which has the goal of researching/prototyping ephemeral location-based services.
 # Installation
+
+For our development we used [Vagrant](https://www.vagrantup.com) to create a consistent environment. Vagrant uses the bootstrap.sh script to setup a virtual server and install the dependencies of the application. A slightly modified version of the same script can be used to setup the project on a real server.
+Just clone the project, navigate to the folder and run the script:
+
+```
+git clone https://github.com/chack05/sc16-ephemeral-lbs-server.git
+cd sc16-ephemeral-lbs-server
+sudo sh install.sh
+```
+You can then start the server application by running `nodejs index.js`. The server then can be reached under port 8080.
+
 # Features
 The server provides two basic functionalities:
 * a public API for the mobile application (and other potential message clients) to gather available zones and store/retrieve corresponding messages
