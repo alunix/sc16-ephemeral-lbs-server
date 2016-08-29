@@ -11,6 +11,7 @@ var vmWelcome = new Vue({
         state: true
     },
     events: {
+      /* event which triggers the display of the welcome Vue depending on the broadcasted "state" param*/
       'switchState': function (state) {
         if (state == "welcome"){
           this.state = true;

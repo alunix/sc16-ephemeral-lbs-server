@@ -96,6 +96,7 @@ var vmAddZone = new Vue({
 		'zoneid': '',
 	},
 	events: {
+		/* event which triggers the display of the addZone Vue depending on the broadcasted "state" param*/
 		'switchState': function (state) {
 			if (state == "addzone") {
 				this.state = true;
