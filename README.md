@@ -1,7 +1,10 @@
 # Introduction
 This repository contains the server-side source code for the "Smart Cities" study project. The project was part of a course at the Institute for Geoinformatics at the University of Münster. The overall goal was to create an ephemeral communication tool that allows it users to communicate anonymously over an ad-hoc network. All communications are of temporary nature and only exist for a fixed amount of time. That allows the users to share possibly sensitive information without being observed by a third party.
+
 Communications take place in zones that can be defined by the users. Each zone marks a geographic area. Users can only send and receive messages while in that particular zone. Each zone has a number of topics that allow users a finer selection of the content relevant to them.
+
 In the course a prototype was implemented. The primary part of this is an [Android app](https://github.com/heinrichloewen/SC-App) used for the communication. This repository holds the the code for an accompanying server component. The user can choose if his messages should be uploaded and stored here until they expire. Users new to the zone can now request a collection of all previous communication in that zone from the server. This reduces the cold start problem of a user entering an empty zone and provides him with an overview of the activities.
+
 Besides of being the backend for the application the server also provides a frontend where existing zones can be explored and new zones are created.
 
 # Features
