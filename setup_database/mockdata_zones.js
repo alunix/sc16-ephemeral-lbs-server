@@ -1,4 +1,4 @@
-exports.mock_zones=[
+module.exports.mock_zones=[
   {
     "Geometry": {
       "Type": "Polygon",
