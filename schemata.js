@@ -1,4 +1,4 @@
-exports.zone = {
+module.exports.zone = {
     "type": "object",
     "properties": {
         "Geometry": {
@@ -38,7 +38,7 @@ exports.zone = {
     "required": ["Geometry", "Name", "Expired-at", "Topics"]
 };
 
-exports.messages = {
+module.exports.messages = {
     "type": "object",
     "properties": {
 

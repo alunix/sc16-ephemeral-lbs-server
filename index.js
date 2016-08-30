@@ -1,23 +1,16 @@
 "use strict";
+var express = require('express');
+var bodyParser = require("body-parser");
+var Validator = require('jsonschema').Validator;
+var zoneModel = require('./models/zonemodel');
+var msgModel = require('./models/msgmodel');
+var schemata = require('./schemata');
 
 /* Change accordingly. */
 var webport = 8080;
 
-/* The database settings... */
-var dbport = 5984;
-var dbserver = "http://localhost";
-var zonesdb = "zones";
-var msgdb = "messages";
-
-/* The last date we care about. */
-var lastDate = new Date(7500,10,30);
-
-var express = require('express');
-var bodyParser = require("body-parser");
-var Validator = require('jsonschema').Validator;
-var zoneModel = require('./zonemodel');
-var msgModel = require('./msgmodel');
-var schemata = require('./schemata');
+/* Initialize the JSON validator */
+var validator = new Validator();
 
 /*
  * We set up the server to serve static files from /public,
@@ -38,88 +31,99 @@ server.use(bodyParser.urlencoded({
 }));
 server.use(bodyParser.json());
 
-/* Set up database and models... */
-var connection = require('nano')( {
-    'url': dbserver + ':' + dbport,
-    'requestDefaults' : { 'proxy' : null }
-});
-zoneModel.configure(connection, msgdb, zonesdb);
-msgModel.configure(connection, msgdb, zonesdb);
-
-/* Handle basic requests... */
-
-/* These two function get injected into the model function calls to respond to the HTTP requests. */
-
-var outputResponder = function(errCode, data, res) {
-    if(!errCode) {
-        res.json(data);
-    }
-    else {
-        res.status(errCode).send(data);
-    }
-};
-
-var inputResponder = function(errCode, msg, res) {
-    res.status(errCode ? errCode : 201).send(msg);
-};
-
 server.get('/api/zones', function(req, res) {
-
-    zoneModel.getZones(res, lastDate, outputResponder);
+    zoneModel.getZones(function(err, data) {
+        if (err) {
+            res.status(err.status).send(err);
+        } else {
+            res.json(data);
+        }
+    })
 });
 
 server.get('/api/zones/:zoneid', function(req, res) {
-
-    zoneModel.getZoneById(res, lastDate, outputResponder, req.params.zoneid);
+    zoneModel.getZoneById(req.params.zoneid, function(err, data) {
+        if (err) {
+            res.status(err.status).send(err);
+        } else {
+            res.json(data);
+        }
+    })
 });
 
 server.post('/api/addzone', function(req, res) {
-
-    let validator = new Validator();
     let vresult = validator.validate(req.body, schemata.zone);
-    if(!vresult.valid) {
-        inputResponder(404, 'Validation error:' + vresult.errors, res);
+    if (!vresult.valid) {
+        res.status(404).send({
+            status: 404,
+            error: 'Validation error:' + vresult.errors
+        });
         return;
     }
-
-    zoneModel.addZone(res, inputResponder, req.body);
+    zoneModel.addZone(req.body, function(err, msg) {
+        if (err) {
+            res.status(err.status).send({ err });
+        } else {
+            res.status(201).send(msg);
+        }
+    })
 });
 
 server.get('/api/zones-search', function(req, res) {
-
     if (!req.query.q) {
-        outputResponder(404, "Query parameter 'q' missing.", res);
+        res.status(404).send({ status: 404, error: "Query parameter 'q' missing." });
         return;
     }
-
     let search_string = req.query.q.toLowerCase();
-    zoneModel.searchZones(res, lastDate, outputResponder, search_string);
+    zoneModel.searchZones(search_string, function(err, data) {
+        if (err) {
+            res.status(err.status).send(err);
+        } else {
+            res.json(data);
+        }
+    })
 });
 
 server.get('/api/zones/:zoneid/dailyactivity', function(req, res) {
-    zoneModel.getDailyActivity(res, outputResponder, req.params.zoneid);
+    zoneModel.getDailyActivity(req.params.zoneid, function(err, data) {
+        if (err) {
+            res.status(err.status).send(err);
+        } else {
+            res.json(data);
+        }
+    })
 });
 
 server.get('/api/messages', function(req, res) {
-
     if (!req.query.zone) {
-        outputResponder(404, "Zone parameter missing.", res);
-        return;
+        res.status(404).send({ status: 404, error: "Zone parameter missing." })
+    } else {
+        msgModel.getMessages(req.query.zone, function(err, data) {
+            if (err) {
+                res.status(err.status).send(err);
+            } else {
+                res.json(data);
+            }
+        })
     }
-
-    msgModel.getMessages(res, lastDate, outputResponder, req.query.zone);
 });
 
 server.post('/api/addmessages', function(req, res) {
-
-    let validator = new Validator();
     let vresult = validator.validate(req.body, schemata.messages);
-    if(!vresult.valid) {
-        inputResponder(404, 'Validation error:' + vresult.errors, res);
+    if (!vresult.valid) {
+        res.status(404).send({
+            status: 404,
+            error: 'Validation error:' + vresult.errors
+        });
         return;
     }
-
-    msgModel.addMessages(res, inputResponder, req.body.Messages);
+    msgModel.addMessages(req.body.Messages, function(err, msg) {
+        if (err) {
+            res.status(err.status).send({ err });
+        } else {
+            res.status(201).send(msg);
+        }
+    })
 });
 
 /* We start the server from the specified port. */
