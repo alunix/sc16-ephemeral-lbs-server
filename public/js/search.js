@@ -3,6 +3,7 @@ Vue.component('searchresult', {
     template: '#search-result-template',
     props: ['name', 'id', 'topics'],
     methods:{
+      /* tell other Vues that another zone is selected and deliver its id */
       selectZone: function(){
         this.$dispatch('switchZone', this.id)
       }
@@ -23,6 +24,7 @@ var searchVue = new Vue({
         }
       },
       events:{
+        /* event which triggers the display of the search Vue depending on the broadcasted "state" param*/
         switchState: function (state) {
           if (state == "search"){
             this.state = true;
@@ -33,6 +35,7 @@ var searchVue = new Vue({
         }
       },
       methods: {
+        /* function which takes the user's "input" as param and grants the search functionality */
           searchZone: function(input) {
             if (input != ''){
               this.$http.get('/api/zones-search?q='+input, function(data) {

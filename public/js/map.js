@@ -21,6 +21,7 @@ var mapVue = new Vue({
     this.setupDrawTools();
   },
   events: {
+    /* event which triggers the display of the map Vue depending on the broadcasted "state" param*/
     'switchState': function (state) {
       if (state == "addzone") {
         this.button_shown = false;
@@ -251,8 +252,6 @@ var mapVue = new Vue({
     }
   }
 });
-
-
 
 /* function for processing clicks on zones on the map and handling overlapping zones */
 function processClick(lat, lng) {

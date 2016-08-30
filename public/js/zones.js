@@ -1,3 +1,4 @@
+/* Vue  component for displaying zone specific information and charts */
 Vue.component('messageinfo', {
     template: '#message-info-template',
     props: ['title', 'message', 'topic']
@@ -19,6 +20,7 @@ var vm = new Vue({
         this.generateChart()
     },
     events: {
+        /* when triggered zone information with the appropriate "id" param is being displayed */
         switchZone: function (id) {
             this.$dispatch('switchState', 'zone');
             this.getZone(id);
@@ -26,6 +28,7 @@ var vm = new Vue({
             this.getDailyActivity(id);
             this.$set('active_topic', null);
         },
+        /* event which triggers the display of the zones Vue depending on the broadcasted "state" param*/
         switchState: function (state) {
             if (state == "zone") {
                 this.state = true;
@@ -36,11 +39,13 @@ var vm = new Vue({
         }
     },
     methods: {
+        /* function which sends a get request for the zone with the specific "id" param */
         getZone: function (id) {
             this.$http.get('/api/zones/' + id, function (data) {
                 this.$set('zone', data);
             });
         },
+        /* function which sends a get request for the messages of the zone with the specific "id" param */
         getMessages: function (id) {
             this.$http.get('/api/messages?zone=' + id, function (data) {
                 this.$set('messages', data['Messages']);
@@ -54,6 +59,7 @@ var vm = new Vue({
             this.$set('active_topic', null);
           }
         },
+        /* function which sends a get request for the dailyactivity data of the zone with the specific "id" param */
         getDailyActivity: function (id) {
             this.$http.get('/api/zones/' + id + '/dailyactivity', function (data) {
                 this.$set('daily_activity', data);
@@ -61,6 +67,7 @@ var vm = new Vue({
                 this.chart.update()
             });
         },
+        /* function responsible for chart rendering */
         generateChart: function () {
             var ctx = $("#zoneChart");
             this.chart = new Chart(ctx, {
