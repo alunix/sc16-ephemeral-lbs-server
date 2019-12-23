@@ -1,3 +1,5 @@
+**Warning: This is an unmaintained project and will likely be taken down from Github at the end of 2020!**
+
 # Introduction
 This repository contains the server-side source code for the "Smart Cities" study project. The project was part of a course at the Institute for Geoinformatics at the University of Münster. The overall goal was to create an ephemeral communication tool that allows it users to communicate anonymously over an ad-hoc network. All communications are of temporary nature and only exist for a fixed amount of time. That allows the users to share possibly sensitive information without being observed by a third party.  
 Communications take place in zones that can be defined by the users. Each zone marks a geographic area. Users can only send and receive messages while located in that particular zone. Each zone has a number of topics that allow users a finer selection of the content relevant to them.  
